@@ -1,0 +1,232 @@
+$primary      : #e1db2c;
+$primary-hover: #f6f035;
+
+$secondary: #888282;
+
+
+.container-fluid {
+    height          : 100vh;
+    background-color: #f2f2ec;
+
+    .tool-container {
+        border-right: 1px solid black;
+        height      : 100vh;
+
+
+        .avatar {
+            padding   : 20px 10px;
+            text-align: center;
+
+            img {
+                width        : 70px;
+                height       : 70px;
+                border-radius: 50%;
+            }
+        }
+
+        .bell-notify,
+        .contact-notify {
+            text-align: center;
+            margin-top: 20px;
+
+            i {
+                font-size       : 30px;
+                background-color: $primary;
+                border-radius   : 50%;
+                width           : 50px;
+                height          : 50px;
+                text-align      : center;
+                padding-top     : 9px;
+                position        : relative;
+                color           : $secondary;
+
+                span {
+                    top        : 30px;
+                    right      : 5px;
+                    color      : red;
+                    font-size  : 20px;
+                    position   : absolute;
+                    font-weight: 700;
+                }
+
+                &:hover {
+                    background-color: $primary-hover;
+                    cursor          : pointer;
+                }
+            }
+        }
+
+
+    }
+
+    .friend-list-container {
+        border-right   : 1px solid black;
+        height         : 100vh;
+        // overflow-y  : hidden;
+
+        .search-box {
+            background-color: yellowgreen;
+            height          : 100px;
+        }
+
+        .option-list {
+            background-color: #d7af79;
+            height          : 50px;
+        }
+
+        .friend.list {
+            overflow-y   : scroll;
+            overflow-x   : hidden;
+            // height    : 600px;
+            height       : calc(100vh - 160px) !important;
+
+            .friend-single {
+                // background-color: aquamarine;
+                margin-right : 15px;
+                padding      : 10px;
+                display      : flex;
+                border-bottom: 1px solid black;
+                margin-top   : 10px;
+
+                &__avatar {
+                    width: 20%;
+
+                    img {
+                        width        : 60px;
+                        height       : 60px;
+                        border-radius: 50%;
+                    }
+                }
+
+                &__info {
+                    .info--name {}
+
+                    .info--preview-message {}
+                }
+            }
+        }
+
+    }
+
+    .chat-container {
+        height  : 100vh;
+        overflow: auto;
+
+        .chat__friend {
+            border-bottom: 1px solid black;
+            height       : 90px;
+            display      : flex;
+
+            &--avatar {
+                width          : 20%;
+                display        : flex;
+                justify-content: center;
+                align-items    : center;
+
+                img {
+                    width        : 65px;
+                    height       : 65px;
+                    border-radius: 50%;
+                }
+            }
+
+            &--info {
+                display        : flex;
+                flex-direction : column;
+                justify-content: center;
+
+                .info--name {}
+
+                p.info--state {
+                    margin-bottom: 0 !important;
+                }
+            }
+        }
+
+        .chat__place {
+            border-bottom   : 1px solid black;
+            height          : 65vh;
+            overflow-y      : scroll;
+            background-color: #93932e1c;
+            padding         : 20px;
+            position        : relative;
+
+            .friend-single {
+                display      : flex;
+                width        : 80%;
+                margin-bottom: 20px;
+
+                .friend-single__avatar {
+                    width: 65px;
+
+                    img {
+                        width        : 60px;
+                        height       : 60px;
+                        border-radius: 50%;
+                    }
+                }
+
+                .friend-single__info {
+                    // width           : calc(100% - 70px);
+                    border          : 1px solid #41862f;
+                    padding         : 10px;
+                    border-radius   : 10px;
+                    background-color: #c8e3c3;
+                    margin-left     : 5px;
+                    margin-right    : 5px;
+                }
+            }
+
+            .friend-single.current-host {
+                display          : flex;
+                flex-direction   : row-reverse;
+                margin-left      : 20%;
+                // position      : absolute;
+                // right         : 10px;
+
+                .friend-single__info {
+                    background-color: #ded49c;
+                }
+            }
+        }
+
+        .chat__type {
+            height: 200px;
+
+            .tool-box {
+                border-bottom: 1px solid black;
+                height       : 25%;
+            }
+
+            .contents-place {
+                display: flex;
+                height : 75%;
+
+                .type-box {
+                    background-color: yellowgreen;
+                    padding         : 10px;
+                    overflow-y      : scroll;
+                    width           : 100%;
+
+                    textarea#type-box-text {
+                        width  : 100%;
+                        height : 95%;
+                        resize : none;
+                        padding: 6px;
+                    }
+                }
+
+                .send-box {
+                    height: 20px;
+                    width : 165px;
+
+                    input#button-send {
+                        width     : 100%;
+                        margin-top: 25px;
+                    }
+                }
+            }
+
+        }
+    }
+}

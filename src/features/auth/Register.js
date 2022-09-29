@@ -163,6 +163,20 @@ const Register = () => {
                                 />
                             </td>
                         </tr>
+                        {/* <tr className='form-content'>
+                            <td>
+                                <label htmlFor="avatar">Avatar:</label>
+                            </td>
+                            <td>
+                                <input
+                                    type="file"
+                                    id="avatar"
+                                    // onChange={(e) => setPassword(e.target.value)}
+                                    // value={password}
+                                    // required
+                                />
+                            </td>
+                        </tr> */}
                     </tbody>
                 </table>
 
