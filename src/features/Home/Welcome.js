@@ -8,9 +8,12 @@ import './Welcome.scss';
 import { useGetFriendListQuery } from "../friendList/friendListApiSlice"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 const Welcome = () => {
+    const navigate = useNavigate()
+
     const user = useSelector(selectCurrentUser)
     const token = useSelector(selectCurrentToken)
-    const navigate = useNavigate()
+    const { data: friendListData } = useGetFriendListQuery();
+
     console.log('check: ', user, 'token:', token)
     const welcome = user ? `Welcome ${user}!` : 'Welcome!'
     const tokenAbbr = `${token.slice(0, 9)}...`
@@ -19,13 +22,20 @@ const Welcome = () => {
 
     const [typeText, setTypeText] = useState('');
 
-    const {
-        data: friendList,
-        isLoading,
-        isSuccess,
-        isError,
-        error
-    } = useGetFriendListQuery();
+    // const {
+    //     data: friendList,
+    //     isLoading,
+    //     isSuccess,
+    //     isError,
+    //     error
+    // } = useGetFriendListQuery();
+    let friendList = [];
+
+    if (friendListData) {
+        friendList = friendListData.data.data;
+        console.log('friendList:', friendList)
+    }
+
     const handleClickToContact = () => {
 
         navigate('/contact')
@@ -38,12 +48,19 @@ const Welcome = () => {
                         <div className="avatar">
                             <img src={require('../../assets/img/avatar.png')} alt="avatar" />
                         </div>
-                        <div className='bell-notify'>
-                            <i class="far fa-bell"><span>1</span></i>
+                        <div className='bell-notify active'>
+                            <i class="far fa-comment-dots">
+                                {/* <span>1</span> */}
+                            </i>
                         </div>
                         <div className='contact-notify'>
                             <NavLink activeClassName='active' to={'/contact'}>
                                 <i class="far fa-address-book"><span>N</span></i>
+                            </NavLink>
+                        </div>
+                        <div className='logout'>
+                            <NavLink to={'/'}>
+                                <i class="fas fa-sign-out-alt"></i>
                             </NavLink>
                         </div>
                     </div>
@@ -57,6 +74,21 @@ const Welcome = () => {
                             <span>Option list</span>
                         </div>
                         <div className="friend list">
+                            {friendList && friendList.length > 0 &&
+                                friendList.map(item => {
+                                    return (
+                                        <div className="friend-single" key={item.id}>
+                                            <div className="friend-single__avatar">
+                                                <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                                            </div>
+                                            <div className="friend-single__info">
+                                                <h4 className="info--name">{item.name}</h4>
+                                                <p className="info--preview-message">{item.phone} Latest message</p>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
 
                             <div className="friend-single">
                                 <div className="friend-single__avatar">
@@ -151,7 +183,7 @@ const Welcome = () => {
                         </div>
                     </div>
                 </div>
-                <div className="col lg-7 col-md-7" style={{ paddingLeft: "0px" }}>
+                <div className="col lg-7 col-md-7" style={{ padding: "0px" }}>
                     <div className="chat-container">
                         <div className="chat__friend">
                             <div className="chat__friend--avatar">
@@ -225,6 +257,7 @@ const Welcome = () => {
                                 <div className="type-box">
                                     <textarea type="text" id="type-box-text"
                                         value={typeText}
+                                        ref={typeTextRef}
                                         onChange={(e) => setTypeText(e.target.value)}
                                         autoComplete="off"
                                     />

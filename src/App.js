@@ -21,7 +21,7 @@ function App() {
         <Route path="register-test" element={<RegisterTest />} />
         {/* protected routes */}
         <Route element={<RequireAuth />}>
-          <Route path="welcome" element={<Welcome />} />
+          <Route path="message" element={<Welcome />} />
           <Route path="contact" element={<Contact />} />
           <Route path="users" element={<UsersList />} />
         </Route>

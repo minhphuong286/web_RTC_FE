@@ -6,10 +6,14 @@ export const friendListApiSlice = apiSlice.injectEndpoints({
             query: () => `/relationship/list-friends`,
             // keepUnusedDataFor: 5,
         }),
-
+        getRequestList: builder.query({
+            query: () => `/relationship/list-request-friends`,
+            // keepUnusedDataFor: 5,
+        }),
     })
 })
 
 export const {
-    useGetFriendListQuery
+    useGetFriendListQuery,
+    useGetRequestListQuery
 } = friendListApiSlice 

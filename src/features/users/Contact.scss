@@ -1,0 +1,72 @@
+@import '../../assets/scss/colors.scss';
+
+.friend-list-container {
+    .option-list {
+        height             : 35px;
+        border-top         : 1px solid;
+        border-bottom-style: ridge;
+        display            : flex;
+
+        .total-list {
+            margin: auto 10px;
+
+            span {
+                font-weight: 600;
+            }
+        }
+
+    }
+}
+
+
+.contact-container {
+    margin: 30px;
+
+    .contact-list {
+        margin-top: 30px;
+
+        .user-single {
+            display         : flex;
+            align-items     : center;
+            background-color: $background-1;
+            padding         : 10px;
+            border-radius   : 10px;
+            margin-bottom   : 15px;
+
+            &__avatar {
+                img {
+                    width        : 70px;
+                    height       : 70px;
+                    border-radius: 50%;
+                }
+            }
+
+            &__info {
+                margin   : 0 20px;
+                // width : 100%;
+                width    : 58%;
+
+                .info--name,
+                .info--preview-message {
+                    white-space  : nowrap;
+                    overflow     : hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .resolve {
+                display   : flex;
+                column-gap: 5px;
+
+                .button-refuse {
+                    background-color: $background;
+
+                    &:hover {
+                        background-color: $primary-hover;
+                        cursor          : pointer;
+                    }
+                }
+            }
+        }
+    }
+}

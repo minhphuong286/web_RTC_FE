@@ -37,7 +37,7 @@ const Login = () => {
             setPhone('')
             setPassword('')
             // <Link to="/welcome">Back to Welcome</Link>
-            navigate('/welcome')
+            navigate('/message')
         } catch (err) {
             console.log('check LOGIN:', err)
             if (!err?.originalStatus) {

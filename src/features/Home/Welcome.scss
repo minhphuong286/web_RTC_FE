@@ -1,8 +1,4 @@
-$primary      : #e1db2c;
-$primary-hover: #f6f035;
-
-$secondary: #888282;
-
+@import '../../assets/scss/colors.scss';
 
 .container-fluid {
     height          : 100vh;
@@ -25,9 +21,20 @@ $secondary: #888282;
         }
 
         .bell-notify,
-        .contact-notify {
-            text-align: center;
-            margin-top: 20px;
+        .contact-notify,
+        .logout {
+            text-align    : center;
+            margin-top    : 20px;
+            padding-top   : 6px;
+            padding-bottom: 6px;
+
+            &.active {
+                background-color: $background-3;
+
+                i {
+                    background-color: $primary-hover;
+                }
+            }
 
             i {
                 font-size       : 30px;
@@ -36,17 +43,24 @@ $secondary: #888282;
                 width           : 50px;
                 height          : 50px;
                 text-align      : center;
-                padding-top     : 9px;
+                padding-top     : 10px;
                 position        : relative;
                 color           : $secondary;
 
                 span {
-                    top        : 30px;
-                    right      : 5px;
-                    color      : red;
-                    font-size  : 20px;
-                    position   : absolute;
-                    font-weight: 700;
+                    top             : 30px;
+                    right           : 5px;
+                    color           : red;
+                    font-size       : 15px;
+                    position        : absolute;
+                    font-weight     : 700;
+                    background-color: $background-2;
+                    width           : 25px;
+                    height          : 25px;
+                    border-radius   : 50%;
+                    display         : flex;
+                    align-items     : center;
+                    justify-content : center;
                 }
 
                 &:hover {
@@ -54,9 +68,8 @@ $secondary: #888282;
                     cursor          : pointer;
                 }
             }
+
         }
-
-
     }
 
     .friend-list-container {
@@ -109,8 +122,9 @@ $secondary: #888282;
     }
 
     .chat-container {
-        height  : 100vh;
-        overflow: auto;
+        height    : 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
 
         .chat__friend {
             border-bottom: 1px solid black;

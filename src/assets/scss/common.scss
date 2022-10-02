@@ -1,11 +1,25 @@
+@import '../../assets/scss/colors.scss';
+
 .button {
+    &.button-cancel {
+        padding         : 5px 25px;
+        border-radius   : 25px;
+        background-color: $primary-2;
+        border          : none;
+
+        &:hover {
+            background-color: $primary-hover;
+            cursor          : pointer;
+        }
+    }
+
     padding         : 5px 25px;
     border-radius   : 25px;
-    background-color: #e1db2c;
+    background-color: $primary;
     border          : none;
 
     &:hover {
-        background-color: #f6f035;
+        background-color: $primary-hover;
         cursor          : pointer;
     }
 }

@@ -1,0 +1,58 @@
+@import '../../assets/scss/colors.scss';
+
+
+.modal-body {
+    background-color: $background;
+
+    .contact-list {
+        margin-top: 20px;
+        padding   : 10px;
+        min-height: 300px;
+
+        .user-single {
+            text-align      : center;
+            background-color: $background-1;
+            padding         : 10px;
+            border-radius   : 10px;
+
+
+            &__avatar {
+                height: 130px;
+
+                img {
+                    width        : 130px;
+                    height       : 130px;
+                    border-radius: 50%;
+                }
+            }
+
+            &__info {}
+
+            .resolve {}
+        }
+    }
+}
+
+.find-user {
+    display        : flex;
+    justify-content: space-between;
+
+    &__phone {
+
+        label {
+            margin-right: 10px;
+        }
+
+        input#phone {
+            padding      : 5px;
+            padding-left : 10px;
+            border-radius: 10px;
+            border       : 1px solid $primary;
+            outline-color: $primary-hover;
+        }
+    }
+
+    &__button {
+        input#find {}
+    }
+}
