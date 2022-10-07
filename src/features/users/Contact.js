@@ -18,6 +18,8 @@ const Contact = () => {
     const [refuseOrAcceptContact] = useRefuseOrAcceptContactMutation();
 
     const [openModalAddNewContact, setOpenModalAddNewContact] = useState(false);
+    let [actionId, setActionId] = useState('');
+    let [isCallingVideo, setIsCallingVideo] = useState(false);
 
     let content;
     let friendList = [];
@@ -43,6 +45,7 @@ const Contact = () => {
             accepted: '0',
             user_two: `${userId}`
         })
+        setActionId(`refuse ${userId}`);
         console.log('res Refuse:', res)
     }
 
@@ -52,8 +55,13 @@ const Contact = () => {
             accepted: '1',
             user_two: `${userId}`
         })
+        setActionId(`accept ${userId}`);
         console.log('res Accept:', res)
     }
+
+    // const detectIsCallingVideo = (flag) => {
+    //     setIsCallingVideo(flag);
+    // }
 
     content = (
         <div className="container-fluid">

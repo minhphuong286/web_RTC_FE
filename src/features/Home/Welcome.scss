@@ -100,6 +100,24 @@
                 display      : flex;
                 border-bottom: 1px solid black;
                 margin-top   : 10px;
+                position     : relative;
+
+                i {
+                    position : absolute;
+                    right    : 10px;
+                    color    : red;
+                    font-size: 25px;
+                    top      : 25px;
+                }
+
+                &.active {
+                    background-color: $background-1;
+                }
+
+                &:hover {
+                    background-color: $background-1;
+                    cursor          : pointer;
+                }
 
                 &__avatar {
                     width: 20%;
@@ -112,9 +130,19 @@
                 }
 
                 &__info {
-                    .info--name {}
+                    padding-left: 10px;
+                    width       : 85%;
 
-                    .info--preview-message {}
+                    .info--name {
+                        padding-right: 45px;
+                    }
+
+                    .info--preview-message {
+                        width        : 98%;
+                        overflow     : hidden;
+                        text-overflow: ellipsis;
+                        white-space  : nowrap;
+                    }
                 }
             }
         }

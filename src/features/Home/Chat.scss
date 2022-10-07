@@ -1,0 +1,35 @@
+@import '../../assets/scss/colors.scss';
+
+.chat-container {
+    .chat__friend {
+        &--info {
+            width: 100%;
+        }
+
+        &--video {
+            display    : flex;
+            align-items: center;
+            margin     : 0 20px;
+            column-gap : 20px;
+
+            i {
+                color: $primary;
+
+                &:hover {
+                    color : $primary-hover;
+                    cursor: pointer;
+                }
+
+                &.calling {
+                    pointer-events: none;
+                    color         : $primary-hover;
+                }
+
+                &.unallow {
+                    color         : $background-3;
+                    pointer-events: none;
+                }
+            }
+        }
+    }
+}
