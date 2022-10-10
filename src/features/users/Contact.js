@@ -72,7 +72,7 @@ const Contact = () => {
                             <img src={require('../../assets/img/avatar.png')} alt="avatar" />
                         </div>
                         <div className='bell-notify'>
-                            <NavLink activeClassName='active' to={'/message'}>
+                            <NavLink to={'/message'}>
                                 <i class="far fa-comment-dots"><span>1</span></i>
                             </NavLink>
                         </div>

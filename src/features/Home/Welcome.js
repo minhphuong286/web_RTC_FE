@@ -55,18 +55,18 @@ const Welcome = () => {
                             <img src={require('../../assets/img/avatar.png')} alt="avatar" />
                         </div>
                         <div className='bell-notify active'>
-                            <i class="far fa-comment-dots">
+                            <i className="far fa-comment-dots">
                                 {/* <span>1</span> */}
                             </i>
                         </div>
                         <div className='contact-notify'>
-                            <NavLink activeClassName='active' to={'/contact'}>
-                                <i class="far fa-address-book"><span>N</span></i>
+                            <NavLink to={'/contact'}>
+                                <i className="far fa-address-book"><span>N</span></i>
                             </NavLink>
                         </div>
                         <div className='logout'>
                             <NavLink to={'/'}>
-                                <i class="fas fa-sign-out-alt"></i>
+                                <i className="fas fa-sign-out-alt"></i>
                             </NavLink>
                         </div>
                     </div>
