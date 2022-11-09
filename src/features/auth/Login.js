@@ -31,7 +31,7 @@ const Login = () => {
         e.preventDefault()
 
         try {
-            console.log('phone:', phone, 'password:', password);
+            // console.log('phone:', phone, 'password:', password);
             const loginData = await login({ phone, password }).unwrap()
             dispatch(setCredentials({ ...loginData, phone }))
             setPhone('')
@@ -39,7 +39,7 @@ const Login = () => {
             // <Link to="/welcome">Back to Welcome</Link>
             navigate('/message')
         } catch (err) {
-            console.log('check LOGIN:', err)
+            // console.log('check LOGIN:', err)
             if (!err?.originalStatus) {
                 // isLoading: true until timeout occurs
                 setErrMsg('No Server Response');
@@ -55,7 +55,7 @@ const Login = () => {
     }
 
     const handleUserInput = (e) => {
-        console.log('check e: ', e)
+        // console.log('check e: ', e)
         setPhone(e.target.value)
     }
     const handlePwdInput = (e) => setPassword(e.target.value)

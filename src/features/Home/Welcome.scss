@@ -186,12 +186,12 @@
         }
 
         .chat__place {
-            border-bottom   : 1px solid black;
-            height          : 65vh;
-            overflow-y      : scroll;
-            background-color: #93932e1c;
-            padding         : 20px;
-            position        : relative;
+            border-bottom      : 1px solid black;
+            height             : 65vh;
+            overflow-y         : scroll;
+            background-color   : #93932e1c;
+            padding            : 20px;
+            // position        : relative;
 
             .friend-single {
                 display      : flex;
@@ -229,6 +229,35 @@
                 .friend-single__info {
                     background-color: #ded49c;
                 }
+            }
+
+
+            &.on-video {
+                height  : calc(100vh - 90px) !important;
+                position: relative;
+
+                .large-frame {
+                    width           : calc(100% - 40px);
+                    height          : calc(100% - 40px);
+                    background-color: black;
+                    position        : absolute;
+                }
+
+                .small-frame {
+                    height          : 158px;
+                    width           : 158px;
+                    background-color: black;
+                    position        : absolute;
+                    top             : 20px;
+                    right           : 20px;
+                }
+
+                .controllCalling {
+                    bottom  : 68px;
+                    position: absolute;
+                    left    : 50%;
+                }
+
             }
         }
 

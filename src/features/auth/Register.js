@@ -42,8 +42,8 @@ const Register = () => {
         e.preventDefault()
 
         try {
-            console.log('username:', username, 'email:', email);
-            console.log('phone:', phone, 'password:', password);
+            // console.log('username:', username, 'email:', email);
+            // console.log('phone:', phone, 'password:', password);
             let name = username;
             const registerData = await register({ name, email, phone, password }).unwrap()
             // let name = username;
@@ -61,11 +61,11 @@ const Register = () => {
             setPassword('')
             setEmail('')
             setUserName('')
-            console.log('OK');
+            // console.log('OK');
             // <Link to="/welcome">Back to Welcome</Link>
             navigate('/welcome')
         } catch (err) {
-            console.log('check Register:', err)
+            // console.log('check Register:', err)
             if (!err?.originalStatus) {
                 // isLoading: true until timeout occurs
                 setErrMsg('No Server Response');

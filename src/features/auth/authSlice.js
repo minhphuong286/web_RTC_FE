@@ -8,7 +8,7 @@ const authSlice = createSlice({
             const { phone } = action.payload;
 
             const accessToken = action.payload.data.access_token;
-            console.log('check authSlice:', phone, 'tokennnn:', action.payload.data.access_token)
+            // console.log('check authSlice:', phone, 'tokennnn:', action.payload.data.access_token)
             state.user = phone
             state.token = accessToken
         },

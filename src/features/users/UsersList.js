@@ -18,7 +18,7 @@ const UsersList = () => {
         content = (
             <section className="users">
                 <h1>Users List</h1>
-                {console.log('check res: ', users.data, usersList.name)}
+                {/* {console.log('check res: ', users.data, usersList.name)} */}
                 {usersList.name}
                 <Link to="/welcome">Back to Welcome</Link>
             </section>

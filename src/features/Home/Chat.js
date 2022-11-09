@@ -8,8 +8,8 @@ import { detectIsCallingVideo } from './videoSlice';
 import { selectCallingDetect, selectCallingUser } from './videoSlice';
 
 const Chat = (props) => {
-    let { currentUser } = props;
-    const callingUser = useSelector(selectCallingUser)
+    let { currentUser, roomId } = props;
+    const callingUserName = useSelector(selectCallingUser)
     const callingDetect = useSelector(selectCallingDetect)
 
     const dispatch = useDispatch()
@@ -18,24 +18,24 @@ const Chat = (props) => {
     const isVideoRef = useRef(false)
 
     const [typeText, setTypeText] = useState('');
-    const [openVideo, setOpenVideo] = useState(false);
+    const [openVideo, setOpenVideo] = useState();
     const [openCamera, setOpenCamera] = useState(true);
 
-    console.log('Check props openVideo:', openVideo)
+    // console.log('Check props openVideo:', openVideo)
 
     const handleOpenVideoCall = (name) => {
-        console.log('openVideo:', openVideo)
+        // console.log('openVideo:', openVideo)
         let isCalling = true;
         setOpenVideo(isCalling);
         dispatch(detectIsCallingVideo({ name, isCalling }));
-        console.log('Name:', name)
+        // console.log('Name:', name)
     }
     const handleStopVideoCall = (name) => {
-        console.log('openVideo:', openVideo)
+        // console.log('openVideo:', openVideo)
         let isCalling = false;
         setOpenVideo(isCalling);
         dispatch(detectIsCallingVideo({ name, isCalling }));
-        console.log('Name:', name)
+        // console.log('Name:', name)
     }
     const content = (
         <div className="chat-container">
@@ -49,8 +49,8 @@ const Chat = (props) => {
                 </div>
                 <div className='chat__friend--video'>
                     <i className=
-                        {callingDetect && callingUser ?
-                            currentUser.name === callingUser ?
+                        {callingDetect && callingUserName ?
+                            currentUser.name === callingUserName ?
                                 "fas fa-video calling"
                                 : "fas fa-video unallow"
                             : "fas fa-video"
@@ -59,8 +59,8 @@ const Chat = (props) => {
                         onClick={() => handleOpenVideoCall(currentUser.name)}
                     ></i>
                     <i className=
-                        {callingDetect && callingUser ?
-                            currentUser.name === callingUser ?
+                        {callingDetect && callingUserName ?
+                            currentUser.name === callingUserName ?
                                 "fas fa-stop"
                                 : "fas fa-stop unallow"
                             : "fas fa-stop"
@@ -69,11 +69,12 @@ const Chat = (props) => {
                     ></i>
                 </div>
             </div>
-            <div className="chat__place">
-                {openVideo === true && currentUser.name === callingUser
+            <div className={callingDetect === true && currentUser.name === callingUserName ? "chat__place on-video" : "chat__place"}>
+                {callingDetect === true && currentUser.name === callingUserName
                     ?
                     <ChatVideo
-
+                        roomId={roomId}
+                        currentUser={currentUser}
                     />
                     :
                     <ChatFrame />
@@ -81,26 +82,32 @@ const Chat = (props) => {
 
 
             </div>
-            <div className="chat__type"
-            >
-                <div className="tool-box">
+            {callingDetect === true && currentUser.name === callingUserName
+                ?
+                <div></div>
+                :
+                <div className="chat__type"
+                >
+                    <div className="tool-box">
+
+                    </div>
+                    <div className="contents-place">
+                        <div className="type-box">
+                            <textarea type="text" id="type-box-text"
+                                value={typeText}
+                                ref={typeTextRef}
+                                onChange={(e) => setTypeText(e.target.value)}
+                                autoComplete="off"
+                            />
+                        </div>
+                        <div className="send-box">
+                            <input type="button" className='button' id='button-send' value="Send" />
+                        </div>
+                    </div>
 
                 </div>
-                <div className="contents-place">
-                    <div className="type-box">
-                        <textarea type="text" id="type-box-text"
-                            value={typeText}
-                            ref={typeTextRef}
-                            onChange={(e) => setTypeText(e.target.value)}
-                            autoComplete="off"
-                        />
-                    </div>
-                    <div className="send-box">
-                        <input type="button" className='button' id='button-send' value="Send" />
-                    </div>
-                </div>
+            }
 
-            </div>
         </div>
     )
 

@@ -27,12 +27,12 @@ const Contact = () => {
 
     if (friendListData) {
         friendList = friendListData.data.data;
-        console.log('friendList:', friendList)
+        // console.log('friendList:', friendList)
     }
 
     if (requestListData) {
         requestList = requestListData.data.data;
-        console.log('requestList:', requestList)
+        // console.log('requestList:', requestList)
     }
 
     const handleAddNewContact = () => {
@@ -40,23 +40,23 @@ const Contact = () => {
     }
 
     const handleRefuseContact = async (userId) => {
-        console.log('From handleRefuseContact id:', userId)
+        // console.log('From handleRefuseContact id:', userId)
         let res = await refuseOrAcceptContact({
             accepted: '0',
             user_two: `${userId}`
         })
         setActionId(`refuse ${userId}`);
-        console.log('res Refuse:', res)
+        // console.log('res Refuse:', res)
     }
 
     const handleAcceptContact = async (userId) => {
-        console.log('From handleAcceptContact id:', userId)
+        // console.log('From handleAcceptContact id:', userId)
         let res = await refuseOrAcceptContact({
             accepted: '1',
             user_two: `${userId}`
         })
         setActionId(`accept ${userId}`);
-        console.log('res Accept:', res)
+        // console.log('res Accept:', res)
     }
 
     // const detectIsCallingVideo = (flag) => {

@@ -1,103 +1,167 @@
 import { useRef, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Peer from "simple-peer"
 import io from "socket.io-client"
 import './ChatVideo.scss';
-// const socket = io.connect('http://localhost:5000')
+import { useCallingVideoMutation, useRejectCallingVideoMutation } from './roomApiSlice';
+import { selectCallingDetect, selectCallingUser, selectDataToDetect } from './videoSlice';
+import { selectDataFromDetect } from './videoSlice';
+// const socket = io.connect('http://localhost:6001')
+const socket = io(
+    '/webRTCPeers',
+    {
+        path: '/webrtc'
+    }
+)
 
-
-const ChatVideo = () => {
+const ChatVideo = (props) => {
+    let { roomId, currentUser } = props;
+    const [callingVideo] = useCallingVideoMutation();
+    const [rejectCallingVideo] = useRejectCallingVideoMutation();
+    const userData = useSelector(selectDataFromDetect);
+    const callingDetect = useSelector(selectCallingDetect)
 
     const localVideoRef = useRef();
     const remoteVideoRef = useRef();
     const pc = useRef(new RTCPeerConnection(null));
     const textRef = useRef();
 
+    const [offerVisible, setOfferVisible] = useState(true)
+    const [answerVisible, setAnswerVisible] = useState(false)
+    const [status, setStatus] = useState('Make a call now')
+    const [dataCall, setDataCall] = useState();
     useEffect(() => {
+        socket.on('connection-success', success => {
+            console.log('Success:', success)
+        })
+        socket.on('sdp', data => {
+            console.log('Data:', data)
+            textRef.current.value = JSON.stringify(data.sdp)
+            pc.current.setRemoteDescription(new RTCSessionDescription(data.sdp))
+            // setDataCall(data)
+            // console.log('dataCall:', dataCall)
+            if (data.sdp.type === 'offer') {
+                setOfferVisible(false)
+                setAnswerVisible(true)
+                setStatus('Incomming call ...')
+            } else if (data.sdp.type === 'answer') {
+                setStatus('Call established')
+            }
+        })
+        socket.on('candidate', candidate => {
+            console.log('Candidates ...:', candidate)
+            // candidates.current = [...candidates.current, candidate]
+            pc.current.addIceCandidate(new RTCIceCandidate(candidate))
+        })
         const constraints = {
             audio: false,
-            video: true,
+            video: true
         }
 
         navigator.mediaDevices.getUserMedia(constraints)
             .then(stream => {
                 localVideoRef.current.srcObject = stream
-
+                console.log('Stream:', stream);
+                console.log('Track:', stream.getTracks())
+                console.log('_pc before:', _pc)
                 stream.getTracks().forEach(track => {
                     _pc.addTrack(track, stream)
                 })
             })
             .catch(e => {
-                console.log('getUserMedia Error:', e);
+                console.log('getUserMedia Error ...', e)
             })
 
         const _pc = new RTCPeerConnection(null)
         _pc.onicecandidate = (e) => {
             if (e.candidate) {
-                console.log(JSON.stringify(e.candidate))
+                // console.log(JSON.stringify(e.candidate))
+                sendToPeer('candidate', e.candidate)
             }
         }
         _pc.oniceconnectionstatechange = (e) => {
-            console.log('stateChange:', e)
+            console.log("oniceconnectionstatechange: ", e)
         }
-
         _pc.ontrack = (e) => {
-            //got remote stream
-
+            console.log("ontrack: ", e)
             remoteVideoRef.current.srcObject = e.streams[0]
+            console.log("Remove Ref:", remoteVideoRef)
         }
 
         pc.current = _pc;
+        console.log('PC:', pc)
+
     }, [])
+
+    const sendToPeer = (eventType, payload) => {
+        socket.emit(eventType, payload)
+    }
+
+    const processSDP = (sdp) => {
+        // console.log(JSON.stringify(sdp))
+        pc.current.setLocalDescription(sdp)
+        sendToPeer('sdp', { sdp, roomId, dataFrom: userData, dataTo: currentUser })
+    }
 
     const createOffer = () => {
         pc.current.createOffer({
             offerToReceiveAudio: 1,
-            offerToReceiveVideo: 1
+            offerToReceiveVideo: 1,
         }).then(sdp => {
-            console.log(JSON.stringify(sdp))
-            pc.current.setLocalDescription(sdp)
-        }).catch(e => console.log('createOffer error:', e))
+            //send the sdp to the server
+            processSDP(sdp);
+            setOfferVisible(false)
+            setStatus('Calling...')
+        }).catch(e => console.log('createOffer Error...', e))
     }
-
     const createAnswer = () => {
         pc.current.createAnswer({
             offerToReceiveAudio: 1,
-            offerToReceiveVideo: 1
+            offerToReceiveVideo: 1,
         }).then(sdp => {
-            console.log(JSON.stringify(sdp))
-            pc.current.setLocalDescription(sdp)
-        }).catch(e => console.log('createAnswer error:', e))
+            processSDP(sdp)
+            setAnswerVisible(false)
+            setStatus('Call established')
+        }).catch(e => console.log('createAnswer Error...', e))
     }
+    // const stopVideo = async () => {
+    //     let stopCalling = await rejectCallingVideo({ roomId });
+    //     console.log('stopCalling:', stopCalling)
+    // }
 
-    const setRemoteDescription = () => {
-        const sdp = JSON.parse(textRef.current.value)
-        console.log('setRemoteDescription sdp:', sdp)
-
-        pc.current.setRemoteDescription(new RTCSessionDescription(sdp))
-    }
-
-    const addCandidate = () => {
-        const candidate = JSON.parse(textRef.current.value)
-        console.log('addCandidate...', candidate)
-
-        pc.current.addIceCandidate(new RTCIceCandidate(candidate))
-
+    const showHideButtons = () => {
+        if (offerVisible) {
+            return (
+                <button onClick={createOffer}>Call</button>
+            )
+        } else if (answerVisible) {
+            // console.log('dataCall showHide:', currentUser.name)
+            return (
+                <button onClick={createAnswer}>Answer</button>
+            )
+        }
     }
     const content = (
         <>
-            <div>
+            {/* <div>
                 <video playsInline ref={localVideoRef} autoPlay style={{ width: 200, height: 200, margin: 5, backgroundColor: 'black' }} />
                 <video playsInline ref={remoteVideoRef} autoPlay style={{ width: 200, height: 200, margin: 5, backgroundColor: 'black' }} />
             </div>
             <div>
-                <button onClick={() => createOffer()}>Create Offer</button>
-                <button onClick={() => createAnswer()}>Create Answer</button>
-                <br></br>
-                <textarea ref={textRef}></textarea>
-                <button onClick={() => setRemoteDescription()}>Set remote Des</button>
-                <button onClick={() => addCandidate()}>Add candidates</button>
-
+                <button onClick={() => stopVideo()}>Stop</button>
+            </div> */}
+            <video
+                className='large-frame'
+                ref={localVideoRef} autoPlay></video>
+            <video
+                className='small-frame'
+                ref={remoteVideoRef} autoPlay></video>
+            <div className='controllCalling'>
+                {showHideButtons()}
             </div>
+
+            <div>{status}</div>
+            <textarea ref={textRef}></textarea>
         </>
     )
 

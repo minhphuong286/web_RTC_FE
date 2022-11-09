@@ -1,53 +1,108 @@
-import { useRef, useState, useEffect } from 'react'
-import { useSelector } from "react-redux"
+import { useRef, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import io from "socket.io-client"
 import { useNavigate } from 'react-router-dom'
 import { NavLink, Link } from "react-router-dom"
 
 import "../../assets/scss/common.scss";
 import './Welcome.scss';
 
+import { detectIsCallingVideo, detectDataTo, detectDataFrom } from './videoSlice';
 import { selectCurrentUser, selectCurrentToken } from "../auth/authSlice"
-import { selectCallingDetect, selectCallingUser } from './videoSlice';
-import { useGetFriendListQuery } from "../friendList/friendListApiSlice"
+import { selectCallingDetect, selectCallingUser, selectDataToDetect } from './videoSlice';
+import { useFindUserMutation } from '../users/contactApiSlice';
+import { useGetFriendListQuery } from "../friendList/friendListApiSlice";
+import { useCreateRoomMutation } from './roomApiSlice';
 
 import Chat from './Chat';
+import ModalVideoCall from './ModalVideoCall';
 
+
+const socket = io(
+    '/webRTCPeers',
+    {
+        path: '/webrtc'
+    }
+)
 
 const Welcome = () => {
-    const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const user = useSelector(selectCurrentUser)
     const token = useSelector(selectCurrentToken)
     const callingUser = useSelector(selectCallingUser)
     const callingDetect = useSelector(selectCallingDetect)
+    const [findUser] = useFindUserMutation();
     const { data: friendListData } = useGetFriendListQuery();
+    const [createRoom] = useCreateRoomMutation();
 
-    console.log('check: ', user, 'token:', token)
-    const welcome = user ? `Welcome ${user}!` : 'Welcome!'
-    const tokenAbbr = `${token.slice(0, 9)}...`
-
+    let [userData, setUserData] = useState();
+    let [dataSDP, setDataSDP] = useState();
     let [currentUser, setCurrentUser] = useState('');
     let [currentId, setCurrentId] = useState('');
-    let [isCallingVideo, setIsCallingVideo] = useState(false);
+    let [roomId, setRoomId] = useState('');
+    const [openModalVideoCall, setOpenModalVideoCall] = useState(false);
+
+    useEffect(async () => {
+        if (user && token) {
+            let userData = await findUser({ search: user });
+            setUserData(userData.data.data[0]);
+            dispatch(detectDataFrom({ dataFrom: userData.data.data[0] }));
+        }
+    }, [])
 
     let friendList = [];
 
     if (friendListData) {
         friendList = friendListData.data.data;
-        console.log('friendList:', friendList)
+        // console.log('friendList:', friendList)
     }
 
-    const handleChatWithFriend = (item) => {
-        console.log('From handleChatWithFriend:', item)
-        setCurrentUser(item)
-        setCurrentId(item.id)
+    useEffect(() => {
+        socket.on('info-socket', info => {
+            console.log('Info socket:', info)
+        })
+        socket.on('connection-success', success => {
+            console.log('Success welcome: ', success)
+        })
+        socket.on('sdp', data => {
+            if (data.sdp.type === 'offer') {
+                if (data.dataTo.phone === user) {
+                    setOpenModalVideoCall(true);
+                    setDataSDP(data);
+                    console.log('Data:', dataSDP)
+                }
+            }
+        })
+    }, [])
+    const handleToggleModal = () => {
+        setOpenModalVideoCall(!openModalVideoCall);
     }
-    console.log('Check calling:', callingUser, callingDetect)
-    // const detectIsCallingVideo = (flag) => {
-    //     setIsCallingVideo(flag);
-    // }
+
+    const handleChatWithFriend = async (item) => {
+        // console.log('From handleChatWithFriend:', item)
+        let phone = item.phone;
+        let createdRoom = await createRoom({ phone });
+        let createedRoomData = createdRoom.data.data;
+        // console.log('createRoom:', createdRoom.data.data);
+        let roomId = createedRoomData.id;
+        // console.log('check roomId:', roomId)
+        if (roomId) {
+            setRoomId(roomId);
+            setCurrentUser(item)
+            setCurrentId(item.id)
+        }
+    }
     const content = (
         <div className="container-fluid">
+            {openModalVideoCall === true && dataSDP
+                && < ModalVideoCall
+                    openModalVideoCall={openModalVideoCall}
+                    handleToggleModal={handleToggleModal}
+                    dataSDP={dataSDP}
+                />
+            }
+
             <div className="row">
                 <div className="col-lg-1 col-md-1">
                     <div className="tool-container">
@@ -111,13 +166,20 @@ const Welcome = () => {
                     </div>
                 </div>
                 <div className="col lg-7 col-md-7" style={{ padding: "0px" }}>
+                    {/* {console.log('Check Chat/Welcome:', currentUser)} */}
                     {currentUser ?
                         <Chat
                             currentUser={currentUser}
+                            roomId={roomId}
                         />
                         :
                         <div className='welcome'>
-                            <h1 className='welcome-title'>Welcome to RTC</h1>
+                            <h1 className='welcome-title'>
+                                {userData ?
+                                    `Welcome ${userData.name} to RTC`
+                                    : `Welcome to RTC`
+                                }
+                            </h1>
                         </div>
                     }
 

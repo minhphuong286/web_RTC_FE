@@ -21,18 +21,18 @@ const ModalNewContact = (props) => {
             let search = userPhone
             let dataFinded = await findUser({ search });
             setUserData(dataFinded.data.data[0])
-            console.log('userData: ', dataFinded.data.data[0])
+            // console.log('userData: ', dataFinded.data.data[0])
             // setUserPhone('')
         }
     }
     const handleContact = async () => {
         if (userData) {
-            console.log('userId:', userData.id)
+            // console.log('userId:', userData.id)
             let res = await requestContact({
                 active: '1',
                 user_two: `${userData.id}`
             })
-            console.log('Res:', res)
+            // console.log('Res:', res)
         }
 
     }
@@ -56,6 +56,7 @@ const ModalNewContact = (props) => {
 
     return (
         <div>
+            {console.log('Props AddNewContact:', props)}
             <Modal
                 backdrop="static"
                 isOpen={openModalAddNewContact}

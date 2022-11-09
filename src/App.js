@@ -20,6 +20,7 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="register-test" element={<RegisterTest />} />
         {/* protected routes */}
+        {/* <Route > */}
         <Route element={<RequireAuth />}>
           <Route path="message" element={<Welcome />} />
           <Route path="contact" element={<Contact />} />
