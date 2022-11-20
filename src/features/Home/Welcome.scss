@@ -2,7 +2,7 @@
 
 .container-fluid {
     height          : 100vh;
-    background-color: #f2f2ec;
+    background-color: $background;
 
     .tool-container {
         border-right: 1px solid black;
@@ -233,8 +233,10 @@
 
 
             &.on-video {
-                height  : calc(100vh - 90px) !important;
-                position: relative;
+                height         : calc(100vh - 90px) !important;
+                position       : relative;
+                display        : flex;
+                justify-content: center;
 
                 .large-frame {
                     width           : calc(100% - 40px);
@@ -250,6 +252,42 @@
                     position        : absolute;
                     top             : 20px;
                     right           : 20px;
+                }
+
+                .control-box {
+                    position: absolute;
+                    bottom  : 4rem;
+                    gap     : 10px;
+
+                    .control-button {
+                        display         : flex;
+                        justify-content : center;
+                        align-items     : center;
+                        border          : 1px solid transparentize($gray, 0);
+                        border-radius   : 50%;
+                        width           : 42px;
+                        height          : 42px;
+                        background-color: transparentize($gray, 0.5);
+
+                        &:hover {
+                            background-color: $primary-hover;
+                            cursor          : pointer;
+                        }
+
+                        &.end-video {
+                            background-color: $red2;
+
+                            i.end-call-icon {
+                                transform: rotate(225deg);
+                                font-size: 20px;
+                                color    : $red1;
+                            }
+
+                            &:hover {
+                                background-color: $primary-hover;
+                            }
+                        }
+                    }
                 }
 
                 .controllCalling {

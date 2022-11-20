@@ -1,0 +1,138 @@
+@import '../../assets/scss/colors.scss';
+
+.modal-header {
+    .modal-title {
+        width       : 100%;
+        padding-left: 30px;
+    }
+}
+
+.modal-body {
+    height         : 72vh;
+    display        : flex;
+    justify-content: center;
+
+    video {
+        background-color: $black;
+    }
+
+    .large-frame {
+        position: absolute;
+        width   : calc(100% - 2rem);
+        height  : calc(100% - 2rem);
+
+    }
+
+    .small-frame {
+        position: absolute;
+        height  : 150px;
+        width   : 150px;
+        left    : 1rem;
+        border  : 1px solid $white;
+        z-index : 1;
+    }
+
+    .control-box {
+        position: absolute;
+        bottom  : 3rem;
+        padding : 5px;
+        gap     : 10px;
+
+        .control-button {
+            display         : flex;
+            justify-content : center;
+            align-items     : center;
+            border          : 1px solid transparentize($gray, 0);
+            border-radius   : 50%;
+            width           : 42px;
+            height          : 42px;
+            background-color: transparentize($gray, 0.5);
+
+            &:hover {
+                background-color: $primary-hover;
+                cursor          : pointer;
+            }
+
+            &.end-video {
+                background-color: $red2;
+
+                i.end-call-icon {
+                    transform: rotate(225deg);
+                    font-size: 20px;
+                    color    : $red1;
+                }
+
+                &:hover {
+                    background-color: $primary-hover;
+                }
+            }
+        }
+    }
+
+    .incoming-notification {
+        width           : 100%;
+        background-color: $background;
+        z-index         : 2;
+
+        >.option-control-box {
+            gap: 100px;
+
+            .option-box {
+                .control-button {
+                    display            : flex;
+                    justify-content    : center;
+                    align-items        : center;
+                    border             : 1px solid transparentize($gray, 0);
+                    border-radius      : 50%;
+                    width              : 65px;
+                    height             : 65px;
+                    // background-color: transparentize($gray, 0.5);
+
+                    i {
+                        font-size: 25px;
+                        color    : $white;
+                    }
+
+                    &:hover {
+                        background-color: $primary-hover;
+                        cursor          : pointer;
+                    }
+
+                    &.end-video {
+                        background-color: $red2;
+
+                        i.end-call-icon {
+                            transform: rotate(225deg);
+                        }
+
+                        &:hover {
+                            background-color: $primary-hover;
+
+                            i.end-call-icon {
+                                color: $red;
+                            }
+                        }
+                    }
+
+                    &.start-video {
+                        background-color: $green1;
+
+                        &:hover {
+                            background-color: $primary-hover;
+
+                            i.start-call-icon {
+                                color: $green;
+                            }
+                        }
+                    }
+                }
+
+                p.option-box-description {
+                    text-align : center;
+                    font-weight: 500;
+                }
+            }
+
+        }
+    }
+}

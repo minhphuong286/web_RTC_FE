@@ -30,6 +30,11 @@ const ChatVideo = (props) => {
     const [answerVisible, setAnswerVisible] = useState(false)
     const [status, setStatus] = useState('Make a call now')
     const [dataCall, setDataCall] = useState();
+    const [mute, setMute] = useState(false);
+    const [video, setVideo] = useState(true);
+    const [setUpState, setSetUpState] = useState(false);
+    const [successfulIceConnection, setSuccessfulIceConnection] = useState(false);
+
     useEffect(() => {
         socket.on('connection-success', success => {
             console.log('Success:', success)
@@ -43,7 +48,7 @@ const ChatVideo = (props) => {
             if (data.sdp.type === 'offer') {
                 setOfferVisible(false)
                 setAnswerVisible(true)
-                setStatus('Incomming call ...')
+                setStatus('Incoming call ...')
             } else if (data.sdp.type === 'answer') {
                 setStatus('Call established')
             }
@@ -67,6 +72,7 @@ const ChatVideo = (props) => {
                 stream.getTracks().forEach(track => {
                     _pc.addTrack(track, stream)
                 })
+                setSetUpState(true);
             })
             .catch(e => {
                 console.log('getUserMedia Error ...', e)
@@ -91,7 +97,17 @@ const ChatVideo = (props) => {
         pc.current = _pc;
         console.log('PC:', pc)
 
-    }, [])
+        // setTimeout(() => {
+
+        // }, 2000)
+
+    }, []);
+
+    useEffect(() => {
+        if (setUpState === true) {
+            createOffer();
+        }
+    }, [setUpState]);
 
     const sendToPeer = (eventType, payload) => {
         socket.emit(eventType, payload)
@@ -141,6 +157,12 @@ const ChatVideo = (props) => {
             )
         }
     }
+    const handleMute = () => {
+        setMute(!mute);
+    }
+    const handleVideo = () => {
+        setVideo(!video);
+    }
     const content = (
         <>
             {/* <div>
@@ -156,6 +178,28 @@ const ChatVideo = (props) => {
             <video
                 className='small-frame'
                 ref={remoteVideoRef} autoPlay></video>
+            <div className='control-box d-flex align-items-center'>
+                <div className='control-button'
+                    onClick={() => { handleMute() }}
+                >
+                    {mute === false
+                        ? <i class="fas fa-microphone microphone-icon"></i>
+                        : <i class="fas fa-microphone-slash microphone-icon"></i>
+                    }
+                </div>
+
+                <div className='control-button  end-video'>
+                    <i class="fas fa-phone end-call-icon"></i>
+                </div>
+                <div className='control-button'
+                    onClick={() => { handleVideo() }}
+                >
+                    {video === true
+                        ? <i class="fas fa-video video-icon"></i>
+                        : <i class="fas fa-video-slash video-icon"></i>
+                    }
+                </div>
+            </div>
             <div className='controllCalling'>
                 {showHideButtons()}
             </div>
