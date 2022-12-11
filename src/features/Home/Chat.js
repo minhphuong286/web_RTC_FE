@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import './Chat.scss';
 import ChatFrame from './ChatFrame';
 import ChatVideo from './ChatVideo';
+import ModalChatVideo from './ModalChatVideo';
 
 import { detectIsCallingVideo } from './videoSlice';
 import { selectCallingDetect, selectCallingUser } from './videoSlice';
@@ -15,27 +16,27 @@ const Chat = (props) => {
     const dispatch = useDispatch()
 
     const typeTextRef = useRef();
-    const isVideoRef = useRef(false)
 
     const [typeText, setTypeText] = useState('');
-    const [openVideo, setOpenVideo] = useState();
-    const [openCamera, setOpenCamera] = useState(true);
-
+    const [openModalVideoCall, setOpenModalVideoCall] = useState(false);
     // console.log('Check props openVideo:', openVideo)
 
     const handleOpenVideoCall = (name) => {
         // console.log('openVideo:', openVideo)
         let isCalling = true;
-        setOpenVideo(isCalling);
         dispatch(detectIsCallingVideo({ name, isCalling }));
+        setOpenModalVideoCall(true);
         // console.log('Name:', name)
     }
     const handleStopVideoCall = (name) => {
         // console.log('openVideo:', openVideo)
         let isCalling = false;
-        setOpenVideo(isCalling);
         dispatch(detectIsCallingVideo({ name, isCalling }));
         // console.log('Name:', name)
+    }
+
+    const handleToggleModal = () => {
+        setOpenModalVideoCall(!openModalVideoCall);
     }
     const content = (
         <div className="chat-container">
@@ -72,15 +73,19 @@ const Chat = (props) => {
             <div className={callingDetect === true && currentUser.name === callingUserName ? "chat__place on-video" : "chat__place"}>
                 {callingDetect === true && currentUser.name === callingUserName
                     ?
-                    <ChatVideo
+                    // <ChatVideo
+                    //     roomId={roomId}
+                    //     currentUser={currentUser}
+                    // />
+                    <ModalChatVideo
+                        openModalVideoCall={openModalVideoCall}
+                        handleToggleModal={handleToggleModal}
                         roomId={roomId}
                         currentUser={currentUser}
                     />
                     :
                     <ChatFrame />
                 }
-
-
             </div>
             {callingDetect === true && currentUser.name === callingUserName
                 ?

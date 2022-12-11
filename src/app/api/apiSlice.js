@@ -4,12 +4,17 @@ import { setCredentials, logOut } from '../../features/auth/authSlice'
 const baseQuery = fetchBaseQuery({
     // baseUrl: 'http://webrtc-project-2-video-call.herokuapp.com',
     baseUrl: 'http://127.0.0.1:8000',
+    // baseUrl: 'https://ded5-14-165-81-124.ap.ngrok.io',
     // baseUrl: 'http://192.168.0.78:8000',
     // credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = getState().auth.token
         if (token) {
             headers.set("authorization", `Bearer ${token}`)
+            headers.set('Access-Control-Allow-Origin', '*')
+            headers.set('Access-Control-Allow-Credentials', 'true')
+            headers.set('Access-Control-Allow-Headers', 'origin, content-type, accept, authorization')
+            headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD')
         }
         return headers
     }

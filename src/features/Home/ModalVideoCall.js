@@ -36,8 +36,18 @@ const ModalVideoCall = (props) => {
             // pc.current.addIceCandidate(new RTCIceCandidate(candidate))
             // candidates.current = [...candidates.current, candidate]
         })
+        socket.on('close', data => {
+            console.log('Close -data: ', data);
+            if (pc.current) {
+                pc.current.close();
+            }
+
+            setTimeout(() => {
+                handleToggleModal();
+            }, 2000);
+        })
         const constraints = {
-            audio: false,
+            audio: true,
             video: true
         }
 
@@ -97,10 +107,33 @@ const ModalVideoCall = (props) => {
     }
 
     const handleMute = () => {
-        setMute(!mute);
+        const stream = localVideoRef.current.srcObject.getTracks().filter(track => track.kind === 'audio');
+        console.log('stream 0:', stream)
+        if (stream) {
+            stream[0].enabled = !mute;
+            setMute(!mute);
+        }
     }
     const handleVideo = () => {
-        setVideo(!video);
+        const stream = localVideoRef.current.srcObject.getTracks().filter(track => track.kind === 'video');
+        console.log('stream 1:', stream)
+        if (stream) {
+            stream[0].enabled = !video;
+            setVideo(!video);
+        }
+    }
+    const handleStopCalling = (type) => {
+        console.log('Stop call: ', pc);
+        if (type === 'stop') {
+            if (pc.current) {
+                pc.current.close();
+            }
+        }
+        else if (type === 'decline') {
+            // sendToPeer('close-decline', { roomId, dataFrom: userData, dataTo: currentUser })
+        }
+        sendToPeer('close', { dataSDP })
+        handleToggleModal();
     }
     return (
         <div>
@@ -132,13 +165,15 @@ const ModalVideoCall = (props) => {
                         <div className='control-button'
                             onClick={() => { handleMute() }}
                         >
-                            {mute === false
+                            {mute === true
                                 ? <i className="fas fa-microphone microphone-icon"></i>
                                 : <i className="fas fa-microphone-slash microphone-icon"></i>
                             }
                         </div>
 
-                        <div className='control-button  end-video'>
+                        <div className='control-button  end-video'
+                            onClick={() => { handleStopCalling('stop') }}
+                        >
                             <i className="fas fa-phone end-call-icon"></i>
                         </div>
                         <div className='control-button'
@@ -158,7 +193,9 @@ const ModalVideoCall = (props) => {
                             </div>
                             <div className='option-control-box d-flex'>
                                 <div className='option-box'>
-                                    <div className='control-button end-video'>
+                                    <div className='control-button end-video'
+                                        onClick={() => handleStopCalling('decline')}
+                                    >
                                         <i className="fas fa-phone end-call-icon"></i>
                                     </div>
                                     <p className='option-box-description'>Decline</p>
