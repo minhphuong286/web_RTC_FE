@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Fade } from 'reactstrap';
 import io from "socket.io-client"
 // import './ChatVideo.scss';
@@ -10,7 +10,7 @@ import { selectDataFromDetect } from './videoSlice';
 const socket = io(
     '/webRTCPeers',
     {
-        path: '/webrtc'
+        path: '/webrtc',
     }
 )
 
@@ -18,23 +18,8 @@ let pc_config = null;
 pc_config = {
     iceServers: [
         {
-            urls: "stun:openrelay.metered.ca:80",
-        },
-        {
-            urls: "turn:openrelay.metered.ca:80",
-            username: "openrelayproject",
-            credential: "openrelayproject",
-        },
-        {
-            urls: "turn:openrelay.metered.ca:443",
-            username: "openrelayproject",
-            credential: "openrelayproject",
-        },
-        {
-            urls: "turn:openrelay.metered.ca:443?transport=tcp",
-            username: "openrelayproject",
-            credential: "openrelayproject",
-        },
+            urls: 'stun:stun.l.google.com:19302'
+        }
     ],
 }
 
@@ -48,7 +33,6 @@ const ModalChatVideo = (props) => {
     const pc = useRef(new RTCPeerConnection(pc_config));
     const localVideoRef = useRef();
     const remoteVideoRef = useRef();
-    const textRef = useRef();
     const userData = useSelector(selectDataFromDetect);
 
     const [mute, setMute] = useState(false);
@@ -56,7 +40,6 @@ const ModalChatVideo = (props) => {
     const [successfulIceConnection, setSuccessfulIceConnection] = useState(false);
     const [offerVisible, setOfferVisible] = useState(true)
     const [answerVisible, setAnswerVisible] = useState(false)
-    const [status, setStatus] = useState('Make a call now')
     const [setUpState, setSetUpState] = useState(false);
 
     useEffect(() => {
@@ -65,16 +48,13 @@ const ModalChatVideo = (props) => {
         })
         socket.on('sdp', data => {
             console.log('Data:', data)
-            textRef.current.value = JSON.stringify(data.sdp)
             pc.current.setRemoteDescription(new RTCSessionDescription(data.sdp))
             // setDataCall(data)
             // console.log('dataCall:', dataCall)
             if (data.sdp.type === 'offer') {
                 setOfferVisible(false)
                 setAnswerVisible(true)
-                setStatus('Incoming call ...')
             } else if (data.sdp.type === 'answer') {
-                setStatus('Call established')
             }
         })
         socket.on('candidate', candidate => {
@@ -161,7 +141,6 @@ const ModalChatVideo = (props) => {
             //send the sdp to the server
             processSDP(sdp);
             setOfferVisible(false)
-            setStatus('Calling...')
         }).catch(e => console.log('createOffer Error...', e))
     }
     const createAnswer = () => {
@@ -171,7 +150,6 @@ const ModalChatVideo = (props) => {
         }).then(sdp => {
             processSDP(sdp)
             setAnswerVisible(false)
-            setStatus('Call established')
         }).catch(e => console.log('createAnswer Error...', e))
     }
     // const stopVideo = async () => {
@@ -263,18 +241,11 @@ const ModalChatVideo = (props) => {
                             }
                         </div>
                     </div>
-                    <textarea style={{
-                        position: 'absolute',
-                        bottom: '6rem',
-                        left: 0
-                    }} ref={textRef}>{ }</textarea>
                 </ModalBody>
                 <ModalFooter>
-
                     <input type="button" className="button" value="Answer"
                         onClick={() => createAnswer()}
                     />
-
                 </ModalFooter>
             </Modal>
         </div >

@@ -1,15 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Fade } from 'reactstrap';
+import io from "socket.io-client";
+import { Howl } from 'howler';
 import './ModalVideoCall.scss';
 import { selectCallingDetect, selectCallingUser, selectDataToDetect } from './videoSlice';
-import io from "socket.io-client"
+
+import incomingSound from '../../assets/sound/incoming.wav';
+
 const socket = io(
     '/webRTCPeers',
     {
         path: '/webrtc'
     }
 )
+let pc_config = {
+    iceServers: [
+        {
+            urls: 'stun:stun.l.google.com:19302'
+        }
+    ],
+}
 
 const ModalVideoCall = (props) => {
     const {
@@ -17,7 +28,7 @@ const ModalVideoCall = (props) => {
         handleToggleModal,
         dataSDP
     } = props;
-    const pc = useRef(new RTCPeerConnection(null));
+    const pc = useRef(new RTCPeerConnection(pc_config));
     const localVideoRef = useRef();
     const remoteVideoRef = useRef();
     const textRef = useRef(JSON.stringify(dataSDP.sdp));
@@ -27,6 +38,11 @@ const ModalVideoCall = (props) => {
     const [video, setVideo] = useState(true);
     const [successfulIceConnection, setSuccessfulIceConnection] = useState(false);
     const [acceptCalling, setAcceptCalling] = useState(false);
+    const sound = useRef(new Howl({
+        src: [incomingSound],
+        loop: true
+    }));
+
 
     useEffect(() => {
         socket.on('candidate', candidate => {
@@ -48,10 +64,10 @@ const ModalVideoCall = (props) => {
         })
         const constraints = {
             audio: true,
-            video: true
+            video: { facingMode: "user" }
         }
 
-        const _pc = new RTCPeerConnection(null);
+        const _pc = new RTCPeerConnection(pc_config);
         _pc.onicecandidate = (e) => {
             if (e.candidate) {
                 // console.log(JSON.stringify(e.candidate))`
@@ -94,6 +110,7 @@ const ModalVideoCall = (props) => {
         sendToPeer('sdp', { sdp })
     }
     const createAnswer = () => {
+        sound.current.stop();
         pc.current.setRemoteDescription(new RTCSessionDescription(dataSDP.sdp));
 
         pc.current.createAnswer({
@@ -131,10 +148,32 @@ const ModalVideoCall = (props) => {
         }
         else if (type === 'decline') {
             // sendToPeer('close-decline', { roomId, dataFrom: userData, dataTo: currentUser })
+            sound.current.stop();
+            // setAcceptCalling(true);
         }
+
         sendToPeer('close', { dataSDP })
         handleToggleModal();
     }
+    const soundPlayer = (start) => {
+        console.log('start:', start)
+        if (start === true) {
+            // sound.loop = true;
+            console.log('sound:', sound)
+            sound.current.play();
+        } else {
+            sound.current.stop();
+        }
+    }
+    useEffect(() => {
+        if (acceptCalling === false) {
+            // sound.loop = true;
+            console.log('sound:', sound)
+            sound.current.play();
+        } else {
+            sound.current.stop();
+        }
+    }, [acceptCalling])
     return (
         <div>
             {
@@ -185,6 +224,7 @@ const ModalVideoCall = (props) => {
                             }
                         </div>
                     </div>
+                    {/* {acceptCalling === false ? soundPlayer(true) : soundPlayer(false)} */}
                     {acceptCalling === false &&
                         <div className='incoming-notification d-flex align-items-center justify-content-evenly flex-column'>
                             <div className='incoming-notification-info'>
