@@ -4,7 +4,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Fade } from 'reacts
 import io from "socket.io-client";
 import { Howl } from 'howler';
 import './ModalVideoCall.scss';
-import { selectCallingDetect, selectCallingUser, selectDataToDetect } from './videoSlice';
+import { selectCallingDetect, selectCallingUser, selectDataToDetect, detectIsCallingVideo } from './videoSlice';
 
 import incomingSound from '../../assets/sound/incoming.wav';
 
@@ -28,10 +28,10 @@ const ModalVideoCall = (props) => {
         handleToggleModal,
         dataSDP
     } = props;
+    const dispatch = useDispatch();
     const pc = useRef(new RTCPeerConnection(pc_config));
     const localVideoRef = useRef();
     const remoteVideoRef = useRef();
-    const textRef = useRef(JSON.stringify(dataSDP.sdp));
     // const [remoted, setRemoted] = useState()
     // const [candidate, setCandidate] = useState();
     const [mute, setMute] = useState(false);
@@ -46,8 +46,7 @@ const ModalVideoCall = (props) => {
 
     useEffect(() => {
         socket.on('candidate', candidate => {
-            console.log('Candidates Modal...:', candidate)
-            console.log('PC:', pc)
+            // console.log('Candidates Modal...:', candidate)
 
             // pc.current.addIceCandidate(new RTCIceCandidate(candidate))
             // candidates.current = [...candidates.current, candidate]
@@ -57,7 +56,7 @@ const ModalVideoCall = (props) => {
             if (pc.current) {
                 pc.current.close();
             }
-
+            dispatch(detectIsCallingVideo({ name: "", isCalling: false }));
             setTimeout(() => {
                 handleToggleModal();
             }, 2000);
@@ -87,9 +86,9 @@ const ModalVideoCall = (props) => {
         navigator.mediaDevices.getUserMedia(constraints)
             .then(stream => {
                 localVideoRef.current.srcObject = stream
-                console.log('Stream:', stream);
-                console.log('Track:', stream.getTracks())
-                console.log('_pc before:', _pc)
+                // console.log('Stream:', stream);
+                // console.log('Track:', stream.getTracks())
+                // console.log('_pc before:', _pc)
                 stream.getTracks().forEach(track => {
                     _pc.addTrack(track, stream)
                 })
@@ -117,7 +116,8 @@ const ModalVideoCall = (props) => {
             offerToReceiveAudio: 1,
             offerToReceiveVideo: 1,
         }).then(sdp => {
-            processSDP(sdp);
+            pc.current.setLocalDescription(sdp)
+            sendToPeer('answer', { sdp, roomId: dataSDP.roomId, dataFrom: dataSDP.dataFrom, dataTo: dataSDP.dataTo })
             setSuccessfulIceConnection(true);
             setAcceptCalling(true);
         }).catch(e => console.log('createAnswer Error...', e))
@@ -151,7 +151,7 @@ const ModalVideoCall = (props) => {
             sound.current.stop();
             // setAcceptCalling(true);
         }
-
+        dispatch(detectIsCallingVideo({ name: "", isCalling: false }));
         sendToPeer('close', { dataSDP })
         handleToggleModal();
     }
@@ -252,11 +252,6 @@ const ModalVideoCall = (props) => {
                             </div>
                         </div>
                     }
-                    <textarea style={{
-                        position: 'absolute',
-                        bottom: '6rem',
-                        left: 0
-                    }} ref={textRef}>{JSON.stringify(dataSDP.sdp)}</textarea>
                 </ModalBody>
                 <ModalFooter>
 

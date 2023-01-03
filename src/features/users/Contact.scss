@@ -1,21 +1,21 @@
 @import '../../assets/scss/colors.scss';
 
 .friend-list-container {
-    .option-list {
-        height             : 35px;
-        border-top         : 1px solid;
-        border-bottom-style: ridge;
-        display            : flex;
+    // .option-list {
+    //     height             : 35px;
+    //     border-top         : 1px solid;
+    //     border-bottom-style: ridge;
+    //     display            : flex;
 
-        .total-list {
-            margin: auto 10px;
+    //     .total-list {
+    //         margin: auto 10px;
 
-            span {
-                font-weight: 600;
-            }
-        }
+    //         span {
+    //             font-weight: 600;
+    //         }
+    //     }
 
-    }
+    // }
 }
 
 
@@ -28,6 +28,7 @@
         .user-single {
             display         : flex;
             align-items     : center;
+            justify-content : space-between;
             background-color: $background-1;
             padding         : 10px;
             border-radius   : 10px;
@@ -42,21 +43,23 @@
             }
 
             &__info {
-                margin   : 0 20px;
-                // width : 100%;
-                width    : 58%;
+                padding: 0 20px;
+                width  : 58%;
 
                 .info--name,
                 .info--preview-message {
                     white-space  : nowrap;
                     overflow     : hidden;
                     text-overflow: ellipsis;
+                    margin-bottom: 5px;
                 }
             }
 
             .resolve {
-                display   : flex;
-                column-gap: 5px;
+                display        : flex;
+                gap            : 5px;
+                flex-wrap      : wrap;
+                justify-content: flex-end;
 
                 .button-refuse {
                     background-color: $background;
@@ -64,6 +67,29 @@
                     &:hover {
                         background-color: $primary-hover;
                         cursor          : pointer;
+                    }
+                }
+            }
+        }
+
+        @media screen and (max-width: 575px) {
+            .user-single {
+                &__avatar {
+                    img {
+                        width : 50px;
+                        height: 50px;
+                    }
+                }
+
+                &__info {
+                    padding: 0 10px;
+                }
+
+                .resolve {
+                    font-size: 14px;
+
+                    .button {
+                        padding: 5px 10px;
                     }
                 }
             }

@@ -1,20 +1,28 @@
 @import '../../assets/scss/colors.scss';
 
 
-.modal-body {
+.body-container {
     background-color: $background;
+    display         : flex;
+    flex-direction  : column;
+    justify-content : flex-start;
+    height          : fit-content;
 
     .contact-list {
-        margin-top: 20px;
-        padding   : 10px;
-        min-height: 300px;
+        margin-top     : 20px;
+        padding        : 10px;
+        min-height     : 300px;
+        display        : flex;
+        flex-direction : column;
+        justify-content: space-between;
+        align-items    : center;
 
         .user-single {
             text-align      : center;
             background-color: $background-1;
             padding         : 10px;
             border-radius   : 10px;
-
+            width           : 100%;
 
             &__avatar {
                 height: 130px;
@@ -25,17 +33,17 @@
                     border-radius: 50%;
                 }
             }
+        }
 
-            &__info {}
-
-            .resolve {}
+        .button {
+            width: fit-content;
         }
     }
 }
 
 .find-user {
     display        : flex;
-    justify-content: space-between;
+    justify-content: space-around;
 
     &__phone {
 
@@ -50,9 +58,5 @@
             border       : 1px solid $primary;
             outline-color: $primary-hover;
         }
-    }
-
-    &__button {
-        input#find {}
     }
 }

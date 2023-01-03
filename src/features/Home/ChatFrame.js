@@ -11,7 +11,7 @@ const ChatFrame = (props) => {
     } = props;
 
     const userData = useSelector(selectDataFromDetect);
-    console.log('Message:', messages)
+    // console.log('Message:', messages)
 
 
     const content = (

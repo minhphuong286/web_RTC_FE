@@ -6,7 +6,8 @@ import { setCredentials } from './authSlice'
 import { useLoginMutation } from './authApiSlice'
 import { Link } from "react-router-dom";
 
-import './Login.scss';;
+import './Login.scss'; import Footer from '../../components/Footer'
+    ;
 
 const Login = () => {
     const phoneRef = useRef()
@@ -60,7 +61,7 @@ const Login = () => {
     }
     const handlePwdInput = (e) => setPassword(e.target.value)
 
-    const content = isLoading ? <h1>Loading...</h1> : (
+    const content = isLoading ? <h1>Loading...</h1> : (<>
 
         <div className='login-background'>
             <section className="login">
@@ -102,8 +103,9 @@ const Login = () => {
 
             </section>
         </div>
+        {/* <Footer /> */}
 
-    )
+    </>)
 
     return content
 }

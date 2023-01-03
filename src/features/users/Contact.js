@@ -7,6 +7,7 @@ import { useGetFriendListQuery, useGetRequestListQuery } from "../friendList/fri
 import { useRefuseOrAcceptContactMutation } from "./contactApiSlice";
 
 import '../../assets/scss/common.scss';
+import "../Home/Welcome.scss";
 import "./Contact.scss";
 
 import ModalNewContact from "./ModalNewContact";
@@ -18,8 +19,9 @@ const Contact = () => {
     const [refuseOrAcceptContact] = useRefuseOrAcceptContactMutation();
 
     const [openModalAddNewContact, setOpenModalAddNewContact] = useState(false);
-    let [actionId, setActionId] = useState('');
-    let [isCallingVideo, setIsCallingVideo] = useState(false);
+    const [actionId, setActionId] = useState('');
+    const [isMobile, setIsMobile] = useState(false);
+    const [isCallingVideo, setIsCallingVideo] = useState(false);
 
     let content;
     let friendList = [];
@@ -59,114 +61,137 @@ const Contact = () => {
         // console.log('res Accept:', res)
     }
 
+    const handleToggleMobile = () => {
+        setIsMobile(!isMobile);
+    }
     // const detectIsCallingVideo = (flag) => {
     //     setIsCallingVideo(flag);
     // }
 
     content = (
         <div className="container-fluid">
-            <div className="row">
-                <div className="col-lg-1 col-md-1">
+            <div className="row flex-nowrap main-row">
+                <div className="col-1 col-lg-1 col-md-1 side-bar">
                     <div className="tool-container">
                         <div className="avatar">
                             <img src={require('../../assets/img/avatar.png')} alt="avatar" />
                         </div>
-                        <div className='bell-notify'>
+                        <div className='tool-box bell-notify'>
                             <NavLink to={'/message'}>
-                                <i class="far fa-comment-dots"><span>1</span></i>
+                                <i className="far fa-comment-dots"><span>1</span></i>
                             </NavLink>
                         </div>
-                        <div className='contact-notify active'>
-                            <i class="far fa-address-book">
+                        <div className='tool-box friend-chat' onClick={() => handleToggleMobile()}>
+                            <i className="far fa-comments"></i>
+                        </div>
+                        <div className='tool-box contact-notify active'>
+                            <i className="far fa-address-book">
                                 {/* <span>N</span> */}
                             </i>
                         </div>
-                        <div className='logout'>
+                        <div className='tool-box logout'>
                             <NavLink to={'/'}>
-                                <i class="fas fa-sign-out-alt"></i>
+                                <i className="fas fa-sign-out-alt"></i>
                             </NavLink>
                         </div>
                     </div>
                 </div>
-                <div className="col-lg-4 col-md-4">
-                    <div className="friend-list-container">
-                        <div className="search-box">
-                            <input className="search-user" type="text" placeholder="Find user..." value="" />
-                            <div className="option-contact">
-                                <input className="button" type="button" value="Add"
-
-                                    onClick={handleAddNewContact}
-                                />
-                                <ModalNewContact
-                                    openModalAddNewContact={openModalAddNewContact}
-                                    handleAddNewContact={handleAddNewContact}
-                                />
+                <div className={isMobile ? "col-11 main-side open" : "col-11 main-side"}>
+                    <div className={isMobile ? "col-lg-4 col-md-4 main-side__left open" : "col-lg-4 col-md-4 main-side__left"}>
+                        <div className="friend-list-container">
+                            <div className="search-box">
+                                <input className="search-user" type="text" placeholder="Find user..." value="" />
+                                <div className="option-contact">
+                                    <button className="button" onClick={handleAddNewContact}><i class="fas fa-user-plus"></i></button>
+                                    <ModalNewContact
+                                        openModalAddNewContact={openModalAddNewContact}
+                                        handleAddNewContact={handleAddNewContact}
+                                    />
+                                </div>
                             </div>
+                            <div className="option-list">
+                                <span className="total-list">
+                                    Friend <span>({friendList.length})</span>
+                                </span>
 
-
-                        </div>
-                        <div className="option-list">
-                            <span className="total-list">
-                                Total: <span>{friendList.length}</span>
-                            </span>
-
-                        </div>
-                        <div className="friend list">
-                            {friendList && friendList.length > 0 &&
-                                friendList.map(item => {
-                                    return (
-                                        <div className="friend-single" key={item.id}>
-                                            <div className="friend-single__avatar">
-                                                <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                            </div>
+                            <div className="friend-list">
+                                {friendList && friendList.length > 0 &&
+                                    friendList.map(item => {
+                                        return (
+                                            <div className="friend-single" key={item.id}>
+                                                <div className="friend-single__avatar">
+                                                    <div className='avatar--frame'>
+                                                        <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                                                    </div>
+                                                </div>
+                                                <div className="friend-single__info">
+                                                    <h5 className="info--name">{item.name}</h5>
+                                                    <p className="info--preview-message">{item.phone}</p>
+                                                </div>
                                             </div>
-                                            <div className="friend-single__info">
-                                                <h4 className="info--name">{item.name}</h4>
-                                                <p className="info--preview-message">{item.phone}</p>
-                                            </div>
-                                        </div>
-                                    )
-                                })
-                            }
+                                        )
+                                    })
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="col lg-7 col-md-7" style={{ padding: "0px" }}>
-                    <div className="chat-container">
-                        {/* <div className="option" */}
-                        <div className="row">
-                            <div className="col-lg-12 col-md-12">
-                                <div className="contact-container">
-                                    <h3 className="contact-list-title">Request contact ({requestList.length})</h3>
-                                    <div className="contact-list">
-                                        {requestList && requestList.length > 0 &&
-                                            requestList.map(item => {
-                                                return (
-                                                    <div className="user-single" key={item.id}>
-                                                        <div className="user-single__avatar">
-                                                            <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+                    <div className={isMobile ? "col lg-7 col-md-7 main-side__right open" : "col lg-7 col-md-7 main-side__right"}>
+                        <div className="chat-container">
+                            {/* <div className="option" */}
+                            <div className="row">
+                                <div className="col-lg-12 col-md-12">
+                                    <div className="contact-container">
+                                        <h3 className="contact-list-title">Request contact ({requestList.length})</h3>
+                                        <div className="contact-list">
+                                            <div className="user-single" >
+                                                <div className="user-single__avatar">
+                                                    <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+                                                </div>
+                                                <div className="user-single__info">
+                                                    <h4 className="info--name">{`item.name`}</h4>
+                                                    <p className="info--preview-message">{`item.phone`} {`item.message ? item.message : 'No message'`}</p>
+                                                </div>
+                                                <div className="resolve">
+                                                    <input type="button" className="button" value="Accept"
+                                                        onClick={() => handleAcceptContact(`item.id`)}
+                                                    />
+                                                    <input type="button" className="button button-refuse" value="Refuse"
+                                                        onClick={() => handleRefuseContact(`item.id`)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            {requestList && requestList.length > 0 &&
+                                                requestList.map(item => {
+                                                    return (
+                                                        <div className="user-single" key={item.id}>
+                                                            <div className="user-single__avatar">
+                                                                <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+                                                            </div>
+                                                            <div className="user-single__info">
+                                                                <h4 className="info--name">{item.name}</h4>
+                                                                <p className="info--preview-message">{item.phone} {item.message ? item.message : 'No message'}</p>
+                                                            </div>
+                                                            <div className="resolve">
+                                                                <input type="button" className="button button-refuse" value="Refuse"
+                                                                    onClick={() => handleRefuseContact(item.id)}
+                                                                />
+                                                                <input type="button" className="button" value="Accept"
+                                                                    onClick={() => handleAcceptContact(item.id)}
+                                                                />
+                                                            </div>
                                                         </div>
-                                                        <div className="user-single__info">
-                                                            <h4 className="info--name">{item.name}</h4>
-                                                            <p className="info--preview-message">{item.phone} {item.message ? item.message : 'No message'}</p>
-                                                        </div>
-                                                        <div className="resolve">
-                                                            <input type="button" className="button button-refuse" value="Refuse"
-                                                                onClick={() => handleRefuseContact(item.id)}
-                                                            />
-                                                            <input type="button" className="button" value="Accept"
-                                                                onClick={() => handleAcceptContact(item.id)}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })
-                                        }
+                                                    )
+                                                })
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         // <section className="users">

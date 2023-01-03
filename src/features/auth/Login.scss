@@ -1,7 +1,15 @@
+// html {
+//     background: url("../../assets/img/bg-login.jpg") no-repeat;
+// }
+
+// .login-background {
+//     background: url("../../assets/img/bg-login.jpg") no-repeat;
+// }
+
 section.login {
     text-align   : center;
     margin       : 10% auto;
-    background   : linear-gradient(135deg, #22c1c3 0%, #fdbb2d 100%);
+    background   : linear-gradient(135deg, #21dcde 0%, #e5ad34 100%);
     width        : 35%;
     border-radius: 15px;
 
@@ -11,11 +19,17 @@ section.login {
     }
 
     form#login-form {
-        margin: 10px auto;
+        margin         : 10px auto;
+        display        : flex;
+        flex-wrap      : wrap;
+        justify-content: center;
+        flex-direction : column;
+        align-items    : center;
 
-        /* display      : flex; */
         .form-content {
-            margin-bottom: 30px;
+            display  : flex;
+            padding  : 1rem 2rem;
+            flex-wrap: wrap;
 
             label {
                 font-weight : 600;
@@ -27,6 +41,7 @@ section.login {
                 border-radius: 15px;
                 border       : navajowhite;
                 outline-color: #e1db2c;
+                width        : 100%;
             }
         }
 
@@ -46,5 +61,17 @@ section.login {
 
     .register-case {
         padding: 20px;
+    }
+}
+
+@media screen and (max-width:768px) {
+    section.login {
+        width: 40%;
+    }
+}
+
+@media screen and (max-width:575px) {
+    section.login {
+        width: 58%;
     }
 }

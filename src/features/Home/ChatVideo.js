@@ -183,20 +183,20 @@ const ChatVideo = (props) => {
                     onClick={() => { handleMute() }}
                 >
                     {mute === false
-                        ? <i class="fas fa-microphone microphone-icon"></i>
-                        : <i class="fas fa-microphone-slash microphone-icon"></i>
+                        ? <i className="fas fa-microphone microphone-icon"></i>
+                        : <i className="fas fa-microphone-slash microphone-icon"></i>
                     }
                 </div>
 
                 <div className='control-button  end-video'>
-                    <i class="fas fa-phone end-call-icon"></i>
+                    <i className="fas fa-phone end-call-icon"></i>
                 </div>
                 <div className='control-button'
                     onClick={() => { handleVideo() }}
                 >
                     {video === true
-                        ? <i class="fas fa-video video-icon"></i>
-                        : <i class="fas fa-video-slash video-icon"></i>
+                        ? <i className="fas fa-video video-icon"></i>
+                        : <i className="fas fa-video-slash video-icon"></i>
                     }
                 </div>
             </div>

@@ -22,4 +22,9 @@
         background-color: $primary-hover;
         cursor          : pointer;
     }
+
+    &.button-icon {
+        padding      : 5px 10px;
+        border-radius: 0.5rem;
+    }
 }

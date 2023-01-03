@@ -59,14 +59,15 @@ const ModalNewContact = (props) => {
             {console.log('Props AddNewContact:', props)}
             <Modal
                 backdrop="static"
+                centered="true"
                 isOpen={openModalAddNewContact}
                 toggle={handleAddNewContact}
             >
                 <ModalHeader toggle={handleAddNewContact}>Add new contact</ModalHeader>
-                <ModalBody>
+                <ModalBody className='body-container'>
                     <div className='find-user'>
                         <div className='find-user__phone'>
-                            <label htmlFor='phone'>Phone:</label>
+                            <label htmlFor='phone'></label>
                             <input id='phone' type="text" placeholder="Find user by phone..."
                                 ref={userPhoneRef}
                                 onChange={(e) => setUserPhone(e.target.value)}
@@ -74,9 +75,10 @@ const ModalNewContact = (props) => {
                             />
                         </div>
                         <div className='find-user__button'>
-                            <input id='find' className='button' type="button" value="Find"
+                            <button id='find' className='button button-icon'
                                 onClick={handleFindUser}
-                            />
+                            ><i class="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
                     <div className="contact-list">
@@ -86,7 +88,7 @@ const ModalNewContact = (props) => {
                                     <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
                                 </div>
                                 <div className="user-single__info">
-                                    <h4 className="info--name">{userData.name} [{userData.id}]</h4>
+                                    <h4 className="info--name">{userData.name}</h4>
                                     <p className="info--preview-message">
                                         {userData.bio ? userData.bio : 'No bio'}
                                     </p>
@@ -94,10 +96,15 @@ const ModalNewContact = (props) => {
 
                             </div>
                         }
+                        {userData &&
+                            <input type="button" className="button" value="Contact"
+                                onClick={handleContact}
+                            />
+                        }
                     </div>
 
                 </ModalBody>
-                <ModalFooter>
+                {/* <ModalFooter>
                     {userData &&
                         <input type="button" className="button" value="Contact"
                             onClick={handleContact}
@@ -106,7 +113,7 @@ const ModalNewContact = (props) => {
                     <input className='button button-cancel' type="button" onClick={handleAddNewContact}
                         value="Cancel"
                     />
-                </ModalFooter>
+                </ModalFooter> */}
             </Modal>
         </div >
     );
