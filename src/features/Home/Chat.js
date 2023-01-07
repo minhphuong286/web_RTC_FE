@@ -18,17 +18,15 @@ pc_config = {
         }
     ]
 }
+const socket = io(
+    '/webRTCPeers',
+    {
+        path: '/webrtc',
+    }
+)
 const Chat = (props) => {
     let { currentUser, roomId } = props;
-    // const socket = io(
-    //     '/webRTCPeers',
-    //     {
-    //         path: '/webrtc',
-    //         query: {
-    //             room: roomId,
-    //         }
-    //     }
-    // )
+
     const callingUserName = useSelector(selectCallingUser)
     const callingDetect = useSelector(selectCallingDetect)
 
@@ -49,196 +47,145 @@ const Chat = (props) => {
     });
     // console.log('Check props openVideo:', openVideo)
 
-    const pc = new RTCPeerConnection(pc_config);
+    const pc = useRef(new RTCPeerConnection(pc_config));
 
     // add pc to peerConnections object
     // const peerConnections = { ...peerConnections, [socketID]: pc }
     // setPeerConnections({ peerConnections })
 
-    pc.onicecandidate = (e) => {
+    pc.current.onicecandidate = (e) => {
         if (e.candidate) {
             // console.log(JSON.stringify(e.candidate))
             sendToPeer('candidate', e.candidate)
         }
     }
 
-    // const buildDataChannel = () => {
-    //     if (pc) {
-
-    //         const handleSendChannelStatusChange = (event) => {
-    //             // console.log('sendChannel status change:', sendChannels);
-    //             // console.log('send channel status: ' + sendChannels[0].readyState)
-    //         }
-    //         console.log('pc:', pc)
-    //         const sendChannel = pc.createDataChannel('sendChannel');
-    //         console.log('ID sendChannel:', sendChannel.id);
-    //         sendChannel.onopen = handleSendChannelStatusChange
-    //         sendChannel.onclose = handleSendChannelStatusChange
-
-    //         setSendChannels((prevState) => {
-    //             console.log('preState:', [
-    //                 ...prevState,
-    //                 sendChannel
-    //             ])
-    //             return ([
-    //                 ...prevState,
-    //                 sendChannel
-    //             ])
-    //         });
-    //         console.log('sendChannel:', sendChannel, 'chs:', sendChannels)
-    //         const handleReceiveMessage = (event) => {
-    //             const message = JSON.parse(event.data)
-    //             console.log('msg REC', message)
-    //             setMessages((prevState) => ([
-    //                 ...prevState,
-    //                 message
-    //             ]));
-    //         }
-
-    //         const handleReceiveChannelStatusChange = (event) => {
-    //             if (this.receiveChannel) {
-    //                 console.log("receive channel's status has changed to " + this.receiveChannel.readyState);
-    //             }
-    //         }
-    //         const receiveChannelCallback = (event) => {
-    //             const receiveChannel = event.channel
-    //             receiveChannel.onmessage = handleReceiveMessage
-    //             receiveChannel.onopen = handleReceiveChannelStatusChange
-    //             receiveChannel.onclose = handleReceiveChannelStatusChange
-    //         }
-
-    //         pc.ondatachannel = receiveChannelCallback;
-
-    //         pc.createOffer(sdpConstraints)
-    //             .then(sdp => {
-    //                 pc.setLocalDescription(sdp);
-    //                 sendToPeer('offer', { sdp, roomId, dataFrom: userData, dataTo: currentUser });
-    //             })
-    //     }else{
-
-    //     }
-    // }
-
     useEffect(() => {
-        // socket.on('connection-success', success => {
-        //     console.log('Success:', success);
-        //     // setMessages(success.message);
-        //     if (pc) {
-        //         const handleSendChannelStatusChange = (event) => {
-        //             // console.log('sendChannel status change:', sendChannels);
-        //             // console.log('send channel status: ' + sendChannels[0].readyState)
-        //         }
-        //         console.log('pc:', pc)
-        //         const sendChannel = pc.createDataChannel('sendChannel');
-        //         console.log('ID sendChannel:', sendChannel.id);
-        //         sendChannel.onopen = handleSendChannelStatusChange
-        //         sendChannel.onclose = handleSendChannelStatusChange
+        socket.on('connection-success', data => {
+            console.log("Chat conn-success:", data);
+        })
+        console.log('Chat socket:', socket);
+        if (socket) {
+            sendToPeer('onliner_chat', { roomId, dataFrom: userData.phone, dataTo: currentUser.phone })
+        };
 
-        //         setSendChannels((prevState) => {
-        //             console.log('preState:', [
-        //                 ...prevState,
-        //                 sendChannel
-        //             ])
-        //             return ([
-        //                 ...prevState,
-        //                 sendChannel
-        //             ])
-        //         });
-        //         console.log('sendChannel:', sendChannel, 'chs:', sendChannels)
-        //         const handleReceiveMessage = (event) => {
-        //             const message = JSON.parse(event.data)
-        //             console.log('msg REC', message)
-        //             setMessages((prevState) => [
-        //                 ...prevState,
-        //                 message
-        //             ]);
-        //         }
+        socket.on('onliner_chat', data => {
+            console.log('Chat onOnliner:', data);
+            if (data.dataFrom === userData.phone && data.roomId === roomId) {
+                setMessages((prevState) => [...prevState, data.messages]);
+            }
 
-        //         const handleReceiveChannelStatusChange = (event) => {
-        //             if (this.receiveChannel) {
-        //                 console.log("receive channel's status has changed to " + this.receiveChannel.readyState);
-        //             }
-        //         }
-        //         const receiveChannelCallback = (event) => {
-        //             const receiveChannel = event.channel
-        //             receiveChannel.onmessage = handleReceiveMessage
-        //             receiveChannel.onopen = handleReceiveChannelStatusChange
-        //             receiveChannel.onclose = handleReceiveChannelStatusChange
-        //         }
+            const handleSendChannelStatusChange = (event) => {
+                console.log('sendChannel status change:', sendChannels);
+                console.log('send channel status: ' + sendChannels[0].readyState)
+            }
+            console.log('pc:', pc.current)
+            const sendChannel = pc.current.createDataChannel('sendChannel');
+            console.log('ID sendChannel:', sendChannel.id, sendChannel);
+            sendChannel.onopen = handleSendChannelStatusChange
+            sendChannel.onclose = handleSendChannelStatusChange
 
-        //         pc.ondatachannel = receiveChannelCallback;
+            setSendChannels((prevState) => [...prevState, sendChannel]);
+            // setSendChannels((prevState) => {
+            //     console.log('preState:', [
+            //         ...prevState,
+            //         sendChannel
+            //     ])
+            //     return ([
+            //         ...prevState,
+            //         sendChannel
+            //     ])
+            // });
+            // console.log('sendChannel:', sendChannel, 'chs:', sendChannels)
+            const handleReceiveMessage = (event) => {
+                const message = JSON.parse(event.data)
+                console.log('msg REC', message, event);
+                setMessages((prevState) => [...prevState, data.messages]);
+            }
 
-        //         pc.createOffer(sdpConstraints)
-        //             .then(sdp => {
-        //                 pc.setLocalDescription(sdp);
-        //                 console.log("current")
-        //                 sendToPeer('offer', { sdp, roomId, dataFrom: userData, dataTo: currentUser });
-        //             })
-        //     }
+            const handleReceiveChannelStatusChange = (event) => {
+                if (this.receiveChannel) {
+                    console.log("receive channel's status has changed to " + this.receiveChannel.readyState);
+                }
+            }
+            const receiveChannelCallback = (event) => {
+                const receiveChannel = event.channel
+                receiveChannel.onmessage = handleReceiveMessage
+                receiveChannel.onopen = handleReceiveChannelStatusChange
+                receiveChannel.onclose = handleReceiveChannelStatusChange
+            }
 
-        // })
-        // socket.on('candidate', candidate => {
-        //     // console.log('Candidates ...:', candidate)
-        //     // candidates.current = [...candidates.current, candidate]
-        //     pc.addIceCandidate(new RTCIceCandidate(candidate))
-        // })
+            pc.current.ondatachannel = receiveChannelCallback;
 
-        // socket.on('offer', data => {
-        //     const handleSendChannelStatusChange = (event) => {
-        //         // console.log('sendChannel status change:', sendChannels);
-        //         // console.log('send channel status: ' + sendChannels[0].readyState)
-        //     }
-        //     console.log('pc:', pc)
-        //     const sendChannel = pc.createDataChannel('sendChannel');
-        //     sendChannel.onopen = handleSendChannelStatusChange
-        //     sendChannel.onclose = handleSendChannelStatusChange
+            pc.current.createOffer(sdpConstraints)
+                .then(sdp => {
+                    pc.current.setLocalDescription(sdp);
+                    console.log("current")
+                    sendToPeer('offer_chat', { sdp, roomId, localId: socket.id, dataFrom: userData.phone, dataTo: currentUser.phone });
+                })
+        })
 
-        //     setSendChannels((prevState) => {
-        //         console.log('preState:', [
-        //             ...prevState,
-        //             sendChannel
-        //         ])
-        //         return ([
-        //             ...prevState,
-        //             sendChannel
-        //         ])
-        //     });
-        //     console.log('sendChannel:', sendChannel, 'chs:', sendChannels)
-        //     const handleReceiveMessage = (event) => {
-        //         const message = JSON.parse(event.data)
-        //         console.log('msg REC', message)
-        //         setMessages((prevState) => ([
-        //             ...prevState,
-        //             message
-        //         ]));
-        //     }
+        socket.on('candidate', candidate => {
+            // console.log('Candidates ...:', candidate)
+            // candidates.current = [...candidates.current, candidate]
+            pc.current.addIceCandidate(new RTCIceCandidate(candidate))
+        })
 
-        //     const handleReceiveChannelStatusChange = (event) => {
-        //         if (this.receiveChannel) {
-        //             console.log("receive channel's status has changed to " + this.receiveChannel.readyState);
-        //         }
-        //     }
-        //     const receiveChannelCallback = (event) => {
-        //         const receiveChannel = event.channel
-        //         receiveChannel.onmessage = handleReceiveMessage
-        //         receiveChannel.onopen = handleReceiveChannelStatusChange
-        //         receiveChannel.onclose = handleReceiveChannelStatusChange
-        //     }
+        socket.on('answer_chat', data => {
+            pc.current.setRemoteDescription(new RTCSessionDescription(data.sdp)).then(() => { })
+        })
 
-        //     pc.ondatachannel = receiveChannelCallback;
+        socket.on('offer_chat', data => {
+            const handleSendChannelStatusChange = (event) => {
+                // console.log('sendChannel status change:', sendChannels);
+                // console.log('send channel status: ' + sendChannels[0].readyState)
+            }
+            console.log('pc:', pc)
+            const sendChannel = pc.current.createDataChannel('sendChannel');
+            sendChannel.onopen = handleSendChannelStatusChange
+            sendChannel.onclose = handleSendChannelStatusChange
+            setMessages((prevState) => [...prevState, data.messages]);
+            // setSendChannels((prevState) => {
+            //     console.log('preState:', [
+            //         ...prevState,
+            //         sendChannel
+            //     ])
+            //     return ([
+            //         ...prevState,
+            //         sendChannel
+            //     ])
+            // });
+            console.log('offer rsendChannel:', sendChannel, 'chs:', sendChannels)
+            const handleReceiveMessage = (event) => {
+                const message = JSON.parse(event.data)
+                console.log('msg offer REC', message)
+                setMessages((prevState) => [...prevState, data.messages]);
+            }
 
-        //     pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-        //     // 2. Create Answer
-        //     pc.createAnswer(sdpConstraints)
-        //         .then(sdp => {
-        //             pc.setLocalDescription(sdp);
-        //             sendToPeer('answer', { sdp, roomId, dataFrom: userData, dataTo: currentUser });
-        //         })
-        // })
+            const handleReceiveChannelStatusChange = (event) => {
+                if (this.receiveChannel) {
+                    console.log("receive channel's status has changed to " + this.receiveChannel.readyState);
+                }
+            }
+            const receiveChannelCallback = (event) => {
+                const receiveChannel = event.channel
+                receiveChannel.onmessage = handleReceiveMessage
+                receiveChannel.onopen = handleReceiveChannelStatusChange
+                receiveChannel.onclose = handleReceiveChannelStatusChange
+            }
 
-        // socket.on('answer', data => {
-        //     pc.setRemoteDescription(new RTCSessionDescription(data.sdp)).then(() => { })
-        // })
+            pc.current.ondatachannel = receiveChannelCallback;
+
+            pc.current.setRemoteDescription(new RTCSessionDescription(data.sdp));
+            // 2. Create Answer
+            pc.current.createAnswer(sdpConstraints)
+                .then(sdp => {
+                    pc.current.setLocalDescription(sdp);
+                    sendToPeer('answer_chat', { sdp, roomId, dataFrom: userData, dataTo: currentUser });
+                })
+        })
+
+
 
     }, [])
 
@@ -265,7 +212,7 @@ const Chat = (props) => {
         }).catch(e => console.log('createAnswer Error...', e))
     }
     const sendToPeer = (eventType, payload) => {
-        // socket.emit(eventType, payload)
+        socket.emit(eventType, payload)
     }
     const handleOpenVideoCall = (name) => {
         // console.log('openVideo:', openVideo)
@@ -286,31 +233,41 @@ const Chat = (props) => {
     }
 
     const sendMessage = (typeText) => {
-        let message = { type: 'text', message: { id: 0, sender: { uid: 0, }, data: { text: typeText } } };
-        setMessages((prevState) => {
-            console.log('preState mess:', [
-                ...prevState,
-                message
-            ])
-            return ([
-                ...prevState,
-                message
-            ])
-        });
+        const msg = {
+            type: 'text',
+            message: {
+                socketId: socket.id,
+                roomId: roomId,
+                dataFrom: { phone: userData.phone, },
+                dataTo: { phone: currentUser.phone },
+                data: { text: typeText }
+            }
+        };
+        // setMessages((prevState) => {
+        //     console.log('preState mess:', [
+        //         ...prevState,
+        //         message
+        //     ])
+        //     return ([
+        //         ...prevState,
+        //         message
+        //     ])
+        // });
+        setMessages((prevState) => [...prevState, msg]);
         console.log('sendCs:', sendChannels)
         sendChannels.map(sendChannel => {
             console.log('sendMessage sendChannel:', sendChannel);
-            sendChannel.readyState === 'open' && sendChannel.send(JSON.stringify(message))
+            sendChannel.readyState === 'open' && sendChannel.send(JSON.stringify(msg))
 
         })
-        sendToPeer('new-message', { messages: messages, roomId, dataFrom: userData, dataTo: currentUser })
+        sendToPeer('new-message', { message: typeText, roomId, dataFrom: userData.phone, dataTo: currentUser.phone })
     }
 
 
     const handleSendMessage = () => {
         if (typeText) {
             console.log("typeText:", typeText)
-            sendMessage(typeText);
+            sendMessage(typeText.trim());
 
         }
     }
@@ -322,7 +279,7 @@ const Chat = (props) => {
                 </div>
                 <div className="chat__friend--info">
                     <h4 className="info--name">{currentUser.name}</h4>
-                    <p className="info--state">Online </p>
+                    {/* <p className="info--state">Online </p> */}
                 </div>
                 <div className='chat__friend--video'>
                     <i className=
@@ -364,7 +321,6 @@ const Chat = (props) => {
                         roomId={roomId}
                         currentUser={currentUser}
                         messages={messages}
-                        sendMessage={sendMessage}
                     />
                 }
             </div>

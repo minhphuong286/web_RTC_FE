@@ -7,30 +7,32 @@ const ChatFrame = (props) => {
         roomId,
         currentUser,
         messages,
-        sendMessage
     } = props;
 
     const userData = useSelector(selectDataFromDetect);
-    // console.log('Message:', messages)
+    console.log('Message PROPS:', messages)
 
 
     const content = (
         <>
             {messages && messages.map((msg, index) => {
                 console.log('mess:', msg)
-                const msgs = msg.message;
+
                 // let cN = msg.dataFrom.name === userData.name ? "friend-single" : "friend-single current-host";
                 let cN = "friend-single";
-                return (
-                    <div className={cN}>
-                        <div className="friend-single__avatar">
-                            <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                if (msg && msg.type === "text" && msg.message.data.text.length > 0) {
+                    const content = msg.message.data.text;
+                    return (
+                        <div className={cN}>
+                            <div className="friend-single__avatar">
+                                <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                            </div>
+                            <div className="friend-single__info">
+                                <p className="info--preview-message">{content}</p>
+                            </div>
                         </div>
-                        <div className="friend-single__info">
-                            <p className="info--preview-message">{msgs.data.text}</p>
-                        </div>
-                    </div>
-                )
+                    )
+                }
             })}
             {/* <div className="friend-single ">
                 <div className="friend-single__avatar">

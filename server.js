@@ -29,21 +29,15 @@ const server = app.listen(port, () => {
 
 io.listen(server)
 
-const webRTCNamespace = io.of('/webRTCPeers')
+const webRTCNamespace = io.of('/webRTCPeers');
+const webRTCChat = io.of('/webRTCPeersChat');
+
 let connectedPeers = new Map();
 let onlineList = [];
 let callingList = [];
 
 webRTCNamespace.on('connection', socket => {
 
-    const room = socket.handshake.query.room;
-
-    messages[room] = messages[room] || []
-
-    socket.emit('info-socket', {
-        socketId: socket.id,
-        // socket: socket
-    })
     console.log("Start:", 'id:', socket.id)
     // connectedPeers.set(socket.id, socket)
     // console.log("connectedPeers:", connectedPeers)
@@ -52,31 +46,49 @@ webRTCNamespace.on('connection', socket => {
     socket.emit('connection-success', {
         status: 'connection-success',
         socketId: socket.id,
-        messages: messages[room],
     })
 
     socket.on('onliner', (data) => {
-        console.log("data - onliner:", data)
-
+        console.log("data - onliner:", data);
         const objIndex = onlineList.findIndex(item => item.dataFrom === data.dataFrom);
         if (objIndex !== -1) {  //update case
             //do something
         } else {
-            onlineList.push({
-                "localId": data.localId,
-                "dataFrom": data.dataFrom,
-                "roomId": data.roomId
-            })
+            if (data.localId && data.dataFrom) {
+                onlineList.push({
+                    "localId": data.localId,
+                    "dataFrom": data.dataFrom,
+                })
+                io.of("/webRTCPeers").emit('onliner', onlineList);
+            }
         }
+    })
 
-        io.of("/webRTCPeers").emit('onliner', onlineList);
+    socket.on('onliner_chat', (data) => {
+        console.log("data - onliner_chat:", data);
+        let room = "";
+        if (data.roomId) {
+            room = data.roomId;
+            messages[room] = messages[room] || [];
+            console.log("ONliNer_chat:", messages[room]);
+            io.of("/webRTCPeers").emit('onliner_chat', { roomId: room, dataFrom: data.dataFrom, dataTo: data.dataTo, messages: messages[room] });
+        }
+    })
 
+    socket.on('offer_chat', data => {
+        console.log("data - offer:", data.localId, "-", data.roomId, "-", data.dataFrom, "-", data.dataTo);
+        socket.broadcast.emit('offer_chat', data);
+    })
+    socket.on('answer_chat', data => {
+        // console.log(data)
+        socket.broadcast.emit('answer_chat', data)
     })
 
     socket.on('new-message', (data) => {
         console.log('new-message', data)
-
-        // messages[room] = [...messages[room], JSON.parse(data.payload)]
+        if (data.roomId && data.message) {
+            messages[data.roomId] = [...messages[data.roomId], data];
+        }
     })
 
     socket.on('disconnect', () => {
@@ -86,19 +98,14 @@ webRTCNamespace.on('connection', socket => {
         // connectedPeers.delete(socket.id);
     })
 
-    socket.on('sdp', data => {
-        //console.log(data)
-        socket.broadcast.emit('sdp', data)
-    })
-
     socket.on('offer', data => {
-        console.log("data - offer:", data.localId, "-", data.roomId, "-", data.dataFrom, "-", data.dataTo);
+        console.log("data - offer:", data.localId, "-", data.roomId, "-", data.dataFrom.phone, "-", data.dataTo);
         // let offerTo = onlineList.filter(item => item.dataFrom === data.dataTo)
         if (callingList.includes(data.dataTo) === false) {
-            callingList.push(data.dataFrom);
+            callingList.push(data.dataFrom.phone);
             socket.broadcast.emit('offer', data);
         } else {
-            webRTCNamespace.to(data.localId).emit('answer', { message: `${data.dataTo} is in a call`, code: 1, roomId: data.roomId, dataFrom: data.dataFrom });
+            webRTCNamespace.to(data.localId).emit('answer', { message: `${data.dataTo} is in a call`, code: 1, roomId: data.roomId, dataFrom: data.dataFrom.phone });
         }
     })
     socket.on('answer', data => {
@@ -114,7 +121,9 @@ webRTCNamespace.on('connection', socket => {
     })
 
     socket.on('close', data => {
-        callingList = callingList.filter(item => item !== data.dataFrom || item !== data.dataTo);
+        console.log("CLose -data:", data);
+        callingList = callingList.filter(item => item !== data.dataFrom).filter(item => item !== data.dataTo);
+        console.log("CLose - callingList:", callingList);
         socket.broadcast.emit('close', data);
     })
 
@@ -124,4 +133,4 @@ webRTCNamespace.on('connection', socket => {
     })
 
 
-})  
+})

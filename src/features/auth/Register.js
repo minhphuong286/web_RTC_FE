@@ -92,10 +92,10 @@ const Register = () => {
         }
     }
 
-    const content = isLoading ? <h1>Loading...</h1> : (
+    const content = isLoading ? <h1 style={{ textAlign: 'center', paddingTop: '5rem' }}>Loading...</h1> : (
         <section className="register">
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
 
+            <div className='logo'></div>
             <h1>Register</h1>
 
             <form onSubmit={handleSubmit} id="register-form">
@@ -179,7 +179,7 @@ const Register = () => {
                         </tr> */}
                     </tbody>
                 </table>
-
+                <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
                 <button>Register</button>
 
             </form>

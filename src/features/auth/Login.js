@@ -61,20 +61,17 @@ const Login = () => {
     }
     const handlePwdInput = (e) => setPassword(e.target.value)
 
-    const content = isLoading ? <h1>Loading...</h1> : (<>
+    const content = isLoading ? <h1 style={{ textAlign: 'center', paddingTop: '5rem' }}>Loading...</h1> : (<>
 
         <div className='login-background'>
             <section className="login">
-                <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-
+                <div className='logo'></div>
                 <h1>Login</h1>
 
                 <form onSubmit={handleSubmit} id="login-form">
                     <div className='form-content'>
                         <label htmlFor="username">Username:</label>
                         <input
-                            type="text"
-                            id="username"
                             ref={phoneRef}
                             value={phone}
                             onChange={handleUserInput}
@@ -93,7 +90,7 @@ const Login = () => {
                             required
                         />
                     </div>
-
+                    <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
                     <button>Login</button>
 
                 </form>

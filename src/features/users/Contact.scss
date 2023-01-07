@@ -24,6 +24,9 @@
 
     .contact-list {
         margin-top: 30px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height    : calc(100vh - 158px);
 
         .user-single {
             display         : flex;
@@ -72,27 +75,35 @@
             }
         }
 
-        @media screen and (max-width: 575px) {
-            .user-single {
-                &__avatar {
-                    img {
-                        width : 50px;
-                        height: 50px;
-                    }
-                }
 
-                &__info {
-                    padding: 0 10px;
-                }
+    }
 
-                .resolve {
-                    font-size: 14px;
-
-                    .button {
-                        padding: 5px 10px;
-                    }
+    @media screen and (max-width: 575px) {
+        .user-single {
+            &__avatar {
+                img {
+                    width : 50px;
+                    height: 50px;
                 }
             }
+
+            &__info {
+                padding: 0 10px;
+            }
+
+            .resolve {
+                font-size: 14px;
+
+                .button {
+                    padding: 5px 10px;
+                }
+            }
+        }
+    }
+
+    @media screen and (max-width: 786px) {
+        .contact-list {
+            height: calc(100vh - 210px);
         }
     }
 }

@@ -178,7 +178,7 @@ const ModalChatVideo = (props) => {
             .then(sdp => {
                 //send the sdp to the server
                 pc.current.setLocalDescription(sdp);
-                sendToPeer('offer', { sdp, roomId, localId: socket.id, dataFrom: userData.phone, dataTo: currentUser.phone });
+                sendToPeer('offer', { sdp, roomId, localId: socket.id, dataFrom: { phone: userData.phone, name: userData.name }, dataTo: currentUser.phone });
             }).catch(e => console.log('createOffer Error...', e))
     }
     const createAnswer = () => {
@@ -227,7 +227,7 @@ const ModalChatVideo = (props) => {
                 isOpen={openModalVideoCall}
                 toggle={handleToggleModal}
             >
-                <ModalHeader toggle={handleToggleModal}>
+                <ModalHeader>
                     {currentUser.name ? `${currentUser.name}` : ``}
                 </ModalHeader>
                 <ModalBody>

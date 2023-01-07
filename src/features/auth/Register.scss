@@ -4,6 +4,15 @@ section.register {
     background   : linear-gradient(135deg, #22c1c3 0%, #fdbb2d 100%);
     width        : 40%;
     border-radius: 15px;
+    padding-top  : 1rem;
+
+    .logo {
+        margin         : 0 auto;
+        width          : 178px;
+        height         : 68px;
+        background     : url(../../assets/img/logo.png) center no-repeat;
+        background-size: contain;
+    }
 
     h1 {
         padding: 20px 0;
@@ -37,6 +46,15 @@ section.register {
 
         /* display      : flex; */
 
+        .errmsg {
+            color        : #e00606;
+            margin-bottom: 0;
+            font-weight  : 500;
+        }
+
+        .offscreen {
+            display: none;
+        }
 
         button {
             margin          : 20px;

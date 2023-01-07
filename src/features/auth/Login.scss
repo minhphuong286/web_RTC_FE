@@ -1,21 +1,26 @@
-// html {
-//     background: url("../../assets/img/bg-login.jpg") no-repeat;
-// }
-
-// .login-background {
-//     background: url("../../assets/img/bg-login.jpg") no-repeat;
-// }
-
 section.login {
-    text-align   : center;
-    margin       : 10% auto;
-    background   : linear-gradient(135deg, #21dcde 0%, #e5ad34 100%);
-    width        : 35%;
-    border-radius: 15px;
+    text-align    : center;
+    margin        : 10% auto;
+    background    : linear-gradient(135deg, #21dcde 0%, #e5ad34 100%);
+    width         : 35%;
+    border-radius : 15px;
+    display       : flex;
+    flex-wrap     : wrap;
+    flex-direction: column;
+    align-items   : center;
+    height        : fit-content;
 
     h1 {
-        padding: 20px 0;
-        color  : white;
+        padding-top: 1rem;
+        color      : white;
+    }
+
+    .logo {
+        margin-top     : 1rem;
+        width          : 178px;
+        height         : 68px;
+        background     : url(../../assets/img/logo.png) center no-repeat;
+        background-size: contain;
     }
 
     form#login-form {
@@ -45,6 +50,16 @@ section.login {
             }
         }
 
+        .errmsg {
+            color        : #e00606;
+            margin-bottom: 0;
+            font-weight  : 500;
+        }
+
+        .offscreen {
+            display: none;
+        }
+
         button {
             margin          : 20px;
             padding         : 5px 50px;
@@ -63,6 +78,8 @@ section.login {
         padding: 20px;
     }
 }
+
+@media screen and (min-width:1200px) {}
 
 @media screen and (max-width:768px) {
     section.login {

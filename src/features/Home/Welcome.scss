@@ -556,10 +556,10 @@
                 height : 75%;
 
                 .type-box {
-                    background-color: yellowgreen;
-                    padding         : 10px;
-                    overflow-y      : auto;
-                    width           : 100%;
+                    // background-color: yellowgreen;
+                    padding   : 10px;
+                    overflow-y: auto;
+                    width     : 100%;
 
                     textarea#type-box-text {
                         width  : 100%;
@@ -580,6 +580,24 @@
                 }
             }
 
+        }
+    }
+
+    .welcome {
+        padding-top: 3rem;
+
+        &__title {
+            text-align : center;
+            font-weight: 300;
+
+            span {
+                font-weight: 500;
+            }
+        }
+
+        &__username {
+            text-align : center;
+            font-weight: 400;
         }
     }
 }

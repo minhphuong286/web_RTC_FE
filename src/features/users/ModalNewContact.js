@@ -77,7 +77,7 @@ const ModalNewContact = (props) => {
                         <div className='find-user__button'>
                             <button id='find' className='button button-icon'
                                 onClick={handleFindUser}
-                            ><i class="fas fa-search"></i>
+                            ><i className="fas fa-search"></i>
                             </button>
                         </div>
                     </div>

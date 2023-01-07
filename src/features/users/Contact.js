@@ -78,11 +78,12 @@ const Contact = () => {
                         </div>
                         <div className='tool-box bell-notify'>
                             <NavLink to={'/message'}>
-                                <i className="far fa-comment-dots"><span>1</span></i>
+                                <i className="far fa-comment-dots"><span className="d-none">1</span></i>
                             </NavLink>
                         </div>
-                        <div className='tool-box friend-chat' onClick={() => handleToggleMobile()}>
-                            <i className="far fa-comments"></i>
+                        <div className={isMobile ? "tool-box friend-chat active" : "tool-box friend-chat"}
+                            onClick={() => handleToggleMobile()}>
+                            <i className="fas fa-plus"></i>
                         </div>
                         <div className='tool-box contact-notify active'>
                             <i className="far fa-address-book">
@@ -102,7 +103,7 @@ const Contact = () => {
                             <div className="search-box">
                                 <input className="search-user" type="text" placeholder="Find user..." value="" />
                                 <div className="option-contact">
-                                    <button className="button" onClick={handleAddNewContact}><i class="fas fa-user-plus"></i></button>
+                                    <button className="button" onClick={handleAddNewContact}><i className="fas fa-user-plus"></i></button>
                                     <ModalNewContact
                                         openModalAddNewContact={openModalAddNewContact}
                                         handleAddNewContact={handleAddNewContact}

@@ -41,7 +41,7 @@ const Welcome = () => {
     const [userData, setUserData] = useState();
     const [dataSDP, setDataSDP] = useState();
     const [currentUser, setCurrentUser] = useState('');
-    const [currentId, setCurrentId] = useState('');
+    const [incomingUser, setIncomingUser] = useState();
     const [friendList, setFriendList] = useState();
     const [onlineList, setOnlineList] = useState([]);
     const [roomId, setRoomId] = useState('');
@@ -78,8 +78,13 @@ const Welcome = () => {
         })
         socket.on('offer', data => {
             if (data.dataTo === user) { //user ~= phone
-                setOpenModalVideoCall(true);
+
                 setDataSDP(data);
+                setIncomingUser({
+                    name: data.dataFrom.name,
+                    phone: data.dataFrom.phone
+                });
+                setOpenModalVideoCall(true);
                 // console.log('Data:', dataSDP)
             }
         })
@@ -102,7 +107,6 @@ const Welcome = () => {
         if (roomId) {
             setRoomId(roomId);
             setCurrentUser(item);
-            setCurrentId(item.id);
             setIsMobile(false);
         }
 
@@ -123,6 +127,7 @@ const Welcome = () => {
                     openModalVideoCall={openModalVideoCall}
                     handleToggleModal={handleToggleModal}
                     dataSDP={dataSDP}
+                    incomingUser={incomingUser}
                 />
             }
 
@@ -133,8 +138,9 @@ const Welcome = () => {
                         <div className="avatar">
                             <img src={require('../../assets/img/avatar.png')} alt="avatar" />
                         </div>
-                        <div className='tool-box friend-chat' onClick={() => handleToggleMobile()}>
-                            <i className="far fa-comments"></i>
+                        <div className={isMobile ? "tool-box friend-chat active" : "tool-box friend-chat"}
+                            onClick={() => handleToggleMobile()}>
+                            <i className="fas fa-plus"></i>
                         </div>
                         <div className='tool-box bell-notify active'>
                             <i className="far fa-comment-dots">
@@ -143,7 +149,7 @@ const Welcome = () => {
                         </div>
                         <div className='tool-box contact-notify'>
                             <NavLink to={'/contact'}>
-                                <i className="far fa-address-book"><span>N</span></i>
+                                <i className="far fa-address-book"><span className='d-none'>N</span></i>
                             </NavLink>
                         </div>
                         <div className='tool-box logout'>
@@ -160,13 +166,13 @@ const Welcome = () => {
 
                             </div>
                             <div className="option-list">
-                                <span><i class="far fa-handshake"></i><i class="far fa-handshake"></i><i class="far fa-handshake"></i></span>
+                                <span><i className="far fa-handshake"></i><i className="far fa-handshake"></i><i className="far fa-handshake"></i></span>
                             </div>
                             <div className="friend-list">
                                 {friendList && friendList.length > 0 &&
                                     friendList.map(item => {
                                         return (
-                                            <div className={item.id === currentId ? "friend-single active" : "friend-single"} key={item.id}
+                                            <div className={item.phone === currentUser.phone ? "friend-single active" : "friend-single"} key={item.id}
 
                                                 onClick={() => handleChatWithFriend({ phone: item.phone, name: item.name, avatar: item.avatar })}
                                             >
@@ -184,7 +190,7 @@ const Welcome = () => {
                                                 </div>
                                                 <div className="friend-single__info">
                                                     <h4 className="info--name">{item.name}</h4>
-                                                    <p className="info--preview-message">{item.phone} Latest message</p>
+                                                    <p className="info--preview-message">{item.phone} </p>
                                                 </div>
                                             </div>
                                         )
@@ -202,12 +208,50 @@ const Welcome = () => {
                             />
                             :
                             <div className='welcome'>
-                                <h1 className='welcome-title'>
-                                    {userData ?
-                                        `Welcome ${userData.name} to RTC`
-                                        : `Welcome to RTC`
+
+                                <h1 className='welcome__title'>
+                                    {
+                                        userData ?
+                                            <p>Welcome to <span>T29 WebRTC</span></p>
+                                            :
+                                            `Welcome to RTC`
                                     }
                                 </h1>
+                                <h3 className='welcome__username'>Hi, {userData ? userData.name : ""}</h3>
+                                <div className='welcome__intro'>
+
+                                </div>
+                                <div id="carouselExampleDark" className="carousel carousel-dark slide" data-bs-ride="carousel" style={{ height: '60vh', minHeight: '368px' }}>
+                                    <div className="carousel-indicators">
+                                        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
+                                        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                    </div>
+                                    <div className="carousel-inner">
+                                        {/* data-bs-interval="10000" */}
+                                        <div className="carousel-item active" >
+                                            <img src={require('../../assets/img/chat.png')} className="d-block w-100" alt="..." />
+                                            {/* <div className="carousel-caption d-none d-md-block">
+                                                <h5>First slide label</h5>
+                                                <p>Some representative placeholder content for the first slide.</p>
+                                            </div> */}
+                                        </div>
+                                        <div className="carousel-item" >
+                                            <img src={require('../../assets/img/video_call.png')} className="d-block w-100" alt="..." />
+                                            {/* <div className="carousel-caption d-none d-md-block">
+                                                <h5>Second slide label</h5>
+                                                <p>Some representative placeholder content for the second slide.</p>
+                                            </div> */}
+                                        </div>
+                                    </div>
+                                    <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span className="visually-hidden">Previous</span>
+                                    </button>
+                                    <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span className="visually-hidden">Next</span>
+                                    </button>
+                                </div>
                             </div>
                         }
 

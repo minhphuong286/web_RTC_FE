@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Fade } from 'reactstrap';
 import io from "socket.io-client";
+import Swal from 'sweetalert2';
 import { Howl } from 'howler';
 import './ModalVideoCall.scss';
 import { selectCallingDetect, selectCallingUser, selectDataToDetect, detectIsCallingVideo } from './videoSlice';
@@ -26,7 +27,8 @@ const ModalVideoCall = (props) => {
     const {
         openModalVideoCall,
         handleToggleModal,
-        dataSDP
+        dataSDP,
+        incomingUser
     } = props;
     const dispatch = useDispatch();
     const pc = useRef(new RTCPeerConnection(pc_config));
@@ -59,6 +61,11 @@ const ModalVideoCall = (props) => {
             dispatch(detectIsCallingVideo({ name: "", isCalling: false }));
             setTimeout(() => {
                 handleToggleModal();
+                Swal.fire({
+                    title: '',
+                    text: `${incomingUser.name} has been stopped the call.`,
+                    icon: 'warning',
+                });
             }, 2000);
         })
         const constraints = {
@@ -117,7 +124,7 @@ const ModalVideoCall = (props) => {
             offerToReceiveVideo: 1,
         }).then(sdp => {
             pc.current.setLocalDescription(sdp)
-            sendToPeer('answer', { sdp, roomId: dataSDP.roomId, dataFrom: dataSDP.dataFrom, dataTo: dataSDP.dataTo })
+            sendToPeer('answer', { sdp, roomId: dataSDP.roomId, dataFrom: dataSDP.dataFrom.phone, dataTo: dataSDP.dataTo })
             setSuccessfulIceConnection(true);
             setAcceptCalling(true);
         }).catch(e => console.log('createAnswer Error...', e))
@@ -152,7 +159,7 @@ const ModalVideoCall = (props) => {
             // setAcceptCalling(true);
         }
         dispatch(detectIsCallingVideo({ name: "", isCalling: false }));
-        sendToPeer('close', { dataSDP })
+        sendToPeer('close', { roomId: dataSDP.roomId, dataFrom: dataSDP.dataFrom.phone, dataTo: dataSDP.dataTo })
         handleToggleModal();
     }
     const soundPlayer = (start) => {
@@ -174,6 +181,7 @@ const ModalVideoCall = (props) => {
             sound.current.stop();
         }
     }, [acceptCalling])
+
     return (
         <div>
             {
@@ -184,8 +192,8 @@ const ModalVideoCall = (props) => {
                 isOpen={openModalVideoCall}
                 toggle={handleToggleModal}
             >
-                <ModalHeader toggle={handleToggleModal}>
-                    {dataSDP.dataFrom ? dataSDP.dataFrom.name : 'Incoming call ...'}
+                <ModalHeader>
+                    {incomingUser ? incomingUser.name : 'Incoming call ...'}
                 </ModalHeader>
                 <ModalBody>
                     <video
@@ -228,7 +236,7 @@ const ModalVideoCall = (props) => {
                     {acceptCalling === false &&
                         <div className='incoming-notification d-flex align-items-center justify-content-evenly flex-column'>
                             <div className='incoming-notification-info'>
-                                <h2 className='info-name'>{dataSDP.dataFrom.name}</h2>
+                                <h2 className='info-name'>{dataSDP.dataFrom.phone}</h2>
                                 <p className='info-notification text-center'>Incoming video call...</p>
                             </div>
                             <div className='option-control-box d-flex'>
@@ -253,18 +261,6 @@ const ModalVideoCall = (props) => {
                         </div>
                     }
                 </ModalBody>
-                <ModalFooter>
-
-                    <input type="button" className="button fas fa-phone" value="Answer"
-                        onClick={() => createAnswer()}
-                    />
-                    {/* <input type="button" className="button" value="Accept"
-                        onClick={() => createAcceptOrReject(true)}
-                    />
-                    <input className='button button-cancel' type="button" onClick={() => createAcceptOrReject(false)}
-                        value="Reject"
-                    /> */}
-                </ModalFooter>
             </Modal>
         </div >
     );
