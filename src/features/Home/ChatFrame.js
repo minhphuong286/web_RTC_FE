@@ -10,20 +10,20 @@ const ChatFrame = (props) => {
     } = props;
 
     const userData = useSelector(selectDataFromDetect);
-    console.log('Message PROPS:', messages)
+    console.log('ChatFrame message PROPS:', messages)
 
 
     const content = (
         <>
             {messages && messages.map((msg, index) => {
-                console.log('mess:', msg)
+                // console.log('mess:', msg)
 
                 // let cN = msg.dataFrom.name === userData.name ? "friend-single" : "friend-single current-host";
-                let cN = "friend-single";
+
                 if (msg && msg.type === "text" && msg.message.data.text.length > 0) {
                     const content = msg.message.data.text;
                     return (
-                        <div className={cN}>
+                        <div className={msg.message.dataFrom.phone === currentUser.phone ? "friend-single" : "friend-single current-host"}>
                             <div className="friend-single__avatar">
                                 <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
                             </div>

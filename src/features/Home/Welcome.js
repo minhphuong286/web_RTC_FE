@@ -66,12 +66,9 @@ const Welcome = () => {
     useEffect(() => {
         if (socket) { sendToPeer("onliner", { localId: socket.id, dataFrom: user }); }
         socket.on('onliner', data => {
-            console.log("data - onliner - welcome:", data);
+            // console.log("data - onliner - welcome:", data);
             let newOnlineList = data.map(item => item.dataFrom);
             setOnlineList(newOnlineList);
-        })
-        socket.on('init', data => {
-            console.log("init2 socket:", data);
         })
         socket.on('connection-success', success => {
             console.log('Success welcome: ', success)
@@ -89,7 +86,7 @@ const Welcome = () => {
             }
         })
         socket.on('answer', data => {
-            console.log("answer Welcome", data);
+            // console.log("answer Welcome", data);
         })
     }, [])
     const handleToggleModal = () => {
@@ -97,7 +94,7 @@ const Welcome = () => {
     }
 
     const handleChatWithFriend = async (item) => {
-        console.log('From handleChatWithFriend:', item)
+        // console.log('From handleChatWithFriend:', item)
         let phone = item.phone;
         let createdRoom = await createRoom({ phone });
         let createedRoomData = createdRoom.data.data;

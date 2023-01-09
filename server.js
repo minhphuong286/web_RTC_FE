@@ -46,6 +46,7 @@ webRTCNamespace.on('connection', socket => {
     socket.emit('connection-success', {
         status: 'connection-success',
         socketId: socket.id,
+
     })
 
     socket.on('onliner', (data) => {
@@ -71,7 +72,8 @@ webRTCNamespace.on('connection', socket => {
             room = data.roomId;
             messages[room] = messages[room] || [];
             console.log("ONliNer_chat:", messages[room]);
-            io.of("/webRTCPeers").emit('onliner_chat', { roomId: room, dataFrom: data.dataFrom, dataTo: data.dataTo, messages: messages[room] });
+            io.of("/webRTCPeers").emit('message_stored', { roomId: room, localId: data.localId, dataFrom: data.dataFrom, dataTo: data.dataTo, messages: messages[room] });
+            io.of("/webRTCPeers").emit('onliner_chat', { roomId: room, localId: data.localId, dataFrom: data.dataFrom, dataTo: data.dataTo, messages: messages[room] });
         }
     })
 
@@ -132,5 +134,9 @@ webRTCNamespace.on('connection', socket => {
         socket.broadcast.emit('candidate', data)
     })
 
+    socket.on('candidate_chat', data => {
+        // console.log(data)
+        socket.broadcast.emit('candidate_chat', data)
+    })
 
 })
