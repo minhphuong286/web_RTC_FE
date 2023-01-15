@@ -1,0 +1,82 @@
+section.login {
+  text-align: center;
+  margin: 10% auto;
+  background: linear-gradient(135deg, #21dcde 0%, #e5ad34 100%);
+  width: 35%;
+  border-radius: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+section.login h1 {
+  padding-top: 1rem;
+  color: white;
+}
+section.login .logo {
+  margin-top: 1rem;
+  width: 178px;
+  height: 68px;
+  background: url(../../assets/img/logo.png) center no-repeat;
+  background-size: contain;
+}
+section.login form#login-form {
+  margin: 10px auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+section.login form#login-form .form-content {
+  display: flex;
+  padding: 1rem 2rem;
+  flex-wrap: wrap;
+}
+section.login form#login-form .form-content label {
+  font-weight: 600;
+  margin-right: 20px;
+}
+section.login form#login-form .form-content input {
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: navajowhite;
+  outline-color: #e1db2c;
+  width: 100%;
+}
+section.login form#login-form .errmsg {
+  color: #e00606;
+  margin-bottom: 0;
+  font-weight: 500;
+}
+section.login form#login-form .offscreen {
+  display: none;
+}
+section.login form#login-form button {
+  margin: 20px;
+  padding: 5px 50px;
+  border-radius: 25px;
+  background-color: #e1db2c;
+  border: none;
+}
+section.login form#login-form button:hover {
+  background-color: #e1da0b;
+  cursor: pointer;
+}
+section.login .register-case {
+  padding: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  section.login {
+    width: 40%;
+  }
+}
+@media screen and (max-width: 575px) {
+  section.login {
+    width: 58%;
+  }
+}/*# sourceMappingURL=Login.css.map */

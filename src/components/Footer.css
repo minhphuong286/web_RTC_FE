@@ -1,0 +1,12 @@
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5rem 2rem;
+}
+.footer-container .information__content {
+  display: flex;
+  gap: 1rem;
+}
+.footer-container .information__content a {
+  color: black;
+}/*# sourceMappingURL=Footer.css.map */

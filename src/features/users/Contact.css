@@ -1,0 +1,67 @@
+.contact-container {
+  margin: 30px;
+}
+.contact-container .contact-list {
+  margin-top: 30px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 158px);
+}
+.contact-container .contact-list .user-single {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(147, 147, 46, 0.1098039216);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.contact-container .contact-list .user-single__avatar img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+.contact-container .contact-list .user-single__info {
+  padding: 0 20px;
+  width: 58%;
+}
+.contact-container .contact-list .user-single__info .info--name,
+.contact-container .contact-list .user-single__info .info--preview-message {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+}
+.contact-container .contact-list .user-single .resolve {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.contact-container .contact-list .user-single .resolve .button-refuse {
+  background-color: #f2f2ec;
+}
+.contact-container .contact-list .user-single .resolve .button-refuse:hover {
+  background-color: #f6f035;
+  cursor: pointer;
+}
+@media screen and (max-width: 575px) {
+  .contact-container .user-single__avatar img {
+    width: 50px;
+    height: 50px;
+  }
+  .contact-container .user-single__info {
+    padding: 0 10px;
+  }
+  .contact-container .user-single .resolve {
+    font-size: 14px;
+  }
+  .contact-container .user-single .resolve .button {
+    padding: 5px 10px;
+  }
+}
+@media screen and (max-width: 786px) {
+  .contact-container .contact-list {
+    height: calc(100vh - 210px);
+  }
+}/*# sourceMappingURL=Contact.css.map */

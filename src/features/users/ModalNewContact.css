@@ -1,0 +1,53 @@
+.body-container {
+  background-color: #f2f2ec;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+.body-container .contact-list {
+  margin-top: 20px;
+  padding: 10px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.body-container .contact-list .user-single {
+  text-align: center;
+  background-color: rgba(147, 147, 46, 0.1098039216);
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+}
+.body-container .contact-list .user-single__avatar {
+  height: 130px;
+}
+.body-container .contact-list .user-single__avatar img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+}
+.body-container .contact-list .button {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.find-user {
+  display: flex;
+  justify-content: space-around;
+}
+.find-user__phone label {
+  margin-right: 10px;
+}
+.find-user__phone input#phone {
+  padding: 5px;
+  padding-left: 10px;
+  border-radius: 10px;
+  border: 1px solid #e1db2c;
+  outline-color: #f6f035;
+}/*# sourceMappingURL=ModalNewContact.css.map */

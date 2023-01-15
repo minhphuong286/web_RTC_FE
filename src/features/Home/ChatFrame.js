@@ -25,7 +25,13 @@ const ChatFrame = (props) => {
                     return (
                         <div className={msg.message.dataFrom.phone === currentUser.phone ? "friend-single" : "friend-single current-host"}>
                             <div className="friend-single__avatar">
-                                <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                                <img src=
+                                    {
+                                        msg.message.dataFrom.phone === currentUser.phone
+                                            ? require('../../assets/img/friend.png')
+                                            : require('../../assets/img/avatar.png')
+                                    }
+                                    alt="avatar-friend" />
                             </div>
                             <div className="friend-single__info">
                                 <p className="info--preview-message">{content}</p>

@@ -1,0 +1,24 @@
+.button {
+  padding: 5px 25px;
+  border-radius: 25px;
+  background-color: #e1db2c;
+  border: none;
+}
+.button.button-cancel {
+  padding: 5px 25px;
+  border-radius: 25px;
+  background-color: #a5a038;
+  border: none;
+}
+.button.button-cancel:hover {
+  background-color: #f6f035;
+  cursor: pointer;
+}
+.button:hover {
+  background-color: #f6f035;
+  cursor: pointer;
+}
+.button.button-icon {
+  padding: 5px 10px;
+  border-radius: 0.5rem;
+}/*# sourceMappingURL=common.css.map */

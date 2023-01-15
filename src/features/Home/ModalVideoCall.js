@@ -195,7 +195,7 @@ const ModalVideoCall = (props) => {
                 <ModalHeader>
                     {incomingUser ? incomingUser.name : 'Incoming call ...'}
                 </ModalHeader>
-                <ModalBody>
+                <ModalBody className='video-call-modal-body'>
                     <video
                         className={
                             successfulIceConnection === true ? 'small-frame local-video' : 'large-frame init'

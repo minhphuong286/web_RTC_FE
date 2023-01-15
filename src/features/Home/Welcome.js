@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import io from "socket.io-client"
 import { useNavigate } from 'react-router-dom'
-import { NavLink, Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 
 import "../../assets/scss/common.scss";
 import './Welcome.scss';
@@ -60,6 +60,7 @@ const Welcome = () => {
         if (friendListData) {
             const _friendList = friendListData.data.data;
             setFriendList(_friendList);
+            dispatch(detectIsCallingVideo({ name: "", isCalling: false }));
         }
     }, [friendListData])
     // console.log("socket", socket)

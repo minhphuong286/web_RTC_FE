@@ -13,7 +13,7 @@ const io = require('socket.io')({
 const app = express()
 const port = 8080
 
-const rooms = {}
+
 const messages = {}
 
 //https://expressjs.com/en/guide/writing-middleware.html
@@ -30,13 +30,104 @@ const server = app.listen(port, () => {
 io.listen(server)
 
 const webRTCNamespace = io.of('/webRTCPeers');
-const webRTCChat = io.of('/webRTCPeersChat');
 
 let connectedPeers = new Map();
 let onlineList = [];
 let callingList = [];
 
+const messagesGroup = {}
+const roomsGroup = {}
+
 webRTCNamespace.on('connection', socket => {
+    const roomGroup = socket.handshake.query.room;
+    roomsGroup[roomGroup] = roomsGroup[roomGroup] && roomsGroup[roomGroup].set(socket.id, socket) || (new Map()).set(socket.id, socket)
+    messagesGroup[roomGroup] = messagesGroup[roomGroup] || []
+
+    const broadcast = () => {
+        const _connectedPeers = roomsGroup[roomGroup]
+
+        for (const [socketID, _socket] of _connectedPeers.entries()) {
+            if (socketID !== socket.id) {
+                _socket.emit('joined-peers-group', {
+                    peerCount: roomsGroup[roomGroup].size, //connectedPeers.size,
+                })
+            }
+        }
+    }
+    broadcast();
+
+    const disconnectedPeer = (socketID) => {
+        const _connectedPeers = roomsGroup[roomGroup]
+        for (const [_socketID, _socket] of _connectedPeers.entries()) {
+            _socket.emit('peer-disconnected-group', {
+                peerCount: roomsGroup[roomGroup].size,
+                socketID
+            })
+        }
+    }
+    socket.on('new-message-group', (data) => {
+        // console.log('new-message', data)
+
+        messagesGroup[roomGroup] = [...messagesGroup[roomGroup], JSON.parse(data.payload)]
+    })
+    socket.on('onlinePeers-group', (data) => {
+        const _connectedPeers = roomsGroup[roomGroup]
+        for (const [socketID, _socket] of _connectedPeers.entries()) {
+            // don't send to self
+            if (socketID !== data.socketID.local) {
+                console.log('online-peer', data.socketID, socketID)
+                socket.emit('online-peer-group', socketID)
+            }
+        }
+    })
+    socket.on('reconnect-group', (data) => {
+        socket.emit('connection-success-group', {
+            success: socket.id,
+            peerCount: roomsGroup[roomGroup].size,
+            messages: messagesGroup[roomGroup],
+        })
+    })
+    socket.on('offer-group', data => {
+        const _connectedPeers = roomsGroup[roomGroup]
+        for (const [socketID, socket] of _connectedPeers.entries()) {
+            // don't send to self
+            if (socketID === data.socketID.remote) {
+                // console.log('Offer', socketID, data.socketID, data.payload.type)
+                socket.emit('offer-group', {
+                    sdp: data.payload,
+                    socketID: data.socketID.local
+                }
+                )
+            }
+        }
+    })
+
+    socket.on('answer-group', (data) => {
+        const _connectedPeers = roomsGroup[roomGroup]
+        for (const [socketID, socket] of _connectedPeers.entries()) {
+            if (socketID === data.socketID.remote) {
+                console.log('Answer', socketID, data.socketID, data.payload.type)
+                socket.emit('answer-group', {
+                    sdp: data.payload,
+                    socketID: data.socketID.local
+                }
+                )
+            }
+        }
+    })
+
+    socket.on('candidate-group', (data) => {
+        const _connectedPeers = roomsGroup[roomGroup]
+        // send candidate to the other peer(s) if any
+        for (const [socketID, socket] of _connectedPeers.entries()) {
+            if (socketID === data.socketID.remote) {
+                socket.emit('candidate-group', {
+                    candidate: data.payload,
+                    socketID: data.socketID.local
+                })
+            }
+        }
+    })
 
     console.log("Start:", 'id:', socket.id)
     // connectedPeers.set(socket.id, socket)
@@ -72,13 +163,13 @@ webRTCNamespace.on('connection', socket => {
             room = data.roomId;
             messages[room] = messages[room] || [];
             console.log("ONliNer_chat:", messages[room]);
-            io.of("/webRTCPeers").emit('message_stored', { roomId: room, localId: data.localId, dataFrom: data.dataFrom, dataTo: data.dataTo, messages: messages[room] });
+            // io.of("/webRTCPeers").emit('message_stored', { roomId: room, localId: data.localId, dataFrom: data.dataFrom, dataTo: data.dataTo, messages: messages[room] });
             io.of("/webRTCPeers").emit('onliner_chat', { roomId: room, localId: data.localId, dataFrom: data.dataFrom, dataTo: data.dataTo, messages: messages[room] });
         }
     })
 
     socket.on('offer_chat', data => {
-        console.log("data - offer:", data.localId, "-", data.roomId, "-", data.dataFrom, "-", data.dataTo);
+        console.log("data - offer:", "-", data.roomId, "-", data.dataFrom, "-", data.dataTo);
         socket.broadcast.emit('offer_chat', data);
     })
     socket.on('answer_chat', data => {
@@ -89,15 +180,20 @@ webRTCNamespace.on('connection', socket => {
     socket.on('new-message', (data) => {
         console.log('new-message', data)
         if (data.roomId && data.message) {
-            messages[data.roomId] = [...messages[data.roomId], data];
+            messages[data.message.roomId] = [...messages[data.message.roomId], data];
         }
     })
 
     socket.on('disconnect', () => {
+        roomsGroup[roomGroup].delete(socket.id)
+        messagesGroup[roomGroup] = roomsGroup[roomGroup].size === 0 ? null : messagesGroup[roomGroup]
+        disconnectedPeer(socket.id)
+
         onlineList = onlineList.filter(item => item.localId !== socket.id);
         io.of("/webRTCPeers").emit('onliner', onlineList);
         console.log(`${socket.id} has disconnected`)
         // connectedPeers.delete(socket.id);
+        io.of("/webRTCPeers").emit('close_chat', socket.id);
     })
 
     socket.on('offer', data => {
@@ -140,3 +236,4 @@ webRTCNamespace.on('connection', socket => {
     })
 
 })
+

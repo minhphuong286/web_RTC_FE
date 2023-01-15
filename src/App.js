@@ -9,6 +9,7 @@ import Register from './features/auth/Register'
 import RegisterTest from './features/auth/RegisterTest'
 import "./assets/fontawesome/index.js"
 import Contact from './features/users/Contact'
+import RoomApp from './features/group/RoomApp'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         {/* <Route > */}
         <Route element={<RequireAuth />}>
           <Route path="message" element={<Welcome />} />
+          <Route path="message/:room" element={<RoomApp />} />
           <Route path="contact" element={<Contact />} />
           <Route path="users" element={<UsersList />} />
         </Route>

@@ -1,0 +1,25 @@
+.chat-container .chat__friend--info {
+  width: 100%;
+}
+.chat-container .chat__friend--video {
+  display: flex;
+  align-items: center;
+  margin: 0 20px;
+  -moz-column-gap: 20px;
+       column-gap: 20px;
+}
+.chat-container .chat__friend--video i {
+  color: #665c23;
+}
+.chat-container .chat__friend--video i:hover {
+  color: #f6f035;
+  cursor: pointer;
+}
+.chat-container .chat__friend--video i.calling {
+  pointer-events: none;
+  color: #f6f035;
+}
+.chat-container .chat__friend--video i.unallow {
+  color: #c5c5b7;
+  pointer-events: none;
+}/*# sourceMappingURL=Chat.css.map */

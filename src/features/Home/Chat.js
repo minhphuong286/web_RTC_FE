@@ -1,7 +1,9 @@
 import { current } from '@reduxjs/toolkit';
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
+import { Link, NavLink, Route, useNavigate } from "react-router-dom"
 import io from "socket.io-client";
+import RoomApp from '../group/RoomApp';
 
 import './Chat.scss';
 import ChatFrame from './ChatFrame';
@@ -31,7 +33,8 @@ const Chat = (props) => {
     const callingUserName = useSelector(selectCallingUser)
     const callingDetect = useSelector(selectCallingDetect)
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const typeTextRef = useRef();
 
@@ -42,10 +45,16 @@ const Chat = (props) => {
     const [initPeerconnection, setInitPeerconnection] = useState(false);
     // const [peerConnections, setPeerConnections] = useState({});
     const [openModalVideoCall, setOpenModalVideoCall] = useState(false);
+    const [openModalVideoCallGroup, setOpenModalVideoCallGroup] = useState(false);
     const [sdpConstraints, setSdpConstraints] = useState({
         offerToReceiveAudio: 1,
         offerToReceiveVideo: 1,
     });
+    const chatPlaceRef = useRef();
+    const scrollToBottom = () => {
+        const chatPlace = document.getElementById("chat-place");
+        chatPlace.scrollTop = chatPlace.scrollHeight
+    }
 
     const pc = new RTCPeerConnection(pc_config);
     pc.onicecandidate = (e) => {
@@ -69,6 +78,9 @@ const Chat = (props) => {
         socket.on('onliner_chat', data => {
             console.log('onliner_chat:', data);
             // setMessages(success.message);
+            // if (data.messages.length > 0) {
+            //     setMessages(data.messages);
+            // }
             if (pc && data.dataFrom === userData.phone) {
                 const handleSendChannelStatusChange = (event) => {
                     // console.log('sendChannel status change:', sendChannels);
@@ -113,7 +125,7 @@ const Chat = (props) => {
                 pc.createOffer(sdpConstraints)
                     .then(sdp => {
                         pc.setLocalDescription(sdp);
-                        sendToPeer('offer_chat', { sdp, roomId, dataFrom: userData, dataTo: currentUser });
+                        sendToPeer('offer_chat', { sdp, roomId, dataFrom: userData.phone, dataTo: currentUser.phone });
                     })
             }
         })
@@ -171,12 +183,18 @@ const Chat = (props) => {
             pc.createAnswer(sdpConstraints)
                 .then(sdp => {
                     pc.setLocalDescription(sdp);
-                    sendToPeer('answer_chat', { sdp, roomId, dataFrom: userData, dataTo: currentUser });
+                    sendToPeer('answer_chat', { sdp, roomId, dataFrom: userData.phone, dataTo: currentUser.phone });
                 })
         })
 
         socket.on('answer_chat', data => {
             pc.setRemoteDescription(new RTCSessionDescription(data.sdp)).then(() => { })
+        })
+
+        socket.on('close_chat', data => {
+            if (socket.id === data) {
+                pc.close();
+            }
         })
 
     }, [])
@@ -191,6 +209,14 @@ const Chat = (props) => {
         setOpenModalVideoCall(true);
         // console.log('Name:', name)
     }
+    const handleOpenVideoCallGroup = (name) => {
+        // console.log('openVideo:', openVideo)
+        // let isCalling = true;
+        // dispatch(detectIsCallingVideo({ name, isCalling }));
+
+        setOpenModalVideoCallGroup(true);
+        // console.log('Name:', name)
+    }
     const handleStopVideoCall = (name) => {
         // console.log('openVideo:', openVideo)
         let isCalling = false;
@@ -200,6 +226,11 @@ const Chat = (props) => {
 
     const handleToggleModal = () => {
         setOpenModalVideoCall(!openModalVideoCall);
+    }
+
+    const handleToggleModalGroup = () => {
+        console.log("Fire toggle ModalGroup")
+        setOpenModalVideoCallGroup(!openModalVideoCallGroup);
     }
 
     const sendMessage = (typeText) => {
@@ -241,90 +272,116 @@ const Chat = (props) => {
             sendMessage(typeText.trim());
             setTypeText("");
             typeTextRef.current.focus();
+            scrollToBottom();
         }
     }
     const content = (
-        <div className="chat-container">
-            <div className="chat__friend">
-                <div className="chat__friend--avatar">
-                    <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
-                </div>
-                <div className="chat__friend--info">
-                    <h4 className="info--name">{currentUser.name}</h4>
-                    {/* <p className="info--state">Online </p> */}
-                </div>
-                <div className='chat__friend--video'>
-                    <i className=
-                        {callingDetect && callingUserName ?
-                            currentUser.name === callingUserName ?
-                                "fas fa-video calling"
-                                : "fas fa-video unallow"
-                            : "fas fa-video"
-                        }
-
-                        onClick={() => handleOpenVideoCall(currentUser.name)}
-                    ></i>
-                    <i className=
-                        {callingDetect && callingUserName ?
-                            currentUser.name === callingUserName ?
-                                "fas fa-stop"
-                                : "fas fa-stop unallow"
-                            : "fas fa-stop"
-                        }
-                        onClick={() => handleStopVideoCall(currentUser.name)}
-                    ></i>
-                </div>
-            </div>
-            <div className={callingDetect === true && currentUser.name === callingUserName ? "chat__place on-video" : "chat__place"}>
-                {callingDetect === true && currentUser.name === callingUserName
-                    ?
-                    // <ChatVideo
-                    //     roomId={roomId}
-                    //     currentUser={currentUser}
-                    // />
-                    <ModalChatVideo
-                        openModalVideoCall={openModalVideoCall}
-                        handleToggleModal={handleToggleModal}
-                        roomId={roomId}
-                        currentUser={currentUser}
-                    />
-                    :
-                    <ChatFrame
-                        roomId={roomId}
-                        currentUser={currentUser}
-                        messages={messages}
-                    />
-                }
-            </div>
-            {callingDetect === true && currentUser.name === callingUserName
-                ?
-                <div></div>
-                :
-                <div className="chat__type"
-                >
-                    <div className="tool-box">
-
-                    </div>
-                    <div className="contents-place">
-                        <div className="type-box">
-                            <textarea type="text" id="type-box-text"
-                                value={typeText}
-                                ref={typeTextRef}
-                                onChange={(e) => setTypeText(e.target.value)}
-                                autoComplete="off"
-                            />
-                        </div>
-                        <div className="send-box">
-                            <input type="button" className='button' id='button-send' value="Send"
-                                onClick={() => handleSendMessage()}
-                            />
-                        </div>
-                    </div>
-
-                </div>
+        <>
+            {openModalVideoCallGroup === true &&
+                <RoomApp
+                    openModalVideoCallGroup={openModalVideoCallGroup}
+                    handleToggleModalGroup={handleToggleModalGroup}
+                    roomId={roomId}
+                    userData={{ phone: userData.phone, name: userData.name }}
+                />
             }
 
-        </div>
+
+            <div className="chat-container">
+
+                <div className="chat__friend">
+                    <div className="chat__friend--avatar">
+                        <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                    </div>
+                    <div className="chat__friend--info">
+                        <h4 className="info--name">{currentUser.name}</h4>
+                        {/* <p className="info--state">Online </p> */}
+                    </div>
+                    <div className='chat__friend--video'>
+                        <i className=
+                            {callingDetect && callingUserName ?
+                                currentUser.name === callingUserName ?
+                                    "fas fa-video calling"
+                                    : "fas fa-video unallow"
+                                : "fas fa-video"
+                            }
+
+                            onClick={() => handleOpenVideoCall(currentUser.name)}
+                        ></i>
+                        {/* <NavLink to={`/${roomId}`}> */}
+                        <i className=
+                            {callingDetect && callingUserName ?
+                                currentUser.name === callingUserName ?
+                                    "fas fa-object-group calling"
+                                    : "fas fa-object-group unallow"
+                                : "fas fa-object-group"
+                            }
+
+                            onClick={() => handleOpenVideoCallGroup(currentUser.name)}
+                        ></i>
+                        {/* </NavLink> */}
+                        <i className=
+                            {callingDetect && callingUserName ?
+                                currentUser.name === callingUserName ?
+                                    "fas fa-stop"
+                                    : "fas fa-stop unallow"
+                                : "fas fa-stop"
+                            }
+                            onClick={() => handleStopVideoCall(currentUser.name)}
+                        ></i>
+                    </div>
+                </div>
+                <div id="chat-place" className={callingDetect === true && currentUser.name === callingUserName ? "chat__place on-video" : "chat__place"}>
+                    {callingDetect === true && currentUser.name === callingUserName
+                        ?
+                        // <ChatVideo
+                        //     roomId={roomId}
+                        //     currentUser={currentUser}
+                        // />
+                        <ModalChatVideo
+                            openModalVideoCall={openModalVideoCall}
+                            handleToggleModal={handleToggleModal}
+                            roomId={roomId}
+                            currentUser={currentUser}
+                        />
+                        :
+                        <ChatFrame
+                            roomId={roomId}
+                            currentUser={currentUser}
+                            messages={messages}
+                        />
+                    }
+                </div>
+                {callingDetect === true && currentUser.name === callingUserName
+                    ?
+                    <div></div>
+                    :
+                    <div className="chat__type"
+                    >
+                        <div className="tool-box">
+
+                        </div>
+                        <div className="contents-place">
+                            <div className="type-box">
+                                <textarea type="text" id="type-box-text"
+                                    value={typeText}
+                                    ref={typeTextRef}
+                                    onChange={(e) => setTypeText(e.target.value)}
+                                    autoComplete="off"
+                                />
+                            </div>
+                            <div className="send-box">
+                                <input type="button" className='button' id='button-send' value="Send"
+                                    onClick={() => handleSendMessage()}
+                                />
+                            </div>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        </>
     )
 
     return content;

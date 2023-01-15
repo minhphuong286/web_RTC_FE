@@ -230,7 +230,7 @@ const ModalChatVideo = (props) => {
                 <ModalHeader>
                     {currentUser.name ? `${currentUser.name}` : ``}
                 </ModalHeader>
-                <ModalBody>
+                <ModalBody className='chat-video-modal-body'>
                     <video
                         className={
                             successfulIceConnection === true ? 'small-frame local-video' : 'large-frame init'

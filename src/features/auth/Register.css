@@ -1,0 +1,79 @@
+section.register {
+  text-align: center;
+  margin: 6% auto;
+  background: linear-gradient(135deg, #22c1c3 0%, #fdbb2d 100%);
+  width: 40%;
+  border-radius: 15px;
+  padding-top: 1rem;
+}
+section.register .logo {
+  margin: 0 auto;
+  width: 178px;
+  height: 68px;
+  background: url(../../assets/img/logo.png) center no-repeat;
+  background-size: contain;
+}
+section.register h1 {
+  padding: 20px 0;
+  color: white;
+}
+section.register form#register-form {
+  margin: 10px auto;
+  /* display      : flex; */
+}
+section.register form#register-form table {
+  height: 300px;
+  margin: 0 auto;
+}
+section.register form#register-form table .form-content {
+  margin-bottom: 30px;
+  text-align: left;
+}
+section.register form#register-form table .form-content label {
+  font-weight: 600;
+  margin-right: 20px;
+}
+section.register form#register-form table .form-content input {
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: navajowhite;
+  outline-color: #e1db2c;
+}
+section.register form#register-form .errmsg {
+  color: #e00606;
+  margin-bottom: 0;
+  font-weight: 500;
+}
+section.register form#register-form .offscreen {
+  display: none;
+}
+section.register form#register-form button {
+  margin: 20px;
+  padding: 5px 50px;
+  border-radius: 25px;
+  background-color: #e1db2c;
+  border: none;
+}
+section.register form#register-form button:hover {
+  background-color: #e1da0b;
+  cursor: pointer;
+}
+section.register .login-case {
+  padding: 20px;
+}
+
+@media screen and (max-width: 992px) {
+  section.register {
+    width: 58%;
+  }
+}
+@media screen and (max-width: 575px) {
+  section.register {
+    width: 78%;
+  }
+}
+@media screen and (max-width: 500px) {
+  section.register {
+    width: 90%;
+  }
+}/*# sourceMappingURL=Register.css.map */
