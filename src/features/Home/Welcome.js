@@ -161,10 +161,11 @@ const Welcome = () => {
                     <div className={isMobile ? "col-lg-4 col-md-4 main-side__left open" : "col-lg-4 col-md-4 main-side__left"}>
                         <div className="friend-list-container">
                             <div className="search-box">
-
+                                <span><i className="far fa-handshake"></i><i className="far fa-handshake"></i><i className="far fa-handshake"></i></span>
                             </div>
                             <div className="option-list">
-                                <span><i className="far fa-handshake"></i><i className="far fa-handshake"></i><i className="far fa-handshake"></i></span>
+                                <button className="button button-person " ><i className="fas fa-user"></i></button>
+                                <button className="button button-group non-active" ><i className="fas fa-users"></i></button>
                             </div>
                             <div className="friend-list">
                                 {friendList && friendList.length > 0 &&

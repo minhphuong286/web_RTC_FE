@@ -1,7 +1,13 @@
 @import '../../assets/scss/colors.scss';
 
+.modal-header.modal-add-new-contact {
+    .modal-title {
+        text-align: center;
+        width     : 100%;
+    }
+}
 
-.body-container {
+.body-container.add-new-contact-modal-body {
     background-color: $background;
     display         : flex;
     flex-direction  : column;
@@ -51,7 +57,7 @@
             margin-right: 10px;
         }
 
-        input#phone {
+        input.type-content {
             padding      : 5px;
             padding-left : 10px;
             border-radius: 10px;

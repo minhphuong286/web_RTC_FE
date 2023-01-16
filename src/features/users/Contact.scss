@@ -1,21 +1,45 @@
 @import '../../assets/scss/colors.scss';
 
 .friend-list-container {
-    // .option-list {
-    //     height             : 35px;
-    //     border-top         : 1px solid;
-    //     border-bottom-style: ridge;
-    //     display            : flex;
+    .option-list.contact {
+        flex-direction: column;
+        align-items   : flex-end;
+        height        : fit-content;
 
-    //     .total-list {
-    //         margin: auto 10px;
+        .button {
+            border-radius: 0.5rem;
+            margin-left  : 2px;
+            width        : fit-content;
 
-    //         span {
-    //             font-weight: 600;
-    //         }
-    //     }
+            &:hover {
+                background-color: $primary-hover;
+            }
 
-    // }
+            &.button-person {
+                border-radius         : 0;
+                margin-left           : 0;
+                border-top-left-radius: 0.5rem;
+                width                 : 50%;
+            }
+
+            &.button-group {
+                border-radius          : 0;
+                margin-left            : 0;
+                border-top-right-radius: 0.5rem;
+                width                  : 50%;
+            }
+        }
+
+        .options {
+            width      : 100%;
+            padding-top: 5px;
+        }
+
+        .total-list {
+            width: 100%;
+        }
+
+    }
 }
 
 

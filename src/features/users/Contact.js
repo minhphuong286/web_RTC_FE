@@ -5,31 +5,40 @@ import { Link, NavLink } from "react-router-dom";
 import { useGetUsersQuery } from "./usersApiSlice";
 import { useGetFriendListQuery, useGetRequestListQuery } from "../friendList/friendListApiSlice";
 import { useRefuseOrAcceptContactMutation } from "./contactApiSlice";
+import { useGetGroupListQuery } from "../users/groupApiSlice";
 
 import '../../assets/scss/common.scss';
 import "../Home/Welcome.scss";
 import "./Contact.scss";
 
 import ModalNewContact from "./ModalNewContact";
-
+import ModalCreateNewGroup from "./ModalCreateNewGroup";
 
 const Contact = () => {
     const { data: friendListData } = useGetFriendListQuery();
     const { data: requestListData } = useGetRequestListQuery();
+    const { data: groupListData } = useGetGroupListQuery();
     const [refuseOrAcceptContact] = useRefuseOrAcceptContactMutation();
 
     const [openModalAddNewContact, setOpenModalAddNewContact] = useState(false);
+    const [openModalCreateNewGroup, setOpenModalCreateNewGroup] = useState(false);
     const [actionId, setActionId] = useState('');
     const [isMobile, setIsMobile] = useState(false);
+    const [isFriend, setIsFriend] = useState(true);
     const [isCallingVideo, setIsCallingVideo] = useState(false);
 
     let content;
     let friendList = [];
+    let groupList = [];
     let requestList = [];
 
     if (friendListData) {
         friendList = friendListData.data.data;
         // console.log('friendList:', friendList)
+    }
+    if (groupListData) {
+        groupList = groupListData.data;
+        // console.log('groupList:', groupList)
     }
 
     if (requestListData) {
@@ -39,6 +48,9 @@ const Contact = () => {
 
     const handleAddNewContact = () => {
         setOpenModalAddNewContact(!openModalAddNewContact);
+    }
+    const handleCreateNewGroup = () => {
+        setOpenModalCreateNewGroup(!openModalCreateNewGroup);
     }
 
     const handleRefuseContact = async (userId) => {
@@ -64,10 +76,12 @@ const Contact = () => {
     const handleToggleMobile = () => {
         setIsMobile(!isMobile);
     }
-    // const detectIsCallingVideo = (flag) => {
-    //     setIsCallingVideo(flag);
-    // }
-
+    const handleDisplayFriendList = () => {
+        setIsFriend(true);
+    }
+    const handleDisplayGroupList = () => {
+        setIsFriend(false);
+    }
     content = (
         <div className="container-fluid">
             <div className="row flex-nowrap main-row">
@@ -103,38 +117,79 @@ const Contact = () => {
                             <div className="search-box">
                                 <input className="search-user" type="text" placeholder="Find user..." value="" />
                                 <div className="option-contact">
-                                    <button className="button" onClick={handleAddNewContact}><i className="fas fa-user-plus"></i></button>
+                                    <button className="button" ><i className="fas fa-search"></i></button>
                                     <ModalNewContact
                                         openModalAddNewContact={openModalAddNewContact}
                                         handleAddNewContact={handleAddNewContact}
                                     />
                                 </div>
                             </div>
-                            <div className="option-list">
+                            <div className="option-list contact">
+                                <div>
+                                    <button className="button" onClick={handleAddNewContact}><i className="fas fa-user-plus"></i></button>
+                                    <button className="button" onClick={handleCreateNewGroup}><i className="fas fa-users-cog"></i></button>
+                                </div>
+                                <div className="options">
+                                    <button className={isFriend ? "button button-person" : "button button-person non-active"}
+                                        onClick={() => handleDisplayFriendList()} ><i className="fas fa-user"></i></button>
+                                    <button className={isFriend ? "button button-group non-active" : "button button-group"}
+                                        onClick={() => handleDisplayGroupList()} ><i className="fas fa-users"></i></button>
+                                </div>
+                                <ModalCreateNewGroup
+                                    openModalCreateNewGroup={openModalCreateNewGroup}
+                                    handleCreateNewGroup={handleCreateNewGroup}
+                                />
                                 <span className="total-list">
-                                    Friend <span>({friendList.length})</span>
+                                    {isFriend
+                                        ? <span>Friend ({friendList.length})</span>
+                                        : <span>Group ({friendList.length})</span>
+                                    }
+
                                 </span>
 
                             </div>
-                            <div className="friend-list">
-                                {friendList && friendList.length > 0 &&
-                                    friendList.map(item => {
-                                        return (
-                                            <div className="friend-single" key={item.id}>
-                                                <div className="friend-single__avatar">
-                                                    <div className='avatar--frame'>
-                                                        <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                            {isFriend === true
+                                ?
+                                <div className="friend-list">
+                                    {friendList && friendList.length > 0 &&
+                                        friendList.map(item => {
+                                            return (
+                                                <div className="friend-single" key={item.id}>
+                                                    <div className="friend-single__avatar">
+                                                        <div className='avatar--frame'>
+                                                            <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="friend-single__info">
+                                                        <h5 className="info--name">{item.name}</h5>
+                                                        <p className="info--preview-message">{item.phone}</p>
                                                     </div>
                                                 </div>
-                                                <div className="friend-single__info">
-                                                    <h5 className="info--name">{item.name}</h5>
-                                                    <p className="info--preview-message">{item.phone}</p>
+                                            )
+                                        })
+                                    }
+                                </div>
+                                :
+                                <div className="friend-list">
+                                    {groupList && groupList.length > 0 &&
+                                        groupList.map(item => {
+                                            return (
+                                                <div className="friend-single" key={item.id}>
+                                                    <div className="friend-single__avatar">
+                                                        <div className='avatar--frame'>
+                                                            <img src={require('../../assets/img/group.png')} alt="avatar-friend" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="friend-single__info">
+                                                        <h5 className="info--name">{item.name}</h5>
+                                                        <p className="info--preview-message">{item.id}</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className={isMobile ? "col lg-7 col-md-7 main-side__right open" : "col lg-7 col-md-7 main-side__right"}>
@@ -194,7 +249,7 @@ const Contact = () => {
                 </div>
 
             </div>
-        </div>
+        </div >
         // <section className="users">
         //     <h1>Users List</h1>
         //     {console.log('check res: ', users.data, usersList.name)}

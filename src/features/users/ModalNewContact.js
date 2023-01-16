@@ -63,8 +63,8 @@ const ModalNewContact = (props) => {
                 isOpen={openModalAddNewContact}
                 toggle={handleAddNewContact}
             >
-                <ModalHeader toggle={handleAddNewContact}>Add new contact</ModalHeader>
-                <ModalBody className='body-container'>
+                <ModalHeader className='modal-add-new-contact' toggle={handleAddNewContact}>Add new contact</ModalHeader>
+                <ModalBody className='body-container add-new-contact-modal-body'>
                     <div className='find-user'>
                         <div className='find-user__phone'>
                             <label htmlFor='phone'></label>

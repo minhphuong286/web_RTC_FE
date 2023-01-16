@@ -308,7 +308,29 @@
             display        : flex;
             align-items    : center;
             justify-content: center;
-            border-bottom  : 1px solid;
+
+            // border-bottom  : 1px solid;
+            .button {
+                width        : 50%;
+                border-radius: 0;
+                border       : 1px solid #665c23;
+
+                &:hover {
+                    background-color: $primary;
+                }
+
+                &.non-active {
+                    background-color: #f2f2ec;
+                }
+
+                &.button-person {
+                    border-top-left-radius: 0.5rem;
+                }
+
+                &.button-group {
+                    border-top-right-radius: 0.5rem;
+                }
+            }
         }
 
         .friend-list {

@@ -1,0 +1,21 @@
+.modal-header.modal-create-new-group {
+    .modal-title {
+        text-align: center;
+    }
+}
+
+.modal-body.create-new-group-modal-body {
+    .find-user {
+        &__phone {
+            width: 100%;
+
+            input.type-content {
+                width: calc(100% - 58px);
+            }
+        }
+    }
+
+    .contact-list {
+        min-height: fit-content;
+    }
+}

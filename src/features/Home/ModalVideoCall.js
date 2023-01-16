@@ -192,7 +192,7 @@ const ModalVideoCall = (props) => {
                 isOpen={openModalVideoCall}
                 toggle={handleToggleModal}
             >
-                <ModalHeader>
+                <ModalHeader className='modal-video-call'>
                     {incomingUser ? incomingUser.name : 'Incoming call ...'}
                 </ModalHeader>
                 <ModalBody className='video-call-modal-body'>
