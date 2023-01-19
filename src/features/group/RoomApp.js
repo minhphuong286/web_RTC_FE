@@ -236,13 +236,13 @@ class RoomApp extends Component {
       {
         path: '/webrtc',
         query: {
-          room: this.props.roomId,
+          room: this.props.roomData.roomId,
         }
       }
     )
     if (this.socketGroup) {
       this.sendToPeer(
-        "reconnect-group", { roomId: window.location.pathname }
+        "reconnect-group", { roomId: this.props.roomData.roomId }
       )
     }
     this.socketGroup.on('connection-success-group', data => {
@@ -474,7 +474,7 @@ class RoomApp extends Component {
   }
 
   render() {
-    let { openModalVideoCallGroup, handleToggleModalGroup, roomId, userData } = this.props;
+    let { openModalVideoCallGroup, handleToggleModalGroup, roomData, userData } = this.props;
 
     if (this.state.disconnected) {
       console.log("render state:", this)
@@ -504,8 +504,8 @@ class RoomApp extends Component {
           toggle={handleToggleModalGroup}
           fullscreen={true}
         >
-          <ModalHeader>
-            Room {roomId}
+          <ModalHeader className='modal-room-app'>
+            {roomData.roomName}
           </ModalHeader>
           <ModalBody className='room-app-modal-body'>
             <Draggable style={{

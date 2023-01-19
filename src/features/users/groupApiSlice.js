@@ -34,20 +34,6 @@ export const groupApiSlice = apiSlice.injectEndpoints({
             query: (byId) => `/group-chat/${byId}/members`,
             // keepUnusedDataFor: 5,
         }),
-        // requestContact: builder.mutation({
-        //     query: (credentials) => ({
-        //         url: `/relationship/friend-request`,
-        //         method: 'POST',
-        //         body: { ...credentials }
-        //     })
-        // }),
-        // refuseOrAcceptContact: builder.mutation({
-        //     query: (credentials) => ({
-        //         url: `/relationship/friend-accept`,
-        //         method: 'POST',
-        //         body: { ...credentials }
-        //     })
-        // }),
     })
 })
 
@@ -57,7 +43,5 @@ export const {
     useDeleteGroupMemberMutation,
     useGetGroupListQuery,
     useGetGroupMemberListQuery
-    // useRequestContactMutation,
-    // useRefuseOrAcceptContactMutation
 } = groupApiSlice
 

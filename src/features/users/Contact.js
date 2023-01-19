@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom'
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { useSelector } from 'react-redux';
+
+import { selectDataFromDetect } from '../Home/videoSlice';
 
 import { useGetUsersQuery } from "./usersApiSlice";
 import { useGetFriendListQuery, useGetRequestListQuery } from "../friendList/friendListApiSlice";
@@ -14,6 +16,7 @@ import "./Contact.scss";
 import ModalNewContact from "./ModalNewContact";
 import ModalCreateNewGroup from "./ModalCreateNewGroup";
 import GroupMember from "./GroupMember";
+import RoomApp from "../group/RoomApp";
 
 const Contact = () => {
     const { data: friendListData } = useGetFriendListQuery();
@@ -25,6 +28,8 @@ const Contact = () => {
         { skip: roomId === '', refetchOnMountOrArgChange: true, }
     );
     const [refuseOrAcceptContact] = useRefuseOrAcceptContactMutation();
+
+    const userData = useSelector(selectDataFromDetect);
 
     const [openModalAddNewContact, setOpenModalAddNewContact] = useState(false);
     const [openModalAddNewGroupMember, setOpenModalAddNewGroupMember] = useState(false);
@@ -111,9 +116,14 @@ const Contact = () => {
         // let isCalling = true;
         // dispatch(detectIsCallingVideo({ name, isCalling }));
 
-        // setOpenModalVideoCallGroup(true);
+        setOpenModalVideoCallGroup(true);
         console.log('Name:', name)
     }
+    const handleToggleModalGroup = () => {
+        console.log("Fire toggle ModalGroup")
+        setOpenModalVideoCallGroup(!openModalVideoCallGroup);
+    }
+
     const updateGroupMemberList = (type, data) => {
         switch (type) {
             case "delete":
@@ -130,9 +140,8 @@ const Contact = () => {
             default:
                 return
         }
-
-
     }
+
     content = (
         <div className="container-fluid">
             <div className="row flex-nowrap main-row">
@@ -261,23 +270,6 @@ const Contact = () => {
                                         <div className="contact-container">
                                             <h3 className="contact-list-title">Request contact ({requestList.length})</h3>
                                             <div className="contact-list">
-                                                <div className="user-single" >
-                                                    <div className="user-single__avatar">
-                                                        <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
-                                                    </div>
-                                                    <div className="user-single__info">
-                                                        <h4 className="info--name">{`item.name`}</h4>
-                                                        <p className="info--preview-message">{`item.phone`} {`item.message ? item.message : 'No message'`}</p>
-                                                    </div>
-                                                    <div className="resolve">
-                                                        <input type="button" className="button" value="Accept"
-                                                            onClick={() => handleAcceptContact(`item.id`)}
-                                                        />
-                                                        <input type="button" className="button button-refuse" value="Refuse"
-                                                            onClick={() => handleRefuseContact(`item.id`)}
-                                                        />
-                                                    </div>
-                                                </div>
                                                 {requestList && requestList.length > 0 &&
                                                     requestList.map(item => {
                                                         return (
@@ -321,6 +313,14 @@ const Contact = () => {
                                                 <i className="fas fa-video"
                                                     onClick={() => handleOpenVideoCallGroup(currentGroup.name)}
                                                 ></i>
+                                                {openModalVideoCallGroup === true &&
+                                                    <RoomApp
+                                                        openModalVideoCallGroup={openModalVideoCallGroup}
+                                                        handleToggleModalGroup={handleToggleModalGroup}
+                                                        roomData={{ roomId: roomId, roomName: currentGroup.name }}
+                                                        userData={{ phone: userData.phone, name: userData.name }}
+                                                    />
+                                                }
                                             </div>
                                         </div>
                                         <div className="search-box">

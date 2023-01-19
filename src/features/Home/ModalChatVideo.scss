@@ -1,0 +1,71 @@
+@import '../../assets/scss/colors.scss';
+
+.modal-chat-video.modal-header {
+    .modal-title {
+        text-align: center;
+        width     : 100%;
+    }
+}
+
+.chat-video-modal-body {
+    height         : 72vh;
+    display        : flex;
+    justify-content: center;
+
+    video {
+        background-color: $black;
+    }
+
+    .large-frame {
+        position: absolute;
+        width   : calc(100% - 2rem);
+        height  : calc(100% - 2rem);
+
+    }
+
+    .small-frame {
+        position: absolute;
+        height  : 150px;
+        width   : 150px;
+        left    : 1rem;
+        border  : 1px solid $white;
+        z-index : 1;
+    }
+
+    .control-box {
+        position: absolute;
+        bottom  : 3rem;
+        padding : 5px;
+        gap     : 10px;
+
+        .control-button {
+            display         : flex;
+            justify-content : center;
+            align-items     : center;
+            border          : 1px solid transparentize($gray, 0);
+            border-radius   : 50%;
+            width           : 42px;
+            height          : 42px;
+            background-color: transparentize($gray, 0.5);
+
+            &:hover {
+                background-color: $primary-hover;
+                cursor          : pointer;
+            }
+
+            &.end-video {
+                background-color: $red2;
+
+                i.end-call-icon {
+                    transform: rotate(225deg);
+                    font-size: 20px;
+                    color    : $red1;
+                }
+
+                &:hover {
+                    background-color: $primary-hover;
+                }
+            }
+        }
+    }
+}

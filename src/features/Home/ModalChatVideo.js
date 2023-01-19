@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Fade } from 'reactstrap';
 import io from "socket.io-client";
 import Swal from 'sweetalert2';
-// import './ChatVideo.scss';
+import './ModalChatVideo.scss';
 import { useCallingVideoMutation, useRejectCallingVideoMutation } from './roomApiSlice';
 import { selectCallingDetect, selectCallingUser, selectDataToDetect } from './videoSlice';
 import { selectDataFromDetect, detectIsCallingVideo } from './videoSlice';
@@ -42,7 +42,7 @@ const ModalChatVideo = (props) => {
         offerToReceiveAudio: 1,
         offerToReceiveVideo: 1,
     }
-    const [mute, setMute] = useState(false);
+    const [mute, setMute] = useState(true);
     const [video, setVideo] = useState(true);
     const [successfulIceConnection, setSuccessfulIceConnection] = useState(false);
     const [setUpState, setSetUpState] = useState(false);
@@ -227,18 +227,20 @@ const ModalChatVideo = (props) => {
                 isOpen={openModalVideoCall}
                 toggle={handleToggleModal}
             >
-                <ModalHeader>
+                <ModalHeader className='modal-chat-video'>
                     {currentUser.name ? `${currentUser.name}` : ``}
                 </ModalHeader>
                 <ModalBody className='chat-video-modal-body'>
                     <video
                         className={
-                            successfulIceConnection === true ? 'small-frame local-video' : 'large-frame init'
+                            // successfulIceConnection === true ? 'small-frame local-video' : 'large-frame init'
+                            successfulIceConnection === true ? 'small-frame' : 'small-frame'
                         }
                         ref={localVideoRef} autoPlay></video>
                     <video
                         className={
-                            successfulIceConnection === true ? 'large-frame remote-video' : 'small-frame remote-init'
+                            // successfulIceConnection === true ? 'large-frame remote-video' : 'small-frame remote-init'
+                            successfulIceConnection === true ? 'large-frame' : 'large-frame'
                         }
                         ref={remoteVideoRef} autoPlay></video>
                     <div className='control-box d-flex align-items-center'>

@@ -1,9 +1,9 @@
 @import '../../assets/scss/colors.scss';
 
-.modal-header {
-    .modal-title.modal-video-call {
-        width       : 100%;
-        padding-left: 30px;
+.modal-header.modal-video-call {
+    .modal-title {
+        width     : 100%;
+        text-align: center;
     }
 }
 

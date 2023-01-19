@@ -13,8 +13,7 @@ import ModalChatVideo from './ModalChatVideo';
 import { detectIsCallingVideo } from './videoSlice';
 import { selectCallingDetect, selectCallingUser, selectDataFromDetect } from './videoSlice';
 
-let pc_config = null;
-pc_config = {
+const pc_config = {
     "iceServers": [
         {
             urls: 'stun:stun.l.google.com:19302'
@@ -38,7 +37,7 @@ const Chat = (props) => {
 
     const typeTextRef = useRef();
 
-    let userData = useSelector(selectDataFromDetect);;
+    let userData = useSelector(selectDataFromDetect);
     const [typeText, setTypeText] = useState('');
     const [messages, setMessages] = useState([]);
     const [sendChannels, setSendChannels] = useState([]);
@@ -281,7 +280,7 @@ const Chat = (props) => {
                 <RoomApp
                     openModalVideoCallGroup={openModalVideoCallGroup}
                     handleToggleModalGroup={handleToggleModalGroup}
-                    roomId={roomId}
+                    roomData={{ roomId: roomId, roomName: roomId }}
                     userData={{ phone: userData.phone, name: userData.name }}
                 />
             }
@@ -312,9 +311,9 @@ const Chat = (props) => {
                         <i className=
                             {callingDetect && callingUserName ?
                                 currentUser.name === callingUserName ?
-                                    "fas fa-object-group calling"
-                                    : "fas fa-object-group unallow"
-                                : "fas fa-object-group"
+                                    "fas fa-object-group calling d-none"
+                                    : "fas fa-object-group unallow d-none"
+                                : "fas fa-object-group d-none"
                             }
 
                             onClick={() => handleOpenVideoCallGroup(currentUser.name)}

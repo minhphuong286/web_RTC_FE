@@ -36,7 +36,7 @@ const ModalVideoCall = (props) => {
     const remoteVideoRef = useRef();
     // const [remoted, setRemoted] = useState()
     // const [candidate, setCandidate] = useState();
-    const [mute, setMute] = useState(false);
+    const [mute, setMute] = useState(true);
     const [video, setVideo] = useState(true);
     const [successfulIceConnection, setSuccessfulIceConnection] = useState(false);
     const [acceptCalling, setAcceptCalling] = useState(false);
