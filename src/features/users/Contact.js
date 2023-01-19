@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import { Link, NavLink } from "react-router-dom";
 
 import { useGetUsersQuery } from "./usersApiSlice";
 import { useGetFriendListQuery, useGetRequestListQuery } from "../friendList/friendListApiSlice";
 import { useRefuseOrAcceptContactMutation } from "./contactApiSlice";
-import { useGetGroupListQuery } from "../users/groupApiSlice";
+import { useGetGroupListQuery, useGetGroupMemberListQuery } from "../users/groupApiSlice";
 
 import '../../assets/scss/common.scss';
 import "../Home/Welcome.scss";
@@ -13,19 +13,30 @@ import "./Contact.scss";
 
 import ModalNewContact from "./ModalNewContact";
 import ModalCreateNewGroup from "./ModalCreateNewGroup";
+import GroupMember from "./GroupMember";
 
 const Contact = () => {
     const { data: friendListData } = useGetFriendListQuery();
     const { data: requestListData } = useGetRequestListQuery();
     const { data: groupListData } = useGetGroupListQuery();
+    const [roomId, setRoomId] = useState('');
+    const { data: memberListData } = useGetGroupMemberListQuery(
+        roomId,
+        { skip: roomId === '', refetchOnMountOrArgChange: true, }
+    );
     const [refuseOrAcceptContact] = useRefuseOrAcceptContactMutation();
 
     const [openModalAddNewContact, setOpenModalAddNewContact] = useState(false);
+    const [openModalAddNewGroupMember, setOpenModalAddNewGroupMember] = useState(false);
     const [openModalCreateNewGroup, setOpenModalCreateNewGroup] = useState(false);
+    const [openModalVideoCallGroup, setOpenModalVideoCallGroup] = useState(false);
     const [actionId, setActionId] = useState('');
     const [isMobile, setIsMobile] = useState(false);
     const [isFriend, setIsFriend] = useState(true);
     const [isCallingVideo, setIsCallingVideo] = useState(false);
+    const [currentGroup, setCurrentGroup] = useState('');
+    const [memberCurrentGroupList, setMemberCurrentGroupList] = useState([]);
+
 
     let content;
     let friendList = [];
@@ -34,20 +45,27 @@ const Contact = () => {
 
     if (friendListData) {
         friendList = friendListData.data.data;
-        // console.log('friendList:', friendList)
     }
     if (groupListData) {
         groupList = groupListData.data;
-        // console.log('groupList:', groupList)
     }
+
+
+    useEffect(() => {
+        if (memberListData && memberListData.data.length > 0) {
+            setMemberCurrentGroupList(memberListData.data);
+        }
+    }, [memberListData])
 
     if (requestListData) {
         requestList = requestListData.data.data;
-        // console.log('requestList:', requestList)
     }
 
     const handleAddNewContact = () => {
         setOpenModalAddNewContact(!openModalAddNewContact);
+    }
+    const handleAddNewGroupMember = () => {
+        setOpenModalAddNewGroupMember(!openModalAddNewGroupMember);
     }
     const handleCreateNewGroup = () => {
         setOpenModalCreateNewGroup(!openModalCreateNewGroup);
@@ -81,6 +99,39 @@ const Contact = () => {
     }
     const handleDisplayGroupList = () => {
         setIsFriend(false);
+    }
+    const handleViewGroup = (currentGroupData) => {
+        if (currentGroupData.name && currentGroupData.id) {
+            setCurrentGroup(currentGroupData);
+            setRoomId(currentGroupData.id);
+        }
+    }
+    const handleOpenVideoCallGroup = (name) => {
+        // console.log('openVideo:', openVideo)
+        // let isCalling = true;
+        // dispatch(detectIsCallingVideo({ name, isCalling }));
+
+        // setOpenModalVideoCallGroup(true);
+        console.log('Name:', name)
+    }
+    const updateGroupMemberList = (type, data) => {
+        switch (type) {
+            case "delete":
+                if (memberCurrentGroupList.length > 0 && data) {
+                    const memberList = memberCurrentGroupList.filter(item => item.id !== data);
+                    setMemberCurrentGroupList(memberList);
+                }
+                break
+            case "add":
+                if (memberCurrentGroupList.length > 0 && data) {
+                    setMemberCurrentGroupList((prevState) => [...prevState, data]);
+                }
+                break
+            default:
+                return
+        }
+
+
     }
     content = (
         <div className="container-fluid">
@@ -118,10 +169,14 @@ const Contact = () => {
                                 <input className="search-user" type="text" placeholder="Find user..." value="" />
                                 <div className="option-contact">
                                     <button className="button" ><i className="fas fa-search"></i></button>
-                                    <ModalNewContact
-                                        openModalAddNewContact={openModalAddNewContact}
-                                        handleAddNewContact={handleAddNewContact}
-                                    />
+                                    {
+                                        openModalAddNewContact &&
+                                        <ModalNewContact
+                                            openModalAddNewContact={openModalAddNewContact}
+                                            handleAddNewContact={handleAddNewContact}
+                                            addNewGroupMember={false}
+                                        />
+                                    }
                                 </div>
                             </div>
                             <div className="option-list contact">
@@ -135,10 +190,13 @@ const Contact = () => {
                                     <button className={isFriend ? "button button-group non-active" : "button button-group"}
                                         onClick={() => handleDisplayGroupList()} ><i className="fas fa-users"></i></button>
                                 </div>
-                                <ModalCreateNewGroup
-                                    openModalCreateNewGroup={openModalCreateNewGroup}
-                                    handleCreateNewGroup={handleCreateNewGroup}
-                                />
+                                {
+                                    openModalCreateNewGroup &&
+                                    <ModalCreateNewGroup
+                                        openModalCreateNewGroup={openModalCreateNewGroup}
+                                        handleCreateNewGroup={handleCreateNewGroup}
+                                    />
+                                }
                                 <span className="total-list">
                                     {isFriend
                                         ? <span>Friend ({friendList.length})</span>
@@ -174,7 +232,9 @@ const Contact = () => {
                                     {groupList && groupList.length > 0 &&
                                         groupList.map(item => {
                                             return (
-                                                <div className="friend-single" key={item.id}>
+                                                <div className={item.id === currentGroup.id ? "friend-single active" : "friend-single"} key={item.id}
+                                                    onClick={() => handleViewGroup({ name: item.name, id: item.id })}
+                                                >
                                                     <div className="friend-single__avatar">
                                                         <div className='avatar--frame'>
                                                             <img src={require('../../assets/img/group.png')} alt="avatar-friend" />
@@ -194,68 +254,106 @@ const Contact = () => {
                     </div>
                     <div className={isMobile ? "col lg-7 col-md-7 main-side__right open" : "col lg-7 col-md-7 main-side__right"}>
                         <div className="chat-container">
-                            {/* <div className="option" */}
-                            <div className="row">
-                                <div className="col-lg-12 col-md-12">
-                                    <div className="contact-container">
-                                        <h3 className="contact-list-title">Request contact ({requestList.length})</h3>
-                                        <div className="contact-list">
-                                            <div className="user-single" >
-                                                <div className="user-single__avatar">
-                                                    <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+                            {isFriend === true
+                                ?
+                                <div className="row">
+                                    <div className="col-lg-12 col-md-12">
+                                        <div className="contact-container">
+                                            <h3 className="contact-list-title">Request contact ({requestList.length})</h3>
+                                            <div className="contact-list">
+                                                <div className="user-single" >
+                                                    <div className="user-single__avatar">
+                                                        <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+                                                    </div>
+                                                    <div className="user-single__info">
+                                                        <h4 className="info--name">{`item.name`}</h4>
+                                                        <p className="info--preview-message">{`item.phone`} {`item.message ? item.message : 'No message'`}</p>
+                                                    </div>
+                                                    <div className="resolve">
+                                                        <input type="button" className="button" value="Accept"
+                                                            onClick={() => handleAcceptContact(`item.id`)}
+                                                        />
+                                                        <input type="button" className="button button-refuse" value="Refuse"
+                                                            onClick={() => handleRefuseContact(`item.id`)}
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div className="user-single__info">
-                                                    <h4 className="info--name">{`item.name`}</h4>
-                                                    <p className="info--preview-message">{`item.phone`} {`item.message ? item.message : 'No message'`}</p>
-                                                </div>
-                                                <div className="resolve">
-                                                    <input type="button" className="button" value="Accept"
-                                                        onClick={() => handleAcceptContact(`item.id`)}
-                                                    />
-                                                    <input type="button" className="button button-refuse" value="Refuse"
-                                                        onClick={() => handleRefuseContact(`item.id`)}
-                                                    />
-                                                </div>
+                                                {requestList && requestList.length > 0 &&
+                                                    requestList.map(item => {
+                                                        return (
+                                                            <div className="user-single" key={item.id}>
+                                                                <div className="user-single__avatar">
+                                                                    <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+                                                                </div>
+                                                                <div className="user-single__info">
+                                                                    <h4 className="info--name">{item.name}</h4>
+                                                                    <p className="info--preview-message">{item.phone} {item.message ? item.message : 'No message'}</p>
+                                                                </div>
+                                                                <div className="resolve">
+                                                                    <input type="button" className="button button-refuse" value="Refuse"
+                                                                        onClick={() => handleRefuseContact(item.id)}
+                                                                    />
+                                                                    <input type="button" className="button" value="Accept"
+                                                                        onClick={() => handleAcceptContact(item.id)}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
                                             </div>
-                                            {requestList && requestList.length > 0 &&
-                                                requestList.map(item => {
-                                                    return (
-                                                        <div className="user-single" key={item.id}>
-                                                            <div className="user-single__avatar">
-                                                                <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
-                                                            </div>
-                                                            <div className="user-single__info">
-                                                                <h4 className="info--name">{item.name}</h4>
-                                                                <p className="info--preview-message">{item.phone} {item.message ? item.message : 'No message'}</p>
-                                                            </div>
-                                                            <div className="resolve">
-                                                                <input type="button" className="button button-refuse" value="Refuse"
-                                                                    onClick={() => handleRefuseContact(item.id)}
-                                                                />
-                                                                <input type="button" className="button" value="Accept"
-                                                                    onClick={() => handleAcceptContact(item.id)}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })
-                                            }
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                :
+                                currentGroup
+                                    ? <>
+                                        < div className="chat__friend">
+                                            <div className="chat__friend--avatar">
+                                                <img src={require('../../assets/img/group.png')} alt="avatar-group" />
+                                            </div>
+                                            <div className="chat__friend--info">
+                                                <h4 className="info--name">{currentGroup.name}</h4>
+                                                {/* <p className="info--state">Online </p> */}
+                                            </div>
+                                            <div className='chat__friend--video'>
+                                                <i className="fas fa-user-plus" onClick={handleAddNewGroupMember}></i>
+                                                <i className="fas fa-video"
+                                                    onClick={() => handleOpenVideoCallGroup(currentGroup.name)}
+                                                ></i>
+                                            </div>
+                                        </div>
+                                        <div className="search-box">
+                                            <input className="search-user" type="text" placeholder="Find member..." value="" />
+                                            <div className="option-contact">
+                                                <button className="button" ><i className="fas fa-search"></i></button>
+                                                {
+                                                    openModalAddNewGroupMember &&
+                                                    <ModalNewContact
+                                                        openModalAddNewContact={openModalAddNewGroupMember}
+                                                        handleAddNewContact={handleAddNewGroupMember}
+                                                        addNewGroupMember={true}
+                                                        roomId={currentGroup.id}
+                                                        updateGroupMemberList={updateGroupMemberList}
+                                                    />
+                                                }
+                                            </div>
+                                        </div>
+                                        <GroupMember
+                                            memberCurrentGroupList={memberCurrentGroupList}
+                                            roomId={roomId}
+                                            updateGroupMemberList={updateGroupMemberList}
+                                        />
+                                    </>
+                                    :
+                                    <></>
+                            }
                         </div>
                     </div>
                 </div>
 
-            </div>
+            </div >
         </div >
-        // <section className="users">
-        //     <h1>Users List</h1>
-        //     {console.log('check res: ', users.data, usersList.name)}
-        //     {usersList.name}
-        //     <Link to="/welcome">Back to Welcome</Link>
-        // </section>
     )
 
     return content

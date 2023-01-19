@@ -213,7 +213,7 @@ const Welcome = () => {
                                         userData ?
                                             <p>Welcome to <span>T29 WebRTC</span></p>
                                             :
-                                            `Welcome to RTC`
+                                            `Welcome to T29 WebRTC`
                                     }
                                 </h1>
                                 <h3 className='welcome__username'>Hi, {userData ? userData.name : ""}</h3>

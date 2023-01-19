@@ -2,18 +2,25 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import './ModalNewContact.scss';
 import { useFindUserMutation, useRequestContactMutation } from './contactApiSlice';
-
+import { useAddGroupMemberMutation } from './groupApiSlice';
+import Swal from 'sweetalert2';
 
 const ModalNewContact = (props) => {
 
     const userPhoneRef = useRef()
-    const { openModalAddNewContact, toggle, handleAddNewContact, modal } = props;
+    const { openModalAddNewContact,
+        addNewGroupMember,
+        handleAddNewContact,
+        updateGroupMemberList,
+        roomId
+    } = props;
 
     const [userPhone, setUserPhone] = useState('');
     const [userData, setUserData] = useState('');
 
     const [findUser] = useFindUserMutation();
     const [requestContact] = useRequestContactMutation();
+    const [addGroupMember] = useAddGroupMemberMutation();
 
 
     const handleFindUser = async (e) => {
@@ -21,20 +28,60 @@ const ModalNewContact = (props) => {
             let search = userPhone
             let dataFinded = await findUser({ search });
             setUserData(dataFinded.data.data[0])
-            // console.log('userData: ', dataFinded.data.data[0])
-            // setUserPhone('')
         }
     }
     const handleContact = async () => {
         if (userData) {
             // console.log('userId:', userData.id)
-            let res = await requestContact({
+            await requestContact({
                 active: '1',
                 user_two: `${userData.id}`
+            }).then(res => {
+                if (res.data.message === "Success") {
+                    Swal.fire({
+                        title: 'Added!',
+                        text: `has sent the contact`,
+                        icon: 'success',
+                    })
+                    handleAddNewContact();
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: `Something went wrong, please try again later!`,
+                        icon: 'error',
+                    })
+                }
             })
-            // console.log('Res:', res)
         }
 
+    }
+
+    const handleAddMemberGroup = async () => {
+        if (userData && roomId) {
+            await addGroupMember({ presence_room_id: `${roomId}`, phone: userData.phone })
+                .then(res => {
+                    if (res.data.message === "Success") {
+                        Swal.fire({
+                            title: 'Added!',
+                            text: `has added new member`,
+                            icon: 'success',
+                        })
+                        const userData = res.data.data.user;
+                        updateGroupMemberList("add", {
+                            name: userData.name,
+                            phone: userData.phone,
+                            id: userData.id
+                        });
+                        handleAddNewContact();
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: `Something went wrong, please try again later!`,
+                            icon: 'error',
+                        })
+                    }
+                })
+        }
     }
     useEffect(() => {
         // if (count === 0) {
@@ -57,13 +104,14 @@ const ModalNewContact = (props) => {
     return (
         <div>
             {console.log('Props AddNewContact:', props)}
+            {console.log('Props AddNewContact, userDate:', userData)}
             <Modal
                 backdrop="static"
                 centered="true"
                 isOpen={openModalAddNewContact}
                 toggle={handleAddNewContact}
             >
-                <ModalHeader className='modal-add-new-contact' toggle={handleAddNewContact}>Add new contact</ModalHeader>
+                <ModalHeader className='modal-add-new-contact' toggle={handleAddNewContact}>{addNewGroupMember === false ? "Add new contact" : "Add new group member"}</ModalHeader>
                 <ModalBody className='body-container add-new-contact-modal-body'>
                     <div className='find-user'>
                         <div className='find-user__phone'>
@@ -96,24 +144,21 @@ const ModalNewContact = (props) => {
 
                             </div>
                         }
-                        {userData &&
-                            <input type="button" className="button" value="Contact"
+                        {userData
+                            &&
+                            <input type="button" className={addNewGroupMember === false ? "button" : "button d-none"} value="Contact"
                                 onClick={handleContact}
+                            />
+                        }
+                        {userData
+                            &&
+                            <input type="button" className={addNewGroupMember === true ? "button" : "button d-none"} value="Add"
+                                onClick={() => handleAddMemberGroup()}
                             />
                         }
                     </div>
 
                 </ModalBody>
-                {/* <ModalFooter>
-                    {userData &&
-                        <input type="button" className="button" value="Contact"
-                            onClick={handleContact}
-                        />
-                    }
-                    <input className='button button-cancel' type="button" onClick={handleAddNewContact}
-                        value="Cancel"
-                    />
-                </ModalFooter> */}
             </Modal>
         </div >
     );

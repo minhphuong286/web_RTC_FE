@@ -1,0 +1,63 @@
+@import '../../assets/scss/colors.scss';
+
+.list__place {
+    overflow-y: auto;
+
+    padding: 20px;
+    height : calc(100% - 190px);
+    display: flex;
+    gap    : 1rem;
+
+    .container-single {
+        background-color: #93932e1c;
+        width           : 50%;
+        padding         : 1rem;
+        border-radius   : 0.5rem;
+        height          : fit-content;
+        display         : flex;
+        flex-direction  : column;
+        align-items     : center;
+        border          : 1px solid;
+        position        : relative;
+
+        .button-delete {
+            position : absolute;
+            right    : 1rem;
+            font-size: 20px;
+            opacity  : 0.3;
+            color    : #9e9a24;
+            cursor   : pointer;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        .is-admin {
+            position: absolute;
+            left    : 1rem;
+            color   : #9e9a24;
+        }
+
+        &__avatar {
+            width : 100px;
+            height: 100px;
+
+            img {
+                width        : 100%;
+                height       : 100%;
+                border-radius: 50%;
+            }
+        }
+
+        &__info {
+            padding   : 5px 0;
+            text-align: center;
+
+            .info--name {
+                margin-bottom: 5px;
+                font-weight  : 500;
+            }
+        }
+    }
+}

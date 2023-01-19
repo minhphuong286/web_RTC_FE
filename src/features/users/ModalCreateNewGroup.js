@@ -61,16 +61,6 @@ const ModalNewContact = (props) => {
                     </div>
 
                 </ModalBody>
-                {/* <ModalFooter>
-                    {userData &&
-                        <input type="button" className="button" value="Contact"
-                            onClick={handleContact}
-                        />
-                    }
-                    <input className='button button-cancel' type="button" onClick={handleCreateNewGroup}
-                        value="Cancel"
-                    />
-                </ModalFooter> */}
             </Modal>
         </div >
     );
