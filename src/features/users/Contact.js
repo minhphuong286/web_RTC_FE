@@ -21,7 +21,7 @@ import RoomApp from "../group/RoomApp";
 const Contact = () => {
     const { data: friendListData } = useGetFriendListQuery();
     const { data: requestListData } = useGetRequestListQuery();
-    const { data: groupListData } = useGetGroupListQuery();
+    const { data: groupListData } = useGetGroupListQuery({ refetchOnMountOrArgChange: true });
     const [roomId, setRoomId] = useState('');
     const { data: memberListData } = useGetGroupMemberListQuery(
         roomId,
@@ -209,7 +209,7 @@ const Contact = () => {
                                 <span className="total-list">
                                     {isFriend
                                         ? <span>Friend ({friendList.length})</span>
-                                        : <span>Group ({friendList.length})</span>
+                                        : <span>Group ({groupList.length})</span>
                                     }
 
                                 </span>
@@ -330,8 +330,8 @@ const Contact = () => {
                                                 {
                                                     openModalAddNewGroupMember &&
                                                     <ModalNewContact
-                                                        openModalAddNewContact={openModalAddNewGroupMember}
-                                                        handleAddNewContact={handleAddNewGroupMember}
+                                                        openModalAddNewGroupMember={openModalAddNewGroupMember}
+                                                        handleAddNewGroupMember={handleAddNewGroupMember}
                                                         addNewGroupMember={true}
                                                         roomId={currentGroup.id}
                                                         updateGroupMemberList={updateGroupMemberList}

@@ -27,7 +27,6 @@
     "socket.io-client": "^4.5.0",
     "sweetalert2": "^11.6.16"
   },
-  "proxy": "http://localhost:8080",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

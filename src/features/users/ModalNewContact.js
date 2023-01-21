@@ -8,9 +8,12 @@ import Swal from 'sweetalert2';
 const ModalNewContact = (props) => {
 
     const userPhoneRef = useRef()
-    const { openModalAddNewContact,
-        addNewGroupMember,
+    const {
+        openModalAddNewContact,
         handleAddNewContact,
+        openModalAddNewGroupMember,
+        handleAddNewGroupMember,
+        addNewGroupMember,
         updateGroupMemberList,
         roomId
     } = props;
@@ -72,7 +75,7 @@ const ModalNewContact = (props) => {
                             phone: userData.phone,
                             id: userData.id
                         });
-                        handleAddNewContact();
+                        handleAddNewGroupMember();
                     } else {
                         Swal.fire({
                             title: 'Error!',
@@ -108,8 +111,8 @@ const ModalNewContact = (props) => {
             <Modal
                 backdrop="static"
                 centered="true"
-                isOpen={openModalAddNewContact}
-                toggle={handleAddNewContact}
+                isOpen={addNewGroupMember ? openModalAddNewGroupMember : openModalAddNewContact}
+                toggle={addNewGroupMember ? handleAddNewGroupMember : handleAddNewContact}
             >
                 <ModalHeader className='modal-add-new-contact' toggle={handleAddNewContact}>{addNewGroupMember === false ? "Add new contact" : "Add new group member"}</ModalHeader>
                 <ModalBody className='body-container add-new-contact-modal-body'>
