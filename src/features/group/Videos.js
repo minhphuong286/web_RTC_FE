@@ -19,17 +19,28 @@ class Videos extends Component {
         const _videoTrack = rVideo.stream.getTracks().filter(track => track.kind === 'video')
 
         let video = _videoTrack && (
-          <Video
-            videoStream={rVideo.stream}
-            frameStyle={{ width: 120, float: 'left', padding: '0 3px' }}
-            videoStyles={{
-              cursor: 'pointer',
-              objectFit: 'cover',
-              borderRadius: 3,
-              width: '100%',
-            }}
-            autoplay
-          />
+          <>
+            <Video
+              videoStream={rVideo.stream}
+              frameStyle={{ width: 120, float: 'left', padding: '0 3px', display: 'flex', flexDirection: 'column' }}
+              videoStyles={{
+                cursor: 'pointer',
+                objectFit: 'cover',
+                borderRadius: 3,
+                width: '100%',
+              }}
+              autoplay
+            />
+            <span style={{
+              color: 'yellow',
+              textAlign: 'center',
+              fontSize: '13px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              paddingLeft: '5px'
+            }}>{ }</span>
+          </>
         ) || <div></div>
 
         return (
