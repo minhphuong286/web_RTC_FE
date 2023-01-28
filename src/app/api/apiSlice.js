@@ -2,8 +2,11 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { setCredentials, logOut } from '../../features/auth/authSlice'
 
 const baseQuery = fetchBaseQuery({
-    // baseUrl: 'http://webrtc-project-2-video-call.herokuapp.com',
-    baseUrl: 'http://127.0.0.1:8000',
+    baseUrl: 'https://webrtc-project-2-video-call.herokuapp.com/?fbclid=IwAR0Gebr9yu_TBWjHxdIStwM59DVcogy-VRMl3WJTozs2kY8QIwl1_quGM64',
+    // baseUrl: 'https://t29webrtc.000webhostapp.com/',
+    // baseUrl: 'https://e9d4-14-165-81-124.ap.ngrok.io',
+
+    // baseUrl: 'http://127.0.0.1:8000',
     // credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = getState().auth.token
