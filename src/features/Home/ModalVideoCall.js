@@ -159,8 +159,10 @@ const ModalVideoCall = (props) => {
             // setAcceptCalling(true);
         }
         dispatch(detectIsCallingVideo({ name: "", isCalling: false }));
-        sendToPeer('close', { roomId: dataSDP.roomId, dataFrom: dataSDP.dataFrom.phone, dataTo: dataSDP.dataTo })
-        handleToggleModal();
+        sendToPeer('close', { roomId: dataSDP.roomId, dataFrom: dataSDP.dataFrom.phone, dataTo: dataSDP.dataTo });
+        setTimeout(() => {
+            handleToggleModal();
+        }, 500);
     }
     const soundPlayer = (start) => {
         console.log('start:', start)

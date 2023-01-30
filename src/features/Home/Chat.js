@@ -7,7 +7,6 @@ import RoomApp from '../group/RoomApp';
 
 import './Chat.scss';
 import ChatFrame from './ChatFrame';
-import ChatVideo from './ChatVideo';
 import ModalChatVideo from './ModalChatVideo';
 
 import { detectIsCallingVideo } from './videoSlice';
@@ -43,7 +42,7 @@ const Chat = (props) => {
     const [sendChannels, setSendChannels] = useState([]);
     const [initPeerconnection, setInitPeerconnection] = useState(false);
     // const [peerConnections, setPeerConnections] = useState({});
-    const [openModalVideoCall, setOpenModalVideoCall] = useState(false);
+    const [openModalChatVideo, setOpenModalChatVideo] = useState(false);
     const [openModalVideoCallGroup, setOpenModalVideoCallGroup] = useState(false);
     const [sdpConstraints, setSdpConstraints] = useState({
         offerToReceiveAudio: 1,
@@ -65,9 +64,6 @@ const Chat = (props) => {
 
     useEffect(() => {
         if (socket) {
-            console.log(
-                "RENDER++++++++++"
-            )
             sendToPeer('onliner_chat', { roomId, localId: socket.id, dataFrom: userData.phone, dataTo: currentUser.phone })
         };
     }, [userData])
@@ -201,11 +197,11 @@ const Chat = (props) => {
     const sendToPeer = (eventType, payload) => {
         socket.emit(eventType, payload)
     }
-    const handleOpenVideoCall = (name) => {
+    const handleOpenChatVideo = (name) => {
         // console.log('openVideo:', openVideo)
         let isCalling = true;
         dispatch(detectIsCallingVideo({ name, isCalling }));
-        setOpenModalVideoCall(true);
+        setOpenModalChatVideo(true);
         // console.log('Name:', name)
     }
     const handleOpenVideoCallGroup = (name) => {
@@ -223,8 +219,8 @@ const Chat = (props) => {
         // console.log('Name:', name)
     }
 
-    const handleToggleModal = () => {
-        setOpenModalVideoCall(!openModalVideoCall);
+    const handleToggleModalChat = () => {
+        setOpenModalChatVideo(!openModalChatVideo);
     }
 
     const handleToggleModalGroup = () => {
@@ -305,7 +301,7 @@ const Chat = (props) => {
                                 : "fas fa-video"
                             }
 
-                            onClick={() => handleOpenVideoCall(currentUser.name)}
+                            onClick={() => handleOpenChatVideo(currentUser.name)}
                         ></i>
                         {/* <NavLink to={`/${roomId}`}> */}
                         <i className=
@@ -338,8 +334,8 @@ const Chat = (props) => {
                         //     currentUser={currentUser}
                         // />
                         <ModalChatVideo
-                            openModalVideoCall={openModalVideoCall}
-                            handleToggleModal={handleToggleModal}
+                            openModalChatVideo={openModalChatVideo}
+                            handleToggleModalChat={handleToggleModalChat}
                             roomId={roomId}
                             currentUser={currentUser}
                         />

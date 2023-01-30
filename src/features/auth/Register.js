@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { useDispatch } from 'react-redux'
 import { setCredentials } from './authSlice'
-import { useLoginMutation } from './authApiSlice'
+import { useRegisterMutation } from './authApiSlice'
 import { Link } from "react-router-dom";
 import axios from '../../axios';
 
@@ -27,7 +27,7 @@ const Register = () => {
 
     const navigate = useNavigate()
 
-    const [register, { isLoading }] = useLoginMutation()
+    const [register, { isLoading }] = useRegisterMutation()
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -63,7 +63,7 @@ const Register = () => {
             setUserName('')
             // console.log('OK');
             // <Link to="/welcome">Back to Welcome</Link>
-            navigate('/welcome')
+            navigate('/message')
         } catch (err) {
             // console.log('check Register:', err)
             if (!err?.originalStatus) {

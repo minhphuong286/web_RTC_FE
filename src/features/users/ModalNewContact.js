@@ -14,7 +14,7 @@ const ModalNewContact = (props) => {
         openModalAddNewGroupMember,
         handleAddNewGroupMember,
         addNewGroupMember,
-        updateGroupMemberList,
+        updateContact,
         roomId
     } = props;
 
@@ -70,7 +70,7 @@ const ModalNewContact = (props) => {
                             icon: 'success',
                         })
                         const userData = res.data.data.user;
-                        updateGroupMemberList("add", {
+                        updateContact("add-member", {
                             name: userData.name,
                             phone: userData.phone,
                             id: userData.id

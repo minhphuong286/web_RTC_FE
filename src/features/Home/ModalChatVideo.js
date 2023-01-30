@@ -26,8 +26,8 @@ pc_config = {
 
 const ModalChatVideo = (props) => {
     const {
-        openModalVideoCall,
-        handleToggleModal,
+        openModalChatVideo,
+        handleToggleModalChat,
         roomId,
         currentUser,
     } = props;
@@ -71,7 +71,7 @@ const ModalChatVideo = (props) => {
             if (data.code && data.message) {
                 console.log("onAnswer: code-", data.code, "message:", data.message);
                 if (data.dataFrom === userData.phone) {
-                    handleToggleModal();
+                    handleToggleModalChat();
                     Swal.fire({
                         title: 'Busy!',
                         text: `${currentUser.name} is in a call, please try again later.`,
@@ -99,7 +99,7 @@ const ModalChatVideo = (props) => {
             }
             dispatch(detectIsCallingVideo({ name: "", isCalling: false }));
             setTimeout(() => {
-                handleToggleModal();
+                handleToggleModalChat();
                 Swal.fire({
                     title: '',
                     text: `${currentUser.name} has been stopped the call.`,
@@ -214,8 +214,10 @@ const ModalChatVideo = (props) => {
         console.log('Stop call: ', pc);
         pc.current.close();
         dispatch(detectIsCallingVideo({ name: "", isCalling: false }));
-        sendToPeer('close', { roomId, dataFrom: userData.phone, dataTo: currentUser.phone })
-        handleToggleModal();
+        sendToPeer('close', { roomId, dataFrom: userData.phone, dataTo: currentUser.phone });
+        setTimeout(() => {
+            handleToggleModalChat();
+        }, 500);
     }
     return (
         <div>
@@ -224,8 +226,8 @@ const ModalChatVideo = (props) => {
             <Modal
                 size="lg"
                 backdrop="static"
-                isOpen={openModalVideoCall}
-                toggle={handleToggleModal}
+                isOpen={openModalChatVideo}
+                toggle={handleToggleModalChat}
             >
                 <ModalHeader className='modal-chat-video'>
                     {currentUser.name ? `${currentUser.name}` : ``}

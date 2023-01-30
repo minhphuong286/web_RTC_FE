@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector } from 'react-redux';
+import Swal from "sweetalert2";
 
 import { selectDataFromDetect } from '../Home/videoSlice';
 
 import { useGetUsersQuery } from "./usersApiSlice";
 import { useGetFriendListQuery, useGetRequestListQuery } from "../friendList/friendListApiSlice";
 import { useRefuseOrAcceptContactMutation } from "./contactApiSlice";
-import { useGetGroupListQuery, useGetGroupMemberListQuery } from "../users/groupApiSlice";
+import { useGetGroupListQuery, useGetGroupMemberListQuery, useDeleteGroupMutation } from "../users/groupApiSlice";
 
 import '../../assets/scss/common.scss';
 import "../Home/Welcome.scss";
@@ -28,6 +29,7 @@ const Contact = () => {
         { skip: roomId === '', refetchOnMountOrArgChange: true, }
     );
     const [refuseOrAcceptContact] = useRefuseOrAcceptContactMutation();
+    const [deleteGroup] = useDeleteGroupMutation();
 
     const userData = useSelector(selectDataFromDetect);
 
@@ -39,22 +41,24 @@ const Contact = () => {
     const [isMobile, setIsMobile] = useState(false);
     const [isFriend, setIsFriend] = useState(true);
     const [isCallingVideo, setIsCallingVideo] = useState(false);
+    const [resp, setResp] = useState('');
     const [currentGroup, setCurrentGroup] = useState('');
+    const [currentGroupList, setCurrentGroupList] = useState([]);
     const [memberCurrentGroupList, setMemberCurrentGroupList] = useState([]);
 
 
     let content;
     let friendList = [];
-    let groupList = [];
     let requestList = [];
 
     if (friendListData) {
         friendList = friendListData.data.data;
     }
-    if (groupListData) {
-        groupList = groupListData.data;
-    }
-
+    useEffect(() => {
+        if (groupListData && groupListData.data.length > 0) {
+            setCurrentGroupList(groupListData.data);
+        }
+    }, [groupListData])
 
     useEffect(() => {
         if (memberListData && memberListData.data.length > 0) {
@@ -82,6 +86,7 @@ const Contact = () => {
             accepted: '0',
             user_two: `${userId}`
         })
+        setResp("refuse");
         setActionId(`refuse ${userId}`);
         // console.log('res Refuse:', res)
     }
@@ -92,6 +97,7 @@ const Contact = () => {
             accepted: '1',
             user_two: `${userId}`
         })
+        setResp("accept");
         setActionId(`accept ${userId}`);
         // console.log('res Accept:', res)
     }
@@ -119,24 +125,51 @@ const Contact = () => {
         setOpenModalVideoCallGroup(true);
         console.log('Name:', name)
     }
+
+    const handleDeleteGroup = async (groupId) => {
+        await deleteGroup({ roomId: groupId })
+            .then(res => {
+                if (res.data.message === "Success") {
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: `has deleted group`,
+                        icon: 'success',
+                    })
+                    updateContact("delete-group", groupId);
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: `Something went wrong, please try again later!`,
+                        icon: 'error',
+                    })
+                }
+            })
+    }
     const handleToggleModalGroup = () => {
         console.log("Fire toggle ModalGroup")
         setOpenModalVideoCallGroup(!openModalVideoCallGroup);
     }
 
-    const updateGroupMemberList = (type, data) => {
+    const updateContact = (type, data) => {
         switch (type) {
-            case "delete":
+            case "delete-member":
                 if (memberCurrentGroupList.length > 0 && data) {
                     const memberList = memberCurrentGroupList.filter(item => item.id !== data);
                     setMemberCurrentGroupList(memberList);
                 }
                 break
-            case "add":
+            case "delete-group":
+                if (currentGroupList.length > 0 && data) {
+                    const groupList = currentGroupList.filter(item => item.id !== data);
+                    setCurrentGroupList(groupList);
+                }
+                break
+            case "add-member":
                 if (memberCurrentGroupList.length > 0 && data) {
                     setMemberCurrentGroupList((prevState) => [...prevState, data]);
                 }
                 break
+
             default:
                 return
         }
@@ -209,7 +242,7 @@ const Contact = () => {
                                 <span className="total-list">
                                     {isFriend
                                         ? <span>Friend ({friendList.length})</span>
-                                        : <span>Group ({groupList.length})</span>
+                                        : <span>Group ({currentGroupList.length})</span>
                                     }
 
                                 </span>
@@ -238,8 +271,8 @@ const Contact = () => {
                                 </div>
                                 :
                                 <div className="friend-list">
-                                    {groupList && groupList.length > 0 &&
-                                        groupList.map(item => {
+                                    {currentGroupList && currentGroupList.length > 0 &&
+                                        currentGroupList.map(item => {
                                             return (
                                                 <div className={item.id === currentGroup.id ? "friend-single active" : "friend-single"} key={item.id}
                                                     onClick={() => handleViewGroup({ name: item.name, id: item.id })}
@@ -252,6 +285,9 @@ const Contact = () => {
                                                     <div className="friend-single__info">
                                                         <h5 className="info--name">{item.name}</h5>
                                                         <p className="info--preview-message">{item.id}</p>
+                                                    </div>
+                                                    <div className="friend-single__icon">
+                                                        <i class="fas fa-trash-alt" onClick={() => handleDeleteGroup(item.id)}></i>
                                                     </div>
                                                 </div>
                                             )
@@ -282,10 +318,10 @@ const Contact = () => {
                                                                     <p className="info--preview-message">{item.phone} {item.message ? item.message : 'No message'}</p>
                                                                 </div>
                                                                 <div className="resolve">
-                                                                    <input type="button" className="button button-refuse" value="Refuse"
+                                                                    <input type="button" className={resp === "accept" ? "d-none" : "button button-refuse"} value={resp === "accept" ? "Accepted" : "Refused"}
                                                                         onClick={() => handleRefuseContact(item.id)}
                                                                     />
-                                                                    <input type="button" className="button" value="Accept"
+                                                                    <input type="button" className={resp === "refuse" ? "d-none" : "button"} value={resp === "refuse" ? "Refused" : "Accepted"}
                                                                         onClick={() => handleAcceptContact(item.id)}
                                                                     />
                                                                 </div>
@@ -334,7 +370,7 @@ const Contact = () => {
                                                         handleAddNewGroupMember={handleAddNewGroupMember}
                                                         addNewGroupMember={true}
                                                         roomId={currentGroup.id}
-                                                        updateGroupMemberList={updateGroupMemberList}
+                                                        updateContact={updateContact}
                                                     />
                                                 }
                                             </div>
@@ -342,7 +378,7 @@ const Contact = () => {
                                         <GroupMember
                                             memberCurrentGroupList={memberCurrentGroupList}
                                             roomId={roomId}
-                                            updateGroupMemberList={updateGroupMemberList}
+                                            updateContact={updateContact}
                                         />
                                     </>
                                     :

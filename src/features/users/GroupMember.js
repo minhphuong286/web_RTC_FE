@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 
 const GroupMember = (props) => {
     const {
-        memberCurrentGroupList, roomId, updateGroupMemberList
+        memberCurrentGroupList, roomId, updateContact
     } = props;
 
     const [deleteGroupMember] = useDeleteGroupMemberMutation();
@@ -23,7 +23,7 @@ const GroupMember = (props) => {
                         text: `has deleted member`,
                         icon: 'success',
                     })
-                    updateGroupMemberList("delete", id);
+                    updateContact("delete-member", id);
                 } else {
                     Swal.fire({
                         title: 'Error!',

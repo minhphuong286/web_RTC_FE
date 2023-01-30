@@ -352,13 +352,19 @@
                 border-radius: 1rem;
                 box-shadow   : 0px 0px 1px 0px;
 
-                i {
-                    position : absolute;
-                    right    : 10px;
-                    color    : $red;
-                    font-size: 25px;
-                    top      : 25px;
+                &__icon {
+                    i {
+                        position: absolute;
+                        right   : 10px;
+                        color   : #665c23;
+                        top     : 25px;
+
+                        &:hover {
+                            color: $red !important;
+                        }
+                    }
                 }
+
 
                 &.active {
                     background-color: $background-1;

@@ -26,6 +26,14 @@ export const groupApiSlice = apiSlice.injectEndpoints({
             })
             // keepUnusedDataFor: 5,
         }),
+        deleteGroup: builder.mutation({
+            query: (credentials) => ({
+                url: `/group-chat/${credentials.roomId}/delete-room`,
+                method: 'DELETE',
+                body: { ...credentials }
+            })
+            // keepUnusedDataFor: 5,
+        }),
         getGroupList: builder.query({
             query: () => `/group-chat/list-rooms`,
             // keepUnusedDataFor: 5,
@@ -41,6 +49,7 @@ export const {
     useCreateGroupMutation,
     useAddGroupMemberMutation,
     useDeleteGroupMemberMutation,
+    useDeleteGroupMutation,
     useGetGroupListQuery,
     useGetGroupMemberListQuery
 } = groupApiSlice
