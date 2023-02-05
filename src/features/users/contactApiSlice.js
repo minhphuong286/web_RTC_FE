@@ -24,12 +24,21 @@ export const contactApiSlice = apiSlice.injectEndpoints({
                 body: { ...credentials }
             })
         }),
+        deleteFriend: builder.mutation({
+            query: (credentials) => ({
+                url: `/relationship/delete-friend`,
+                method: 'DELETE',
+                body: { ...credentials }
+            })
+            // keepUnusedDataFor: 5,
+        }),
     })
 })
 
 export const {
     useFindUserMutation,
     useRequestContactMutation,
-    useRefuseOrAcceptContactMutation
+    useRefuseOrAcceptContactMutation,
+    useDeleteFriendMutation
 } = contactApiSlice
 

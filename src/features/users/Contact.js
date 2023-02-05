@@ -7,7 +7,7 @@ import { selectDataFromDetect } from '../Home/videoSlice';
 
 import { useGetUsersQuery } from "./usersApiSlice";
 import { useGetFriendListQuery, useGetRequestListQuery } from "../friendList/friendListApiSlice";
-import { useRefuseOrAcceptContactMutation } from "./contactApiSlice";
+import { useRefuseOrAcceptContactMutation, useDeleteFriendMutation } from "./contactApiSlice";
 import { useGetGroupListQuery, useGetGroupMemberListQuery, useDeleteGroupMutation } from "../users/groupApiSlice";
 
 import '../../assets/scss/common.scss';
@@ -30,6 +30,7 @@ const Contact = () => {
     );
     const [refuseOrAcceptContact] = useRefuseOrAcceptContactMutation();
     const [deleteGroup] = useDeleteGroupMutation();
+    const [deleteFriend] = useDeleteFriendMutation();
 
     const userData = useSelector(selectDataFromDetect);
 
@@ -44,16 +45,19 @@ const Contact = () => {
     const [resp, setResp] = useState('');
     const [currentGroup, setCurrentGroup] = useState('');
     const [currentGroupList, setCurrentGroupList] = useState([]);
+    const [friendList, setFriendList] = useState([]);
     const [memberCurrentGroupList, setMemberCurrentGroupList] = useState([]);
 
 
     let content;
-    let friendList = [];
     let requestList = [];
 
-    if (friendListData) {
-        friendList = friendListData.data.data;
-    }
+    useEffect(() => {
+        if (friendListData && friendListData.data.length > 0) {
+            setFriendList(friendListData.data);
+        }
+    }, [friendListData])
+
     useEffect(() => {
         if (groupListData && groupListData.data.length > 0) {
             setCurrentGroupList(groupListData.data);
@@ -145,6 +149,27 @@ const Contact = () => {
                 }
             })
     }
+
+    const handleDeleteFriend = async (friendId) => {
+        await deleteFriend({ user_two: friendId })
+            .then(res => {
+                if (res.data.message === "Success") {
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: `has deleted friend`,
+                        icon: 'success',
+                    })
+                    updateContact("delete-friend", friendId);
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: `Something went wrong, please try again later!`,
+                        icon: 'error',
+                    })
+                }
+            })
+    }
+
     const handleToggleModalGroup = () => {
         console.log("Fire toggle ModalGroup")
         setOpenModalVideoCallGroup(!openModalVideoCallGroup);
@@ -167,6 +192,12 @@ const Contact = () => {
             case "add-member":
                 if (memberCurrentGroupList.length > 0 && data) {
                     setMemberCurrentGroupList((prevState) => [...prevState, data]);
+                }
+                break
+            case "delete-friend":
+                if (friendList.length > 0 && data) {
+                    const friends = friendList.filter(item => item.id !== data);
+                    setFriendList(friends);
                 }
                 break
 
@@ -263,6 +294,9 @@ const Contact = () => {
                                                     <div className="friend-single__info">
                                                         <h5 className="info--name">{item.name}</h5>
                                                         <p className="info--preview-message">{item.phone}</p>
+                                                    </div>
+                                                    <div className="friend-single__icon">
+                                                        <i class="fas fa-trash-alt" onClick={() => handleDeleteFriend(item.id)}></i>
                                                     </div>
                                                 </div>
                                             )
