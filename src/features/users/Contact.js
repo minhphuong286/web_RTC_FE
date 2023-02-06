@@ -20,8 +20,8 @@ import GroupMember from "./GroupMember";
 import RoomApp from "../group/RoomApp";
 
 const Contact = () => {
-    const { data: friendListData } = useGetFriendListQuery();
-    const { data: requestListData } = useGetRequestListQuery();
+    const { data: friendListData } = useGetFriendListQuery({ refetchOnMountOrArgChange: true });
+    const { data: requestListData } = useGetRequestListQuery({ refetchOnMountOrArgChange: true });
     const { data: groupListData } = useGetGroupListQuery({ refetchOnMountOrArgChange: true });
     const [roomId, setRoomId] = useState('');
     const { data: memberListData } = useGetGroupMemberListQuery(
@@ -51,10 +51,10 @@ const Contact = () => {
 
     let content;
     let requestList = [];
-
+    console.log('friendListData:', friendListData)
     useEffect(() => {
-        if (friendListData && friendListData.data.length > 0) {
-            setFriendList(friendListData.data);
+        if (friendListData && friendListData.data.data.length > 0) {
+            setFriendList(friendListData.data.data);
         }
     }, [friendListData])
 
