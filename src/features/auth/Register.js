@@ -6,8 +6,10 @@ import { setCredentials } from './authSlice'
 import { useRegisterMutation } from './authApiSlice'
 import { Link } from "react-router-dom";
 import axios from '../../axios';
+import CommonUtils from '../../utils/CommonUtils'
 
 import './Register.scss';
+import Swal from 'sweetalert2'
 
 const REGISTER_URL = '/auth/register';
 
@@ -16,12 +18,13 @@ const Register = () => {
     const usernameRef = useRef()
     const emailRef = useRef()
     const errRef = useRef()
-
+    const avatarRef = useRef()
 
     const [phone, setPhone] = useState('')
     const [email, setEmail] = useState('')
     const [username, setUserName] = useState('')
     const [password, setPassword] = useState('')
+    const [avatar, setAvatar] = useState(require('../../assets/img/avatar.png'))
 
     const [errMsg, setErrMsg] = useState('')
 
@@ -31,12 +34,21 @@ const Register = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        usernameRef.current.focus()
+        // usernameRef.current.focus()
     }, [])
 
     useEffect(() => {
         setErrMsg('')
     }, [phone, password, username, email])
+
+    const handleChangeAvatar = (e) => {
+        console.log("e:", e)
+        const file = e.target.files[0];
+        if (file) {
+            const avatarURL = URL.createObjectURL(file);
+            setAvatar(avatarURL)
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -45,7 +57,51 @@ const Register = () => {
             // console.log('username:', username, 'email:', email);
             // console.log('phone:', phone, 'password:', password);
             let name = username;
-            const registerData = await register({ name, email, phone, password }).unwrap()
+            // let avt = avatarRef.current.files[0];
+            let avt;
+            if (avatarRef.current.files.length !== 0) {
+                avt = await CommonUtils.getBase64(avatarRef.current.files[0]);
+            }
+            console.log("avat:", avt)
+            // const dataForm = new FormData()
+            // dataForm.append('avatar', avatarRef.current.files[0])
+            // dataForm.append('name', username)
+            // dataForm.append('email', email)
+            // dataForm.append('phone', phone)
+            // dataForm.append('password', password)
+
+            // dataForm['avatar'] = avatarRef.current.files[0]
+
+            // dataForm['name'] = username
+            // dataForm['email'] = email
+            // dataForm['phone'] = phone
+            // dataForm['password'] = password
+
+            // console.log("dataForm:", dataForm)
+            const registerData = await register({ name: username, email, phone, password, avatar: avt }).unwrap()
+            // const registerData = await register(data)
+            // const registerData = axios.post("http://127.0.0.1:8000/auth/register", dataForm)
+            // .then(res => {
+            //     console.log('res:', res.message)
+            //     if (res.message && res.message === "Success") {
+            //         dispatch(setCredentials({ ...registerData, phone }))
+            //         setPhone('')
+            //         setPassword('')
+            //         setEmail('')
+            //         setUserName('')
+            //         // console.log('OK');
+            //         // <Link to="/welcome">Back to Welcome</Link>
+            //         navigate('/message')
+            //     }
+            // })
+            dispatch(setCredentials({ ...registerData, phone }))
+            setPhone('')
+            setPassword('')
+            setEmail('')
+            setUserName('')
+            // console.log('OK');
+            // <Link to="/welcome">Back to Welcome</Link>
+            navigate('/message')
             // let name = username;
             // const response = await axios.post(REGISTER_URL,
             //     JSON.stringify({ name, email, phone, password }),
@@ -56,19 +112,19 @@ const Register = () => {
             // console.log(response?.data);
             // console.log(response?.accessToken);
             // console.log(JSON.stringify(response))
-            dispatch(setCredentials({ ...registerData, phone }))
-            setPhone('')
-            setPassword('')
-            setEmail('')
-            setUserName('')
-            // console.log('OK');
-            // <Link to="/welcome">Back to Welcome</Link>
-            navigate('/message')
+
         } catch (err) {
             // console.log('check Register:', err)
             if (!err?.originalStatus) {
                 // isLoading: true until timeout occurs
-                setErrMsg('No Server Response');
+                if (err.data.errors.phone) {
+                    setErrMsg(err.data.errors.phone);
+                } else if (err.data.errors.email) {
+                    setErrMsg(err.data.errors.email);
+                }
+                else {
+                    setErrMsg("Something went wrong, please try again later!")
+                }
             } else if (err.originalStatus === 400) {
                 setErrMsg('Missing Username or Password');
             } else if (err.originalStatus === 401) {
@@ -76,7 +132,7 @@ const Register = () => {
             } else {
                 setErrMsg('Login Failed');
             }
-            errRef.current.focus();
+            // errRef.current.focus();
         }
     }
 
@@ -101,6 +157,27 @@ const Register = () => {
             <form onSubmit={handleSubmit} id="register-form">
                 <table>
                     <tbody>
+                        <tr className='form-content'>
+                            <td colSpan={2}>
+                                <div className='avatar-preview'>
+                                    <img src={avatar} alt="avatar" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr className='form-content'>
+                            <td>
+                                <label htmlFor="password">Avatar:</label>
+                            </td>
+                            <td>
+                                <input
+                                    accept='image/png, image/jpeg, image/jpg'
+                                    type="file"
+                                    id="avatar"
+                                    ref={avatarRef}
+                                    onChange={(e) => handleChangeAvatar(e)}
+                                />
+                            </td>
+                        </tr>
                         <tr className='form-content'>
                             <td>
                                 <label htmlFor="username">Name:</label>
@@ -163,20 +240,7 @@ const Register = () => {
                                 />
                             </td>
                         </tr>
-                        {/* <tr className='form-content'>
-                            <td>
-                                <label htmlFor="avatar">Avatar:</label>
-                            </td>
-                            <td>
-                                <input
-                                    type="file"
-                                    id="avatar"
-                                    // onChange={(e) => setPassword(e.target.value)}
-                                    // value={password}
-                                    // required
-                                />
-                            </td>
-                        </tr> */}
+
                     </tbody>
                 </table>
                 <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>

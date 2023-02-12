@@ -42,8 +42,18 @@ const Login = () => {
         } catch (err) {
             // console.log('check LOGIN:', err)
             if (!err?.originalStatus) {
+                console.log('check LOGIN:', err)
+                if (err.data.message) {
+                    setErrMsg(err.data.message);
+                }
+                // else if (err.data.errors.email) {
+                //     setErrMsg(err.data.errors.email);
+                // }
+                else {
+                    setErrMsg("Something went wrong, please try again later!")
+                }
                 // isLoading: true until timeout occurs
-                setErrMsg('No Server Response');
+                // setErrMsg('No Server Response');
             } else if (err.originalStatus === 400) {
                 setErrMsg('Missing Username or Password');
             } else if (err.originalStatus === 401) {

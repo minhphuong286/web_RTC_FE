@@ -42,10 +42,10 @@ const GroupMember = (props) => {
                         <div className="container-single" key={index}>
                             <div className="button-delete"
                                 onClick={() => handleDeleteMember(member.id)}>
-                                <i class="fas fa-times"></i>
+                                <i className="fas fa-times"></i>
                             </div>
                             <div className={member.role === 1 ? "is-admin" : "is-admin d-none"}>
-                                <i class="fas fa-star"></i>
+                                <i className="fas fa-star"></i>
                             </div>
                             <div className="container-single__avatar">
                                 <img src={require('../../assets/img/friend.png')}

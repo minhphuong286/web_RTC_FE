@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import io from "socket.io-client"
-import { useNavigate } from 'react-router-dom'
-import { NavLink } from "react-router-dom"
+import { useNavigate, NavLink } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 import "../../assets/scss/common.scss";
 import './Welcome.scss';
@@ -26,8 +26,7 @@ const socket = io(
 );
 
 const Welcome = () => {
-
-
+    const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const user = useSelector(selectCurrentUser)
@@ -42,7 +41,7 @@ const Welcome = () => {
     const [dataSDP, setDataSDP] = useState();
     const [currentUser, setCurrentUser] = useState('');
     const [incomingUser, setIncomingUser] = useState();
-    const [friendList, setFriendList] = useState();
+    const [friendList, setFriendList] = useState([]);
     const [onlineList, setOnlineList] = useState([]);
     const [roomId, setRoomId] = useState('');
     const [isMobile, setIsMobile] = useState(false);
@@ -67,7 +66,7 @@ const Welcome = () => {
     useEffect(() => {
         if (socket) { sendToPeer("onliner", { localId: socket.id, dataFrom: user }); }
         socket.on('onliner', data => {
-            // console.log("data - onliner - welcome:", data);
+            console.log("data - onliner - welcome:", data);
             let newOnlineList = data.map(item => item.dataFrom);
             setOnlineList(newOnlineList);
         })
@@ -90,6 +89,11 @@ const Welcome = () => {
             // console.log("answer Welcome", data);
         })
     }, [])
+
+    const sendToPeer = (eventType, payload) => {
+        socket.emit(eventType, payload)
+    }
+
     const handleToggleModal = () => {
         setOpenModalVideoCall(!openModalVideoCall);
     }
@@ -114,8 +118,19 @@ const Welcome = () => {
         setIsMobile(!isMobile);
     }
 
-    const sendToPeer = (eventType, payload) => {
-        socket.emit(eventType, payload)
+    const handleLogout = (e) => {
+        e.preventDefault()
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to log out, exactly?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, log out!"
+        }).then(function (isConfirm) {
+            if (isConfirm.value) {
+                navigate("/");
+            }
+        })
     }
 
     const content = (
@@ -134,7 +149,12 @@ const Welcome = () => {
                 <div className="col-1 col-lg-1 col-md-1 side-bar">
                     <div className="tool-container">
                         <div className="avatar">
-                            <img src={require('../../assets/img/avatar.png')} alt="avatar" />
+                            {userData && userData.avatar
+                                ?
+                                <img src={userData.avatar} alt="avatar" />
+                                :
+                                <img src={require('../../assets/img/avatar.png')} alt="avatar" />
+                            }
                         </div>
                         <div className={isMobile ? "tool-box friend-chat active" : "tool-box friend-chat"}
                             onClick={() => handleToggleMobile()}>
@@ -151,7 +171,7 @@ const Welcome = () => {
                             </NavLink>
                         </div>
                         <div className='tool-box logout'>
-                            <NavLink to={'/'}>
+                            <NavLink to={'/'} onClick={(e) => handleLogout(e)}>
                                 <i className="fas fa-sign-out-alt"></i>
                             </NavLink>
                         </div>
@@ -166,8 +186,17 @@ const Welcome = () => {
                             <div className="option-list">
                                 <button className="button button-person " ><i className="fas fa-user"></i></button>
                                 <button className="button button-group non-active" ><i className="fas fa-users"></i></button>
+                                {/* <button className={isFriend ? "button button-person" : "button button-person non-active"}
+                                        onClick={() => handleDisplayFriendList()} ><i className="fas fa-user"></i></button>
+                                    <button className={isFriend ? "button button-group non-active" : "button button-group"}
+                                        onClick={() => handleDisplayGroupList()} ><i className="fas fa-users"></i></button> */}
                             </div>
                             <div className="friend-list">
+                                {friendList && friendList.length === 0 &&
+                                    <div className="friend-list-none">
+                                        <img src={require('../../assets/img/friend-none.png')} alt="friend-none" />
+                                    </div>
+                                }
                                 {friendList && friendList.length > 0 &&
                                     friendList.map(item => {
                                         return (

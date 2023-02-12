@@ -38,8 +38,12 @@ class Videos extends Component {
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              paddingLeft: '5px'
-            }}>{ }</span>
+              paddingLeft: '5px',
+              position: 'absolute',
+              left: '5px',
+              width: '92%',
+              background: 'black'
+            }}>{rVideo.name}</span>
           </>
         ) || <div></div>
 
@@ -47,7 +51,7 @@ class Videos extends Component {
           <div
             id={rVideo.name}
             onClick={() => this.props.switchVideo(rVideo)}
-            style={{ display: 'inline-block' }}
+            style={{ display: 'inline-block', position: 'relative' }}
             key={index}
           >
             {video}

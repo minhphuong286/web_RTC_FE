@@ -30,6 +30,20 @@ section.register {
                 margin-bottom: 30px;
                 text-align   : left;
 
+                .avatar-preview {
+                    width        : 68px;
+                    height       : 68px;
+                    border       : 1px solid;
+                    border-radius: 50%;
+                    margin       : 0 auto;
+
+                    img {
+                        width        : 100%;
+                        height       : 100%;
+                        border-radius: 50%;
+                    }
+                }
+
                 label {
                     font-weight : 600;
                     margin-right: 20px;
@@ -40,6 +54,7 @@ section.register {
                     border-radius: 15px;
                     border       : navajowhite;
                     outline-color: #e1db2c;
+                    width        : 100%;
                 }
             }
         }

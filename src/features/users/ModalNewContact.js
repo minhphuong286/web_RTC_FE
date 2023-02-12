@@ -106,8 +106,8 @@ const ModalNewContact = (props) => {
 
     return (
         <div>
-            {console.log('Props AddNewContact:', props)}
-            {console.log('Props AddNewContact, userDate:', userData)}
+            {/* {console.log('Props AddNewContact:', props)}
+            {console.log('Props AddNewContact, userDate:', userData)} */}
             <Modal
                 backdrop="static"
                 centered="true"
@@ -136,7 +136,13 @@ const ModalNewContact = (props) => {
                         {userData &&
                             <div className="user-single">
                                 <div className="user-single__avatar">
-                                    <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+
+                                    {userData && userData.avatar
+                                        ?
+                                        <img src={userData.avatar} alt="avatar-user-contact" />
+                                        :
+                                        <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+                                    }
                                 </div>
                                 <div className="user-single__info">
                                     <h4 className="info--name">{userData.name}</h4>

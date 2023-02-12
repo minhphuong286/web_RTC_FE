@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const videoSlice = createSlice({
     name: 'video',
-    initialState: { user: null, isCalling: false },
+    initialState: { user: null, isCalling: false, groupCalling: [] },
     reducers: {
         detectIsCallingVideo: (state, action) => {
             const { name, isCalling } = action.payload;
@@ -19,10 +19,14 @@ const videoSlice = createSlice({
             const { dataTo } = action.payload;
             state.dataTo = dataTo
         },
+        detectGroupIsCalling: (state, action) => {
+            const { groupId } = action.payload;
+            state.groupCalling = groupId
+        },
     },
 })
 
-export const { detectIsCallingVideo, detectDataFrom, detectDataTo } = videoSlice.actions
+export const { detectIsCallingVideo, detectDataFrom, detectDataTo, detectGroupIsCalling } = videoSlice.actions
 
 export default videoSlice.reducer
 
@@ -30,3 +34,4 @@ export const selectCallingUser = (state) => state.video.user
 export const selectCallingDetect = (state) => state.video.isCalling
 export const selectDataFromDetect = (state) => state.video.dataFrom
 export const selectDataToDetect = (state) => state.video.dataTo
+export const selectDataGroupIsCalling = (state) => state.video.groupCalling

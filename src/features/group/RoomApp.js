@@ -8,6 +8,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Fade } from 'reacts
 import './RoomApp.scss';
 import Video from './Video'
 import Videos from './Videos'
+import axios from 'axios';
 
 import Chat from './Chat'
 
@@ -46,6 +47,7 @@ class RoomApp extends Component {
       messages: [],
       sendChannels: [],
       disconnected: false,
+      memberNumber: 0
     }
 
     // DONT FORGET TO CHANGE TO YOUR URL
@@ -254,14 +256,16 @@ class RoomApp extends Component {
 
       this.setState({
         status: status,
-        messages: data.messages
+        messages: data.messages,
+        memberNumber: data.peerCount
       })
     })
 
     this.socketGroup.on('joined-peers-group', data => {
 
       this.setState({
-        status: data.peerCount > 1 ? `Attendance: ${data.peerCount}` : 'Waiting for others'
+        status: data.peerCount > 1 ? `Attendance: ${data.peerCount}` : 'Waiting for others',
+        memberNumber: data.peerCount
       })
     })
 
@@ -277,7 +281,8 @@ class RoomApp extends Component {
             // remoteStream: remoteStreams.length > 0 && remoteStreams[0].stream || null,
             remoteStreams,
             ...selectedVideo,
-            status: data.peerCount > 1 ? `Attendance: ${data.peerCount}` : 'Waiting for others'
+            status: data.peerCount > 1 ? `Attendance: ${data.peerCount}` : 'Waiting for others',
+            memberNumber: data.peerCount
           }
         })
       }
@@ -477,18 +482,23 @@ class RoomApp extends Component {
     let { openModalVideoCallGroup, handleToggleModalGroup, roomData, userData } = this.props;
 
     if (this.state.disconnected) {
-      console.log("render state:", this)
+      console.log("render state:", this.state.memberNumber)
       this.socketGroup.close()
       this.state.localStream.getTracks().forEach(track => track.stop())
-
+      // if (this.state.memberNumber === 1) {
+      //   axios.post('http://127.0.0.1:8000/group-chat/upload-history', { is_end: 1, presence_room_id: this.props.roomData.roomId })
+      //     .then(res => {
+      //       console.log("end calling video:", res)
+      //     })
+      // }
       setTimeout(() => {
         // console.log("render:", this.props);
-        handleToggleModalGroup();
+        // handleToggleModalGroup();
       }, 1000)
       // return (<div>You have successfully Disconnected</div>)
     }
 
-    console.log(this.state.localStream)
+    // console.log(this.state.localStream)
 
     const statusText = <div style={{ color: 'yellow', padding: 5 }}>{this.state.status}</div>
 

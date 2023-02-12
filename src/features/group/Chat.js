@@ -17,6 +17,7 @@ const Chat = props => {
   useEffect(() => {
     scrollToBottom()
     setUser({ uid: props.user.uid, })
+
   }, [props])
 
   const sendMessage = (msg) => {
@@ -30,6 +31,7 @@ const Chat = props => {
     sendMessage({ type: 'text', message: { id: user.uid, sender: { uid: user.uid, }, data: { text: message } } })
     setMessage('')
   };
+
 
   const handleChange = event => {
     setMessage(event.target.value)
@@ -98,7 +100,7 @@ const Chat = props => {
         // height: 650,
       }}>
         <ul className="chat" id="chatList">
-          {console.log("props msg:", props.messages)}
+          {/* {console.log("props msg:", props.messages)} */}
           {props.messages.map(data =>
           (
 

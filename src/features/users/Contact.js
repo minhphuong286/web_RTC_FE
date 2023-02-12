@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import { NavLink, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux';
 import Swal from "sweetalert2";
 
-import { selectDataFromDetect } from '../Home/videoSlice';
+import { selectDataFromDetect, detectGroupIsCalling, selectDataGroupIsCalling } from '../Home/videoSlice';
 
 import { useGetUsersQuery } from "./usersApiSlice";
 import { useGetFriendListQuery, useGetRequestListQuery } from "../friendList/friendListApiSlice";
 import { useRefuseOrAcceptContactMutation, useDeleteFriendMutation } from "./contactApiSlice";
-import { useGetGroupListQuery, useGetGroupMemberListQuery, useDeleteGroupMutation } from "../users/groupApiSlice";
+import { useGetGroupListQuery, useGetGroupMemberListQuery, useDeleteGroupMutation, useUpdateHistoryGroupMutation } from "../users/groupApiSlice";
 
 import '../../assets/scss/common.scss';
 import "../Home/Welcome.scss";
@@ -22,17 +22,23 @@ import RoomApp from "../group/RoomApp";
 const Contact = () => {
     const { data: friendListData } = useGetFriendListQuery({ refetchOnMountOrArgChange: true });
     const { data: requestListData } = useGetRequestListQuery({ refetchOnMountOrArgChange: true });
-    const { data: groupListData } = useGetGroupListQuery({ refetchOnMountOrArgChange: true });
+    const { data: groupListData } = useGetGroupListQuery({ refetchOnMountOrArgChange: true, });
     const [roomId, setRoomId] = useState('');
     const { data: memberListData } = useGetGroupMemberListQuery(
         roomId,
         { skip: roomId === '', refetchOnMountOrArgChange: true, }
     );
+
     const [refuseOrAcceptContact] = useRefuseOrAcceptContactMutation();
     const [deleteGroup] = useDeleteGroupMutation();
     const [deleteFriend] = useDeleteFriendMutation();
+    const [updateHistoryGroup] = useUpdateHistoryGroupMutation();
 
     const userData = useSelector(selectDataFromDetect);
+    const groups = useSelector(selectDataGroupIsCalling);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
 
     const [openModalAddNewContact, setOpenModalAddNewContact] = useState(false);
     const [openModalAddNewGroupMember, setOpenModalAddNewGroupMember] = useState(false);
@@ -48,10 +54,9 @@ const Contact = () => {
     const [friendList, setFriendList] = useState([]);
     const [memberCurrentGroupList, setMemberCurrentGroupList] = useState([]);
 
-
     let content;
     let requestList = [];
-    console.log('friendListData:', friendListData)
+    // console.log('friendListData:', friendListData)
     useEffect(() => {
         if (friendListData && friendListData.data.data.length > 0) {
             setFriendList(friendListData.data.data);
@@ -121,10 +126,20 @@ const Contact = () => {
             setRoomId(currentGroupData.id);
         }
     }
-    const handleOpenVideoCallGroup = (name) => {
+    const handleOpenVideoCallGroup = async (name, id) => {
         // console.log('openVideo:', openVideo)
         // let isCalling = true;
         // dispatch(detectIsCallingVideo({ name, isCalling }));
+        // const groups = useSelector(selectDataGroupIsCalling);
+
+        // const groupId = groups.filter(item => item === id)[0];
+        // console.log('groups', groups)
+        // if (groupId) {
+
+        // } else {
+        //     // await updateHistoryGroup({ is_end: 0, presence_room_id: id });
+        //     dispatch(detectGroupIsCalling({ groupId: id }));
+        // }
 
         setOpenModalVideoCallGroup(true);
         console.log('Name:', name)
@@ -133,19 +148,29 @@ const Contact = () => {
     const handleDeleteGroup = async (groupId) => {
         await deleteGroup({ roomId: groupId })
             .then(res => {
-                if (res.data.message === "Success") {
+                if (res.data && res.data.message === "Success") {
                     Swal.fire({
                         title: 'Deleted!',
                         text: `has deleted group`,
                         icon: 'success',
                     })
                     updateContact("delete-group", groupId);
+                    setCurrentGroup("");
+                    setRoomId("");
                 } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: `Something went wrong, please try again later!`,
-                        icon: 'error',
-                    })
+                    if (res.error && res.error.data.message) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: res.error.data.message,
+                            icon: 'error',
+                        })
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong, please try again later!',
+                            icon: 'error',
+                        })
+                    }
                 }
             })
     }
@@ -173,6 +198,21 @@ const Contact = () => {
     const handleToggleModalGroup = () => {
         console.log("Fire toggle ModalGroup")
         setOpenModalVideoCallGroup(!openModalVideoCallGroup);
+    }
+
+    const handleLogout = (e) => {
+        e.preventDefault()
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to log out, exactly?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, log out!"
+        }).then(function (isConfirm) {
+            if (isConfirm.value) {
+                navigate("/");
+            }
+        })
     }
 
     const updateContact = (type, data) => {
@@ -212,7 +252,12 @@ const Contact = () => {
                 <div className="col-1 col-lg-1 col-md-1 side-bar">
                     <div className="tool-container">
                         <div className="avatar">
-                            <img src={require('../../assets/img/avatar.png')} alt="avatar" />
+                            {userData && userData.avatar
+                                ?
+                                <img src={userData.avatar} alt="avatar" />
+                                :
+                                <img src={require('../../assets/img/avatar.png')} alt="avatar" />
+                            }
                         </div>
                         <div className='tool-box bell-notify'>
                             <NavLink to={'/message'}>
@@ -228,9 +273,9 @@ const Contact = () => {
                                 {/* <span>N</span> */}
                             </i>
                         </div>
-                        <div className='tool-box logout'>
-                            <NavLink to={'/'}>
-                                <i className="fas fa-sign-out-alt"></i>
+                        <div className='tool-box logout '>
+                            <NavLink to={'/'} onClick={(e) => handleLogout(e)}>
+                                <i className="fas fa-sign-out-alt" ></i>
                             </NavLink>
                         </div>
                     </div>
@@ -282,8 +327,14 @@ const Contact = () => {
                             {isFriend === true
                                 ?
                                 <div className="friend-list">
+                                    {friendList.length === 0 &&
+                                        <div className="friend-list-none">
+                                            <img src={require('../../assets/img/friend-none.png')} alt="friend-none" />
+                                        </div>
+                                    }
                                     {friendList && friendList.length > 0 &&
                                         friendList.map(item => {
+                                            // console.log("friendList", friendList)
                                             return (
                                                 <div className="friend-single" key={item.id}>
                                                     <div className="friend-single__avatar">
@@ -296,7 +347,7 @@ const Contact = () => {
                                                         <p className="info--preview-message">{item.phone}</p>
                                                     </div>
                                                     <div className="friend-single__icon">
-                                                        <i class="fas fa-trash-alt" onClick={() => handleDeleteFriend(item.id)}></i>
+                                                        <i className="fas fa-trash-alt" onClick={() => handleDeleteFriend(item.id)}></i>
                                                     </div>
                                                 </div>
                                             )
@@ -305,8 +356,14 @@ const Contact = () => {
                                 </div>
                                 :
                                 <div className="friend-list">
+                                    {currentGroupList.length === 0 &&
+                                        <div className="friend-list-none">
+                                            <img src={require('../../assets/img/group-none.png')} alt="group-none" />
+                                        </div>
+                                    }
                                     {currentGroupList && currentGroupList.length > 0 &&
                                         currentGroupList.map(item => {
+                                            // console.log('currentGroupList', currentGroupList)
                                             return (
                                                 <div className={item.id === currentGroup.id ? "friend-single active" : "friend-single"} key={item.id}
                                                     onClick={() => handleViewGroup({ name: item.name, id: item.id })}
@@ -321,7 +378,7 @@ const Contact = () => {
                                                         <p className="info--preview-message">{item.id}</p>
                                                     </div>
                                                     <div className="friend-single__icon">
-                                                        <i class="fas fa-trash-alt" onClick={() => handleDeleteGroup(item.id)}></i>
+                                                        <i className="fas fa-trash-alt" onClick={() => handleDeleteGroup(item.id)}></i>
                                                     </div>
                                                 </div>
                                             )
@@ -340,6 +397,11 @@ const Contact = () => {
                                         <div className="contact-container">
                                             <h3 className="contact-list-title">Request contact ({requestList.length})</h3>
                                             <div className="contact-list">
+                                                {requestList.length === 0 &&
+                                                    <div className="contact-list-none">
+                                                        <img src={require('../../assets/img/contact-none.png')} alt="contact-none" />
+                                                    </div>
+                                                }
                                                 {requestList && requestList.length > 0 &&
                                                     requestList.map(item => {
                                                         return (
@@ -381,7 +443,7 @@ const Contact = () => {
                                             <div className='chat__friend--video'>
                                                 <i className="fas fa-user-plus" onClick={handleAddNewGroupMember}></i>
                                                 <i className="fas fa-video"
-                                                    onClick={() => handleOpenVideoCallGroup(currentGroup.name)}
+                                                    onClick={() => handleOpenVideoCallGroup(currentGroup.name, currentGroup.id)}
                                                 ></i>
                                                 {openModalVideoCallGroup === true &&
                                                     <RoomApp
@@ -416,7 +478,11 @@ const Contact = () => {
                                         />
                                     </>
                                     :
-                                    <></>
+                                    <>
+                                        <div className="contact-home">
+                                            <img src={require('../../assets/img/teamwork.png')} alt="contact-none" />
+                                        </div>
+                                    </>
                             }
                         </div>
                     </div>
