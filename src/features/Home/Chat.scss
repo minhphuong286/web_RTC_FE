@@ -13,7 +13,9 @@
             column-gap : 20px;
 
             i {
-                color: $primary-3;
+                color        : $primary-3;
+                padding-right: 5px;
+                font-size    : 18px;
 
                 &:hover {
                     color : $primary-hover;

@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import Swal from "sweetalert2";
+import axios from 'axios';
 
 import { selectDataFromDetect, detectGroupIsCalling, selectDataGroupIsCalling } from '../Home/videoSlice';
 
 import { useGetUsersQuery } from "./usersApiSlice";
 import { useGetFriendListQuery, useGetRequestListQuery } from "../friendList/friendListApiSlice";
 import { useRefuseOrAcceptContactMutation, useDeleteFriendMutation } from "./contactApiSlice";
-import { useGetGroupListQuery, useGetGroupMemberListQuery, useDeleteGroupMutation, useUpdateHistoryGroupMutation } from "../users/groupApiSlice";
+import { useGetGroupListQuery, useGetGroupMemberListQuery, useDeleteGroupMutation, useUpdateHistoryGroupMutation, useGetGroupStatusQuery } from "../users/groupApiSlice";
 
 import '../../assets/scss/common.scss';
 import "../Home/Welcome.scss";
@@ -19,6 +20,8 @@ import ModalCreateNewGroup from "./ModalCreateNewGroup";
 import GroupMember from "./GroupMember";
 import RoomApp from "../group/RoomApp";
 
+import { selectCurrentUser, selectCurrentToken } from "../auth/authSlice"
+
 const Contact = () => {
     const { data: friendListData } = useGetFriendListQuery({ refetchOnMountOrArgChange: true });
     const { data: requestListData } = useGetRequestListQuery({ refetchOnMountOrArgChange: true });
@@ -28,6 +31,11 @@ const Contact = () => {
         roomId,
         { skip: roomId === '', refetchOnMountOrArgChange: true, }
     );
+    // const [groupStopId, setGroupStopId] = useState('');
+    // const { data: groupStatus } = useGetGroupStatusQuery(
+    //     groupStopId,
+    //     { skip: groupStopId === '', refetchOnMountOrArgChange: true, }
+    // );
 
     const [refuseOrAcceptContact] = useRefuseOrAcceptContactMutation();
     const [deleteGroup] = useDeleteGroupMutation();
@@ -36,6 +44,9 @@ const Contact = () => {
 
     const userData = useSelector(selectDataFromDetect);
     const groups = useSelector(selectDataGroupIsCalling);
+    const user = useSelector(selectCurrentUser)
+    const token = useSelector(selectCurrentToken)
+    const baseURL = "http://127.0.0.1:8000";
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -140,7 +151,31 @@ const Contact = () => {
         //     // await updateHistoryGroup({ is_end: 0, presence_room_id: id });
         //     dispatch(detectGroupIsCalling({ groupId: id }));
         // }
+        if (id) {
+            // setGroupStopId(id);
+            // if (groupStatus && groupStatus.data.status !== "0") {
+            //     await updateHistoryGroup({ is_end: 0, presence_room_id: id })
+            //         .then(res => {
+            //             setGroupStopId('');
+            //         })
+            // }
 
+
+            let config = {
+                headers: { Authorization: `Bearer ${token}` }
+            }
+            let status = await axios.get(`${baseURL}/group-chat/${id}`, config)
+            console.log("res uploadHistory out-status:", status.data.data.status)
+            if (status.data && status.data.data.status !== "0") {
+                console.log("res uploadHistory in-status:", status.data.data.status)
+                let updateHistory = await axios.post(`${baseURL}/group-chat/upload-history`, { is_end: "0", presence_room_id: `${id}` }, config)
+                // await updateHistoryGroup({ is_end: 0, presence_room_id: id })
+                //     .then(res => {
+                //         console.log("res uploadHistory:", res)
+                //     })
+                console.log("updateHistory: ", updateHistory)
+            }
+        }
         setOpenModalVideoCallGroup(true);
         console.log('Name:', name)
     }
@@ -213,6 +248,27 @@ const Contact = () => {
                 navigate("/");
             }
         })
+    }
+
+    const handleSaveHistory = async (state, groupId) => {
+        console.log("handleSaveHistory:", state, groupId);
+        if (groupId) {
+            let config = {
+                headers: { Authorization: `Bearer ${token}` }
+            }
+            let status = await axios.get(`${baseURL}/group-chat/${groupId}`, config)
+            console.log("res Stop uploadHistory out-status:", status.data.data.status)
+            if (status.data && status.data.data.status === "0") {
+                console.log("res Stop uploadHistory in-status:", status.data.data.status)
+                let updateStopHistory = await axios.post(`${baseURL}/group-chat/upload-history`, { is_end: "1", presence_room_id: `${groupId}` }, config)
+                // await updateHistoryGroup({ is_end: 1, presence_room_id: groupId })
+                //     .then(res => {
+                //         console.log("res Stop uploadHistory:", res)
+                //         setOpenModalVideoCallGroup(false);
+                //     })
+                console.log("STOP updateHistory: ", updateStopHistory)
+            }
+        }
     }
 
     const updateContact = (type, data) => {
@@ -451,6 +507,7 @@ const Contact = () => {
                                                         handleToggleModalGroup={handleToggleModalGroup}
                                                         roomData={{ roomId: roomId, roomName: currentGroup.name }}
                                                         userData={{ phone: userData.phone, name: userData.name }}
+                                                        handleSaveHistory={handleSaveHistory}
                                                     />
                                                 }
                                             </div>

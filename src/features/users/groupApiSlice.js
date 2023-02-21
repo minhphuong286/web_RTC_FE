@@ -50,6 +50,10 @@ export const groupApiSlice = apiSlice.injectEndpoints({
             query: (byId) => `/group-chat/${byId}/members`,
             keepUnusedDataFor: 5,
         }),
+        getGroupStatus: builder.query({
+            query: (groupId) => `/group-chat/${groupId}`,
+            keepUnusedDataFor: 5,
+        }),
     })
 })
 
@@ -60,6 +64,7 @@ export const {
     useDeleteGroupMutation,
     useUpdateHistoryGroupMutation,
     useGetGroupListQuery,
-    useGetGroupMemberListQuery
+    useGetGroupMemberListQuery,
+    useGetGroupStatusQuery
 } = groupApiSlice
 

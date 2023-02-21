@@ -8,12 +8,12 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Fade } from 'reacts
 import './RoomApp.scss';
 import Video from './Video'
 import Videos from './Videos'
-import axios from 'axios';
 
 import Chat from './Chat'
 
 import Draggable from './Draggable'
 import { detectIsCallingVideo } from '../Home/videoSlice';
+import { useGetGroupListQuery } from "../users/groupApiSlice";
 
 class RoomApp extends Component {
   constructor(props) {
@@ -252,7 +252,7 @@ class RoomApp extends Component {
       this.getLocalStream()
 
       console.log("RoomApp, connection-success", data.success)
-      const status = data.peerCount > 1 ? `Attendance: ${data.peerCount}` : 'Waiting for others'
+      const status = data.peerCount > 1 ? `Attendee: ${data.peerCount}` : 'Waiting for others'
 
       this.setState({
         status: status,
@@ -264,7 +264,7 @@ class RoomApp extends Component {
     this.socketGroup.on('joined-peers-group', data => {
 
       this.setState({
-        status: data.peerCount > 1 ? `Attendance: ${data.peerCount}` : 'Waiting for others',
+        status: data.peerCount > 1 ? `Attendee: ${data.peerCount}` : 'Waiting for others',
         memberNumber: data.peerCount
       })
     })
@@ -281,7 +281,7 @@ class RoomApp extends Component {
             // remoteStream: remoteStreams.length > 0 && remoteStreams[0].stream || null,
             remoteStreams,
             ...selectedVideo,
-            status: data.peerCount > 1 ? `Attendance: ${data.peerCount}` : 'Waiting for others',
+            status: data.peerCount > 1 ? `Attendee: ${data.peerCount}` : 'Waiting for others',
             memberNumber: data.peerCount
           }
         })
@@ -479,21 +479,32 @@ class RoomApp extends Component {
   }
 
   render() {
-    let { openModalVideoCallGroup, handleToggleModalGroup, roomData, userData } = this.props;
+    let { openModalVideoCallGroup, handleToggleModalGroup, roomData, userData, handleSaveHistory } = this.props;
 
     if (this.state.disconnected) {
       console.log("render state:", this.state.memberNumber)
       this.socketGroup.close()
       this.state.localStream.getTracks().forEach(track => track.stop())
-      // if (this.state.memberNumber === 1) {
-      //   axios.post('http://127.0.0.1:8000/group-chat/upload-history', { is_end: 1, presence_room_id: this.props.roomData.roomId })
-      //     .then(res => {
-      //       console.log("end calling video:", res)
-      //     })
-      // }
+      if (this.state.memberNumber === 1) {
+
+        // let config = {
+        //   headers: { Authorization: `Bearer ` }
+        // }
+        // // axios.post('http://127.0.0.1:8000/private-chat/list-rooms', { is_end: 1, presence_room_id: this.props.roomData.roomId })
+        // //   .then(res => {
+        // //     console.log("end calling video:", res)
+        // //   })
+
+        // axios.get('http://127.0.0.1:8000/private-chat/list-rooms',config)
+        //   .then(res => {
+        //     console.log("end calling video:", res)
+        //   })
+        handleSaveHistory(1, this.props.roomData.roomId);
+        console.log("Need to stop",);
+      }
       setTimeout(() => {
         // console.log("render:", this.props);
-        // handleToggleModalGroup();
+        handleToggleModalGroup();
       }, 1000)
       // return (<div>You have successfully Disconnected</div>)
     }
