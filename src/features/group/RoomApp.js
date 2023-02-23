@@ -491,12 +491,12 @@ class RoomApp extends Component {
         // let config = {
         //   headers: { Authorization: `Bearer ` }
         // }
-        // // axios.post('http://127.0.0.1:8000/private-chat/list-rooms', { is_end: 1, presence_room_id: this.props.roomData.roomId })
+        // // axios.post('https://webrtc-project-2-video-call.herokuapp.com//private-chat/list-rooms', { is_end: 1, presence_room_id: this.props.roomData.roomId })
         // //   .then(res => {
         // //     console.log("end calling video:", res)
         // //   })
 
-        // axios.get('http://127.0.0.1:8000/private-chat/list-rooms',config)
+        // axios.get('https://webrtc-project-2-video-call.herokuapp.com//private-chat/list-rooms',config)
         //   .then(res => {
         //     console.log("end calling video:", res)
         //   })

@@ -6,7 +6,7 @@ const baseQuery = fetchBaseQuery({
     // baseUrl: 'https://t29webrtc.000webhostapp.com/',
     // baseUrl: 'https://e9d4-14-165-81-124.ap.ngrok.io',
 
-    baseUrl: 'http://127.0.0.1:8000',
+    baseUrl: 'https://webrtc-project-2-video-call.herokuapp.com/',
     // credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = getState().auth.token

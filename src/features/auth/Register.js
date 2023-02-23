@@ -80,7 +80,7 @@ const Register = () => {
             // console.log("dataForm:", dataForm)
             const registerData = await register({ name: username, email, phone, password, avatar: avt }).unwrap()
             // const registerData = await register(data)
-            // const registerData = axios.post("http://127.0.0.1:8000/auth/register", dataForm)
+            // const registerData = axios.post("https://webrtc-project-2-video-call.herokuapp.com//auth/register", dataForm)
             // .then(res => {
             //     console.log('res:', res.message)
             //     if (res.message && res.message === "Success") {
