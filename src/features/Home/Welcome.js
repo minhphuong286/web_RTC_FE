@@ -4,6 +4,7 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import io from "socket.io-client"
 import axios from 'axios';
+import moment from 'moment';
 
 import "../../assets/scss/common.scss";
 import './Welcome.scss';
@@ -14,11 +15,12 @@ import { selectCallingDetect, selectCallingUser, selectDataToDetect } from './vi
 import { useFindUserMutation } from '../users/contactApiSlice';
 import { useGetFriendListQuery } from "../friendList/friendListApiSlice";
 import { useCreateRoomMutation } from './roomApiSlice';
-import { useGetGroupListQuery } from '../users/groupApiSlice';
+import { useGetGroupListQuery, useGetGroupHistoryQuery } from '../users/groupApiSlice';
 
 import Chat from './Chat';
 import ModalVideoCall from './ModalVideoCall';
 import RoomApp from '../group/RoomApp';
+import HistoryVideo from './HistoryVideo';
 
 const socket = io(
     '/webRTCPeers',
@@ -40,6 +42,7 @@ const Welcome = () => {
     const { data: groupListData } = useGetGroupListQuery({ refetchOnMountOrArgChange: true, });
     const { data: friendListData } = useGetFriendListQuery({ refetchOnMountOrArgChange: true, });
 
+
     const [findUser] = useFindUserMutation();
     const [createRoom] = useCreateRoomMutation();
 
@@ -56,6 +59,8 @@ const Welcome = () => {
     const [isFriend, setIsFriend] = useState(true);
     const [currentGroup, setCurrentGroup] = useState('');
     const [currentGroupList, setCurrentGroupList] = useState([]);
+    const [groupId, setGroupId] = useState('');
+
 
     useEffect(async () => {
         if (user && token) {
@@ -78,6 +83,9 @@ const Welcome = () => {
             setCurrentGroupList(groupListData.data);
         }
     }, [groupListData])
+
+
+
     // console.log("socket", socket)
     useEffect(() => {
         if (socket) { sendToPeer("onliner", { localId: socket.id, dataFrom: user }); }
@@ -142,6 +150,7 @@ const Welcome = () => {
         if (currentGroupData.name && currentGroupData.id) {
             setCurrentGroup(currentGroupData);
             setRoomId(currentGroupData.id);
+            setGroupId(currentGroupData.id);
         }
     }
 
@@ -460,25 +469,16 @@ const Welcome = () => {
                                             />
                                         } */}
                                             {/* </div> */}
-                                            <h3 className='count-to-month'>Play 2 times in month</h3>
+                                            {/* <h3 className='count-to-month'>
+                                                {countTime.cWeek > 0 ? `Đã thực hiện ${countTime.cWeek} lần trong tuần` : `Chưa thực hiện cuộc gọi nào!`}
+                                                {countTime.cMonth > 1 ? `, ${countTime.cMonth} lần trong tháng.` : ``}
+                                            </h3> */}
                                         </div>
-                                        <div className='history-calling'>
-                                            {/* <h3 className='count-to-month'>Play 2 times in month</h3> */}
-                                            <div className='history-list'>
-                                                <div className="history-single">
-                                                    <div className="abstract">
-                                                        <img src={require('../../assets/img/history.png')} alt="avatar-user-contact" />
-                                                    </div>
-                                                    <div className="date-time">
-                                                        <h4 className="date"><i className="fas fa-calendar-alt"></i> 02/12/2023</h4>
-                                                        <p className="time"><i className="far fa-clock"></i> 3:30 PM</p>
-                                                    </div>
-                                                    <div className="duration">
-                                                        <p className='count'><i className="fas fa-stopwatch"></i> 1h:20m:20s</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {/* <h3 className='count-to-month'>Play 2 times in month</h3> */}
+                                        <HistoryVideo
+                                            groupId={groupId}
+                                        />
+
                                         {/* <GroupMember
                                     memberCurrentGroupList={memberCurrentGroupList}
                                     roomId={roomId}

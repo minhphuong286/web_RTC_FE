@@ -14,8 +14,10 @@
 
             i {
                 color        : $primary-3;
-                padding-right: 5px;
                 font-size    : 18px;
+                border       : 1px solid #665c23;
+                border-radius: 50%;
+                padding      : 9px;
 
                 &:hover {
                     color : $primary-hover;

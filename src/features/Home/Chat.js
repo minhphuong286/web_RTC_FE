@@ -315,7 +315,7 @@ const Chat = (props) => {
                             onClick={() => handleOpenVideoCallGroup(currentUser.name)}
                         ></i>
                         {/* </NavLink> */}
-                        <i className=
+                        {/* <i className=
                             {callingDetect && callingUserName ?
                                 currentUser.name === callingUserName ?
                                     "fas fa-stop"
@@ -323,7 +323,7 @@ const Chat = (props) => {
                                 : "fas fa-stop"
                             }
                             onClick={() => handleStopVideoCall(currentUser.name)}
-                        ></i>
+                        ></i> */}
                     </div>
                 </div>
                 <div id="chat-place" className={callingDetect === true && currentUser.name === callingUserName ? "chat__place on-video" : "chat__place"}>
