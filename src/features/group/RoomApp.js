@@ -27,7 +27,7 @@ class RoomApp extends Component {
       peerConnections: {},  // holds all Peer Connections
       selectedVideo: null,
 
-      status: 'Please wait...',
+      status: 'Vui lòng chờ thành viên khác...',
 
       pc_config: {
         "iceServers": [
@@ -252,7 +252,7 @@ class RoomApp extends Component {
       this.getLocalStream()
 
       console.log("RoomApp, connection-success", data.success)
-      const status = data.peerCount > 1 ? `Attendee: ${data.peerCount}` : 'Waiting for others'
+      const status = data.peerCount > 1 ? `Thành viên tham gia: ${data.peerCount}` : 'Vui lòng chờ thành viên khác'
 
       this.setState({
         status: status,
@@ -264,7 +264,7 @@ class RoomApp extends Component {
     this.socketGroup.on('joined-peers-group', data => {
 
       this.setState({
-        status: data.peerCount > 1 ? `Attendee: ${data.peerCount}` : 'Waiting for others',
+        status: data.peerCount > 1 ? `Thành viên tham gia: ${data.peerCount}` : 'Vui lòng chờ thành viên khác',
         memberNumber: data.peerCount
       })
     })
@@ -281,7 +281,7 @@ class RoomApp extends Component {
             // remoteStream: remoteStreams.length > 0 && remoteStreams[0].stream || null,
             remoteStreams,
             ...selectedVideo,
-            status: data.peerCount > 1 ? `Attendee: ${data.peerCount}` : 'Waiting for others',
+            status: data.peerCount > 1 ? `Thành viên tham gia: ${data.peerCount}` : 'Vui lòng chờ thành viên khác',
             memberNumber: data.peerCount
           }
         })
