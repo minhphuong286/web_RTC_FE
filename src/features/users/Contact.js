@@ -185,8 +185,8 @@ const Contact = () => {
             .then(res => {
                 if (res.data && res.data.message === "Success") {
                     Swal.fire({
-                        title: 'Deleted!',
-                        text: `has deleted group`,
+                        title: 'Đã xóa!',
+                        text: `Xóa nhóm thành công`,
                         icon: 'success',
                     })
                     updateContact("delete-group", groupId);
@@ -215,8 +215,8 @@ const Contact = () => {
             .then(res => {
                 if (res.data.message === "Success") {
                     Swal.fire({
-                        title: 'Deleted!',
-                        text: `has deleted friend`,
+                        title: 'Đã xóa!',
+                        text: `Xóa bạn bè thành công`,
                         icon: 'success',
                     })
                     updateContact("delete-friend", friendId);
@@ -238,11 +238,12 @@ const Contact = () => {
     const handleLogout = (e) => {
         e.preventDefault()
         Swal.fire({
-            title: "Are you sure?",
-            text: "Do you want to log out, exactly?",
+            title: "Đăng xuất",
+            text: "Bạn thực sự muốn đăng xuất khỏi ứng dụng",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Yes, log out!"
+            confirmButtonText: "Đăng xuất",
+            cancelButtonText: 'Hủy',
         }).then(function (isConfirm) {
             if (isConfirm.value) {
                 navigate("/");
@@ -340,7 +341,7 @@ const Contact = () => {
                     <div className={isMobile ? "col-lg-4 col-md-4 main-side__left open" : "col-lg-4 col-md-4 main-side__left"}>
                         <div className="friend-list-container">
                             <div className="search-box">
-                                <input className="search-user" type="text" placeholder="Find user..." value="" />
+                                <input className="search-user" type="text" placeholder="Tìm kiếm..." value="" />
                                 <div className="option-contact">
                                     <button className="button" ><i className="fas fa-search"></i></button>
                                     {
@@ -373,8 +374,8 @@ const Contact = () => {
                                 }
                                 <span className="total-list">
                                     {isFriend
-                                        ? <span>Friend ({friendList.length})</span>
-                                        : <span>Group ({currentGroupList.length})</span>
+                                        ? <span>Bạn bè ({friendList.length})</span>
+                                        : <span>Nhóm ({currentGroupList.length})</span>
                                     }
 
                                 </span>
@@ -451,7 +452,9 @@ const Contact = () => {
                                 <div className="row">
                                     <div className="col-lg-12 col-md-12">
                                         <div className="contact-container">
-                                            <h3 className="contact-list-title">Request contact ({requestList.length})</h3>
+                                            <h3 className="contact-list-title">
+                                                {requestList.length === 0 ? `` : `Có ${requestList.length} yêu cầu liên hệ`}
+                                            </h3>
                                             <div className="contact-list">
                                                 {requestList.length === 0 &&
                                                     <div className="contact-list-none">
@@ -513,7 +516,7 @@ const Contact = () => {
                                             </div>
                                         </div>
                                         <div className="search-box">
-                                            <input className="search-user" type="text" placeholder="Find member..." value="" />
+                                            <input className="search-user" type="text" placeholder="Tìm thành viên..." value="" />
                                             <div className="option-contact">
                                                 <button className="button" ><i className="fas fa-search"></i></button>
                                                 {

@@ -63,7 +63,7 @@ const ModalVideoCall = (props) => {
                 handleToggleModal();
                 Swal.fire({
                     title: '',
-                    text: `${incomingUser.name} has been stopped the call.`,
+                    text: `${incomingUser.name} đã kết thúc cuộc gọi`,
                     icon: 'warning',
                 });
             }, 2000);

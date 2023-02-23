@@ -148,11 +148,11 @@ const Register = () => {
         }
     }
 
-    const content = isLoading ? <h1 style={{ textAlign: 'center', paddingTop: '5rem' }}>Loading...</h1> : (
+    const content = isLoading ? <h1 style={{ textAlign: 'center', paddingTop: '5rem' }}>Vui lòng đợi...</h1> : (
         <section className="register">
 
             <div className='logo'></div>
-            <h1>Register</h1>
+            <h1>Đăng ký</h1>
 
             <form onSubmit={handleSubmit} id="register-form">
                 <table>
@@ -166,7 +166,7 @@ const Register = () => {
                         </tr>
                         <tr className='form-content'>
                             <td>
-                                <label htmlFor="password">Avatar:</label>
+                                <label htmlFor="password">Ảnh đại diện:</label>
                             </td>
                             <td>
                                 <input
@@ -180,7 +180,7 @@ const Register = () => {
                         </tr>
                         <tr className='form-content'>
                             <td>
-                                <label htmlFor="username">Name:</label>
+                                <label htmlFor="username">Tên:</label>
                             </td>
                             <td>
                                 <input
@@ -212,7 +212,7 @@ const Register = () => {
                         </tr>
                         <tr className='form-content'>
                             <td>
-                                <label htmlFor="phone">Phone:</label>
+                                <label htmlFor="phone">Điện thoại:</label>
                             </td>
                             <td>
                                 <input
@@ -228,7 +228,7 @@ const Register = () => {
                         </tr>
                         <tr className='form-content'>
                             <td>
-                                <label htmlFor="password">Password:</label>
+                                <label htmlFor="password">Mật khẩu:</label>
                             </td>
                             <td>
                                 <input
@@ -244,11 +244,11 @@ const Register = () => {
                     </tbody>
                 </table>
                 <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-                <button>Register</button>
+                <button>Đăng ký</button>
 
             </form>
             <div className='login-case'>
-                <span >Have an account? <span><Link to="/login">Login</Link></span></span>
+                <span >Bạn đã có tài khoản, <span><Link to="/login">Đăng nhập</Link></span></span>
             </div>
         </section>
     )

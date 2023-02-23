@@ -131,7 +131,7 @@ const Chat = props => {
               <input
                 className="textarea-chating input"
                 type="text"
-                placeholder="Enter your message..."
+                placeholder="Nhập tin nhắn..."
                 onChange={handleChange}
                 value={message}
               />

@@ -73,8 +73,8 @@ const ModalChatVideo = (props) => {
                 if (data.dataFrom === userData.phone) {
                     handleToggleModalChat();
                     Swal.fire({
-                        title: 'Busy!',
-                        text: `${currentUser.name} is in a call, please try again later.`,
+                        title: 'Người dùng bận!',
+                        text: `${currentUser.name} đang bận, vui lòng thử lại sau`,
                         icon: 'info',
                     })
                 }
@@ -102,7 +102,7 @@ const ModalChatVideo = (props) => {
                 handleToggleModalChat();
                 Swal.fire({
                     title: '',
-                    text: `${currentUser.name} has been stopped the call.`,
+                    text: `${currentUser.name} đã kết thúc cuộc gọi`,
                     icon: 'warning',
                 });
             }, 2000);

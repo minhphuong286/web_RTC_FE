@@ -42,8 +42,8 @@ const ModalNewContact = (props) => {
             }).then(res => {
                 if (res.data.message === "Success") {
                     Swal.fire({
-                        title: 'Added!',
-                        text: `has sent the contact`,
+                        title: 'Đã thêm!',
+                        text: `Đã gửi yêu cầu liên hệ`,
                         icon: 'success',
                     })
                     handleAddNewContact();
@@ -65,8 +65,8 @@ const ModalNewContact = (props) => {
                 .then(res => {
                     if (res.data.message === "Success") {
                         Swal.fire({
-                            title: 'Added!',
-                            text: `has added new member`,
+                            title: 'Đã thêm!',
+                            text: `Thêm thành viên thành công`,
                             icon: 'success',
                         })
                         const userData = res.data.data.user;
@@ -114,12 +114,12 @@ const ModalNewContact = (props) => {
                 isOpen={addNewGroupMember ? openModalAddNewGroupMember : openModalAddNewContact}
                 toggle={addNewGroupMember ? handleAddNewGroupMember : handleAddNewContact}
             >
-                <ModalHeader className='modal-add-new-contact' toggle={handleAddNewContact}>{addNewGroupMember === false ? "Add new contact" : "Add new group member"}</ModalHeader>
+                <ModalHeader className='modal-add-new-contact' toggle={handleAddNewContact}>{addNewGroupMember === false ? "Tạo liên hệ mới" : "Thêm thành viên mới"}</ModalHeader>
                 <ModalBody className='body-container add-new-contact-modal-body'>
                     <div className='find-user'>
                         <div className='find-user__phone'>
                             <label htmlFor='phone'></label>
-                            <input id='phone' type="text" placeholder="Find user by phone..."
+                            <input id='phone' type="text" placeholder="Tìm kiếm..."
                                 ref={userPhoneRef}
                                 onChange={(e) => setUserPhone(e.target.value)}
                                 value={userPhone}
@@ -155,13 +155,13 @@ const ModalNewContact = (props) => {
                         }
                         {userData
                             &&
-                            <input type="button" className={addNewGroupMember === false ? "button" : "button d-none"} value="Contact"
+                            <input type="button" className={addNewGroupMember === false ? "button" : "button d-none"} value="Yêu cầu"
                                 onClick={handleContact}
                             />
                         }
                         {userData
                             &&
-                            <input type="button" className={addNewGroupMember === true ? "button" : "button d-none"} value="Add"
+                            <input type="button" className={addNewGroupMember === true ? "button" : "button d-none"} value="Thêm"
                                 onClick={() => handleAddMemberGroup()}
                             />
                         }

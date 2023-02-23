@@ -451,11 +451,12 @@ class RoomApp extends Component {
   exitRoom = (e) => {
     // e.preventDefault();
     Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to leave, exactly?",
+      title: "Rời phòng!",
+      text: "Bạn thực sự muốn rời khỏi phòng?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, leave it!"
+      confirmButtonText: "Rời",
+      cancelButtonText: 'Hủy',
     }).then(function (isConfirm) {
       if (isConfirm.value) {
         console.log('ENTER ExitRoom:', e)

@@ -166,11 +166,12 @@ const Welcome = () => {
     const handleLogout = (e) => {
         e.preventDefault()
         Swal.fire({
-            title: "Are you sure?",
-            text: "Do you want to log out, exactly?",
+            title: "Đăng xuất",
+            text: "Bạn thực sự muốn đăng xuất khỏi ứng dụng",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Yes, log out!"
+            confirmButtonText: "Đăng xuất",
+            cancelButtonText: 'Hủy',
         }).then(function (isConfirm) {
             if (isConfirm.value) {
                 navigate("/");
@@ -386,12 +387,12 @@ const Welcome = () => {
                                         <h1 className='welcome__title'>
                                             {
                                                 userData ?
-                                                    <p>Welcome to <span>T29 WebRTC</span></p>
+                                                    <p>Chào mừng đến với <span>T29 WebRTC</span></p>
                                                     :
                                                     `Welcome to T29 WebRTC`
                                             }
                                         </h1>
-                                        <h3 className='welcome__username'>Hi, {userData ? userData.name : ""}</h3>
+                                        <h3 className='welcome__username'>Xin chào, {userData ? userData.name : ""}</h3>
                                         <div className='welcome__intro'>
 
                                         </div>

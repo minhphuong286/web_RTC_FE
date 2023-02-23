@@ -19,8 +19,8 @@ const GroupMember = (props) => {
             }).then(res => {
                 if (res.data.message === "Success") {
                     Swal.fire({
-                        title: 'Deleted!',
-                        text: `has deleted member`,
+                        title: 'Đã xóa!',
+                        text: `Xóa thành viên thành công`,
                         icon: 'success',
                     })
                     updateContact("delete-member", id);

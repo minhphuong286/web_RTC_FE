@@ -71,16 +71,16 @@ const Login = () => {
     }
     const handlePwdInput = (e) => setPassword(e.target.value)
 
-    const content = isLoading ? <h1 style={{ textAlign: 'center', paddingTop: '5rem' }}>Loading...</h1> : (<>
+    const content = isLoading ? <h1 style={{ textAlign: 'center', paddingTop: '5rem' }}>Vui lòng đợi...</h1> : (<>
 
         <div className='login-background'>
             <section className="login">
                 <div className='logo'></div>
-                <h1>Login</h1>
+                <h1>Đăng nhập</h1>
 
                 <form onSubmit={handleSubmit} id="login-form">
                     <div className='form-content'>
-                        <label htmlFor="username">Username:</label>
+                        <label htmlFor="username">Tên đăng nhập:</label>
                         <input
                             ref={phoneRef}
                             value={phone}
@@ -91,7 +91,7 @@ const Login = () => {
                     </div>
 
                     <div className='form-content'>
-                        <label htmlFor="password">Password:</label>
+                        <label htmlFor="password">Mật khẩu:</label>
                         <input
                             type="password"
                             id="password"
@@ -101,11 +101,11 @@ const Login = () => {
                         />
                     </div>
                     <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-                    <button>Login</button>
+                    <button>Đăng nhập</button>
 
                 </form>
                 <div className='register-case'>
-                    <span >Don't have an account? <span><Link to="/register">Register</Link></span></span>
+                    <span >Bạn chưa có tài khoản, <span><Link to="/register">Đăng ký</Link></span></span>
                 </div>
 
             </section>

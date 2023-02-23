@@ -22,8 +22,8 @@ const ModalNewContact = (props) => {
                 console.log("handleCreate:", res);
                 if (res.data.message === "Success") {
                     Swal.fire({
-                        title: 'Created!',
-                        text: `create a new group successfully`,
+                        title: 'Đã tạo!',
+                        text: `tạo nhóm thành công`,
                         icon: 'success',
                     })
                     setNameGroup("");
@@ -42,12 +42,12 @@ const ModalNewContact = (props) => {
                 isOpen={openModalCreateNewGroup}
                 toggle={handleCreateNewGroup}
             >
-                <ModalHeader className='modal-add-new-contact' toggle={handleCreateNewGroup}>Create new group</ModalHeader>
+                <ModalHeader className='modal-add-new-contact' toggle={handleCreateNewGroup}>Tạo nhóm mới</ModalHeader>
                 <ModalBody className='body-container add-new-contact-modal-body create-new-group-modal-body'>
                     <div className='find-user'>
                         <div className='find-user__phone'>
-                            <label htmlFor='name-group'>Name:</label>
-                            <input id='name-group' className='type-content' type="text" placeholder="Enter name of group..."
+                            <label htmlFor='name-group'>Tên:</label>
+                            <input id='name-group' className='type-content' type="text" placeholder="Nhập tên nhóm..."
                                 ref={nameGroupRef}
                                 onChange={(e) => setNameGroup(e.target.value)}
                                 value={nameGroup}
@@ -55,7 +55,7 @@ const ModalNewContact = (props) => {
                         </div>
                     </div>
                     <div className="contact-list">
-                        <input type="button" className="button" value="Create"
+                        <input type="button" className="button" value="Tạo"
                             onClick={handleCreate}
                         />
                     </div>
