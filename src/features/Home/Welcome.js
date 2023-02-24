@@ -33,7 +33,8 @@ const Welcome = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const baseURL = "https://webrtc-project-2-video-call.herokuapp.com/";
+    const baseURL = "https://webrtc-project-2-video-call.herokuapp.com";
+    // const baseURL = "http://127.0.0.1:8000";
     const user = useSelector(selectCurrentUser)
     const token = useSelector(selectCurrentToken)
     const callingUser = useSelector(selectCallingUser)
@@ -324,7 +325,13 @@ const Welcome = () => {
                                                     }
                                                     <div className="friend-single__avatar">
                                                         <div className='avatar--frame'>
-                                                            <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                                                            {item.avatar
+                                                                ?
+                                                                <img src={item.avatar} alt="avatar-friend" />
+                                                                :
+                                                                <img src={require('../../assets/img/friend.png')} alt="avatar" />
+                                                            }
+                                                            {/* <img src={require('../../assets/img/friend.png')} alt="avatar-friend" /> */}
                                                             <span className={onlineList.includes(item.phone) ? 'status' : ''}></span>
                                                         </div>
                                                     </div>

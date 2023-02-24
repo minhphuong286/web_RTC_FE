@@ -12,25 +12,42 @@ const GroupMember = (props) => {
     const [deleteGroupMember] = useDeleteGroupMemberMutation();
 
     const handleDeleteMember = async (id) => {
-        if (id && roomId) {
-            await deleteGroupMember({
-                roomId: roomId,
-                memberId: id
-            }).then(res => {
-                if (res.data.message === "Success") {
-                    Swal.fire({
-                        title: 'Đã xóa!',
-                        text: `Xóa thành viên thành công`,
-                        icon: 'success',
-                    })
-                    updateContact("delete-member", id);
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: `Something went wrong, please try again later!`,
-                        icon: 'error',
+        if (id && roomId && memberCurrentGroupList.length > 1) {
+            Swal.fire({
+                title: "Xóa thành viên",
+                text: "Bạn thực sự muốn xóa thành viên khỏi nhóm",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Xóa",
+                cancelButtonText: 'Hủy',
+            }).then(async function (isConfirm) {
+                if (isConfirm.value) {
+                    await deleteGroupMember({
+                        roomId: roomId,
+                        memberId: id
+                    }).then(res => {
+                        if (res.data.message === "Success") {
+                            Swal.fire({
+                                title: 'Đã xóa!',
+                                text: `Xóa thành viên thành công`,
+                                icon: 'success',
+                            })
+                            updateContact("delete-member", id);
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: `Something went wrong, please try again later!`,
+                                icon: 'error',
+                            })
+                        }
                     })
                 }
+            })
+        } else {
+            Swal.fire({
+                title: 'Không thể xóa!',
+                text: `Nhóm phải có ít nhất 1 thành viên`,
+                icon: 'error',
             })
         }
     }
@@ -48,8 +65,13 @@ const GroupMember = (props) => {
                                 <i className="fas fa-star"></i>
                             </div>
                             <div className="container-single__avatar">
-                                <img src={require('../../assets/img/friend.png')}
-                                    alt="avatar-member" />
+                                {member.avatar
+                                    ?
+                                    <img src={member.avatar} alt="avatar-member" />
+                                    :
+                                    <img src={require('../../assets/img/friend.png')}
+                                        alt="avatar-member" />
+                                }
                             </div>
                             <div className="container-single__info">
                                 <p className="info--name">{member.name}</p>

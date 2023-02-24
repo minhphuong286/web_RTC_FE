@@ -239,7 +239,7 @@ const ModalVideoCall = (props) => {
                         <div className='incoming-notification d-flex align-items-center justify-content-evenly flex-column'>
                             <div className='incoming-notification-info'>
                                 <h2 className='info-name'>{dataSDP.dataFrom.phone}</h2>
-                                <p className='info-notification text-center'>Incoming video call...</p>
+                                <p className='info-notification text-center'>Đang gọi đến...</p>
                             </div>
                             <div className='option-control-box d-flex'>
                                 <div className='option-box'>
@@ -248,7 +248,7 @@ const ModalVideoCall = (props) => {
                                     >
                                         <i className="fas fa-phone end-call-icon"></i>
                                     </div>
-                                    <p className='option-box-description'>Decline</p>
+                                    <p className='option-box-description'>Từ chối</p>
                                 </div>
                                 <div className='option-box'>
                                     <div className='control-button start-video'>
@@ -256,7 +256,7 @@ const ModalVideoCall = (props) => {
                                             onClick={() => createAnswer()}
                                         ></i>
                                     </div>
-                                    <p className='option-box-description'>Accept</p>
+                                    <p className='option-box-description'>Chấp nhận</p>
                                 </div>
 
                             </div>

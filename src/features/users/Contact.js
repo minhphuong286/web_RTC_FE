@@ -46,7 +46,8 @@ const Contact = () => {
     const groups = useSelector(selectDataGroupIsCalling);
     const user = useSelector(selectCurrentUser)
     const token = useSelector(selectCurrentToken)
-    const baseURL = "https://webrtc-project-2-video-call.herokuapp.com/";
+    const baseURL = "https://webrtc-project-2-video-call.herokuapp.com";
+    // const baseURL = "http://127.0.0.1:8000";
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -55,7 +56,7 @@ const Contact = () => {
     const [openModalAddNewGroupMember, setOpenModalAddNewGroupMember] = useState(false);
     const [openModalCreateNewGroup, setOpenModalCreateNewGroup] = useState(false);
     const [openModalVideoCallGroup, setOpenModalVideoCallGroup] = useState(false);
-    const [actionId, setActionId] = useState('');
+    const [actionId, setActionId] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const [isFriend, setIsFriend] = useState(true);
     const [isCallingVideo, setIsCallingVideo] = useState(false);
@@ -107,7 +108,7 @@ const Contact = () => {
             user_two: `${userId}`
         })
         setResp("refuse");
-        setActionId(`refuse ${userId}`);
+        setActionId(1);
         // console.log('res Refuse:', res)
     }
 
@@ -118,7 +119,7 @@ const Contact = () => {
             user_two: `${userId}`
         })
         setResp("accept");
-        setActionId(`accept ${userId}`);
+        setActionId(1);
         // console.log('res Accept:', res)
     }
 
@@ -181,53 +182,76 @@ const Contact = () => {
     }
 
     const handleDeleteGroup = async (groupId) => {
-        await deleteGroup({ roomId: groupId })
-            .then(res => {
-                if (res.data && res.data.message === "Success") {
-                    Swal.fire({
-                        title: 'Đã xóa!',
-                        text: `Xóa nhóm thành công`,
-                        icon: 'success',
+        Swal.fire({
+            title: "Xóa nhóm",
+            text: "Bạn thực sự muốn xóa nhóm này",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Xóa",
+            cancelButtonText: 'Hủy',
+        }).then(async function (isConfirm) {
+            if (isConfirm.value) {
+                await deleteGroup({ roomId: groupId })
+                    .then(res => {
+                        if (res.data && res.data.message === "Success") {
+                            Swal.fire({
+                                title: 'Đã xóa!',
+                                text: `Xóa nhóm thành công`,
+                                icon: 'success',
+                            })
+                            updateContact("delete-group", groupId);
+                            setCurrentGroup("");
+                            setRoomId("");
+                        } else {
+                            if (res.error && res.error.data.message) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: res.error.data.message,
+                                    icon: 'error',
+                                })
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Something went wrong, please try again later!',
+                                    icon: 'error',
+                                })
+                            }
+                        }
                     })
-                    updateContact("delete-group", groupId);
-                    setCurrentGroup("");
-                    setRoomId("");
-                } else {
-                    if (res.error && res.error.data.message) {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: res.error.data.message,
-                            icon: 'error',
-                        })
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Something went wrong, please try again later!',
-                            icon: 'error',
-                        })
-                    }
-                }
-            })
+            }
+        })
+
     }
 
     const handleDeleteFriend = async (friendId) => {
-        await deleteFriend({ user_two: friendId })
-            .then(res => {
-                if (res.data.message === "Success") {
-                    Swal.fire({
-                        title: 'Đã xóa!',
-                        text: `Xóa bạn bè thành công`,
-                        icon: 'success',
+        Swal.fire({
+            title: "Xóa bạn bè",
+            text: "Bạn thực sự muốn xóa người bạn này",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Xóa",
+            cancelButtonText: 'Hủy',
+        }).then(async function (isConfirm) {
+            if (isConfirm.value) {
+                await deleteFriend({ user_two: friendId })
+                    .then(res => {
+                        if (res.data.message === "Success") {
+                            Swal.fire({
+                                title: 'Đã xóa!',
+                                text: `Xóa bạn bè thành công`,
+                                icon: 'success',
+                            })
+                            updateContact("delete-friend", friendId);
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: `Something went wrong, please try again later!`,
+                                icon: 'error',
+                            })
+                        }
                     })
-                    updateContact("delete-friend", friendId);
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: `Something went wrong, please try again later!`,
-                        icon: 'error',
-                    })
-                }
-            })
+            }
+        })
     }
 
     const handleToggleModalGroup = () => {
@@ -341,9 +365,10 @@ const Contact = () => {
                     <div className={isMobile ? "col-lg-4 col-md-4 main-side__left open" : "col-lg-4 col-md-4 main-side__left"}>
                         <div className="friend-list-container">
                             <div className="search-box">
-                                <input className="search-user" type="text" placeholder="Tìm kiếm..." value="" />
+                                {/* <input className="search-user" type="text" placeholder="Tìm kiếm..." value="" /> */}
                                 <div className="option-contact">
-                                    <button className="button" ><i className="fas fa-search"></i></button>
+                                    {/* <button className="button" ><i className="fas fa-search"></i></button> */}
+                                    <span><i className="far fa-handshake"></i><i className="far fa-handshake"></i><i className="far fa-handshake"></i></span>
                                     {
                                         openModalAddNewContact &&
                                         <ModalNewContact
@@ -396,7 +421,12 @@ const Contact = () => {
                                                 <div className="friend-single" key={item.id}>
                                                     <div className="friend-single__avatar">
                                                         <div className='avatar--frame'>
-                                                            <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                                                            {item.avatar
+                                                                ?
+                                                                <img src={item.avatar} alt="avatar-friend" />
+                                                                :
+                                                                <img src={require('../../assets/img/friend.png')} alt="avatar-friend" />
+                                                            }
                                                         </div>
                                                     </div>
                                                     <div className="friend-single__info">
@@ -466,20 +496,42 @@ const Contact = () => {
                                                         return (
                                                             <div className="user-single" key={item.id}>
                                                                 <div className="user-single__avatar">
-                                                                    <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+                                                                    {item.avatar
+                                                                        ?
+                                                                        <img src={item.avatar} alt="avatar-user-contact" />
+                                                                        :
+                                                                        <img src={require('../../assets/img/friend.png')} alt="avatar-user-contact" />
+                                                                    }
+
                                                                 </div>
                                                                 <div className="user-single__info">
                                                                     <h4 className="info--name">{item.name}</h4>
-                                                                    <p className="info--preview-message">{item.phone} {item.message ? item.message : 'No message'}</p>
+                                                                    <p className="info--preview-message">{item.phone} {item.message ? item.message : ''}</p>
                                                                 </div>
-                                                                <div className="resolve">
-                                                                    <input type="button" className={resp === "accept" ? "d-none" : "button button-refuse"} value={resp === "accept" ? "Accepted" : "Refused"}
-                                                                        onClick={() => handleRefuseContact(item.id)}
-                                                                    />
-                                                                    <input type="button" className={resp === "refuse" ? "d-none" : "button"} value={resp === "refuse" ? "Refused" : "Accepted"}
-                                                                        onClick={() => handleAcceptContact(item.id)}
-                                                                    />
-                                                                </div>
+                                                                {actionId === 0
+                                                                    ?
+                                                                    <div className="resolve">
+
+                                                                        <input type="button" className="button button-refuse" value="Từ chối"
+                                                                            onClick={() => handleRefuseContact(item.id)}
+                                                                        />
+                                                                        <input type="button" className="button button-accept" value="Chấp nhận"
+                                                                            onClick={() => handleAcceptContact(item.id)}
+                                                                        />
+                                                                    </div>
+                                                                    :
+                                                                    <div className="resolve">
+                                                                        {
+                                                                            resp === "accept"
+                                                                                ?
+                                                                                <input type="button" className="button" value="Đã chấp nhận"
+                                                                                />
+                                                                                :
+                                                                                <input type="button" className="button" value="Đã từ chối"
+                                                                                />
+                                                                        }
+                                                                    </div>
+                                                                }
                                                             </div>
                                                         )
                                                     })
@@ -516,9 +568,11 @@ const Contact = () => {
                                             </div>
                                         </div>
                                         <div className="search-box">
-                                            <input className="search-user" type="text" placeholder="Tìm thành viên..." value="" />
+                                            {/* <input className="search-user" type="text" placeholder="Tìm thành viên..." value="" /> */}
                                             <div className="option-contact">
-                                                <button className="button" ><i className="fas fa-search"></i></button>
+                                                {/* <button className="button" ><i className="fas fa-search"></i></button> */}
+                                                <h4>Có tất cả {memberCurrentGroupList.length} thành viên</h4>
+
                                                 {
                                                     openModalAddNewGroupMember &&
                                                     <ModalNewContact

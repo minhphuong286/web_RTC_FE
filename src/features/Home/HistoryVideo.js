@@ -87,16 +87,19 @@ const HistoryVideo = (props) => {
                             let time = moment.utc(item.start_calling).local().format('H:mm');
                             let dur = getDuration(item.duration);
                             return (
-                                <div className="history-single" key={item.id}>
-                                    <div className="abstract">
-                                        <img src={require('../../assets/img/history.png')} alt="avatar-user-contact" />
+                                <div className="history-single" key={item.id} style={{}}>
+                                    <div style={{ 'display': 'flex', 'align-items': 'center' }}>
+                                        <div className="abstract">
+                                            <img src={require('../../assets/img/history.png')} alt="avatar-user-contact" />
+                                        </div>
+                                        <div className="date-time" style={{ 'width': 'fit-content' }}>
+                                            <h4 className="date"><i className="fas fa-calendar-alt"></i> {date}</h4>
+                                            <p className="time"><i className="far fa-clock"></i> {time}</p>
+                                        </div>
                                     </div>
-                                    <div className="date-time">
-                                        <h4 className="date"><i className="fas fa-calendar-alt"></i> {date}</h4>
-                                        <p className="time"><i className="far fa-clock"></i> {time}</p>
-                                    </div>
+
                                     <div className="duration">
-                                        <p className='count'><i className="fas fa-stopwatch"></i>&nbsp;
+                                        <p className='count' style={{ 'min-width': '150px', 'text-align': 'left' }}><i className="fas fa-stopwatch"></i>&nbsp;
                                             {dur.day ? `${dur.day}d:` : ``}
                                             {dur.hour ? `${dur.hour}h:` : ``}
                                             {dur.minute ? `${dur.minute}m:` : ``}

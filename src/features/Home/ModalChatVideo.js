@@ -250,8 +250,8 @@ const ModalChatVideo = (props) => {
                             onClick={() => { handleMute() }}
                         >
                             {mute === true
-                                ? <i className="fas fa-microphone microphone-icon"></i>
-                                : <i className="fas fa-microphone-slash microphone-icon"></i>
+                                ? <i className="fas fa-microphone microphone-icon" style={{ color: 'yellow' }}></i>
+                                : <i className="fas fa-microphone-slash microphone-icon" style={{ color: 'yellow' }}></i>
                             }
                         </div>
 
@@ -264,8 +264,8 @@ const ModalChatVideo = (props) => {
                             onClick={() => { handleVideo() }}
                         >
                             {video === true
-                                ? <i className="fas fa-video video-icon"></i>
-                                : <i className="fas fa-video-slash video-icon"></i>
+                                ? <i className="fas fa-video video-icon" style={{ color: 'yellow' }}></i>
+                                : <i className="fas fa-video-slash video-icon" style={{ color: 'yellow' }}></i>
                             }
                         </div>
                     </div>

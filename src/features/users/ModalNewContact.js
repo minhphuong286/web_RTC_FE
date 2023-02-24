@@ -73,7 +73,8 @@ const ModalNewContact = (props) => {
                         updateContact("add-member", {
                             name: userData.name,
                             phone: userData.phone,
-                            id: userData.id
+                            id: userData.id,
+                            avatar: userData.avatar
                         });
                         handleAddNewGroupMember();
                     } else {
@@ -114,7 +115,7 @@ const ModalNewContact = (props) => {
                 isOpen={addNewGroupMember ? openModalAddNewGroupMember : openModalAddNewContact}
                 toggle={addNewGroupMember ? handleAddNewGroupMember : handleAddNewContact}
             >
-                <ModalHeader className='modal-add-new-contact' toggle={handleAddNewContact}>{addNewGroupMember === false ? "Tạo liên hệ mới" : "Thêm thành viên mới"}</ModalHeader>
+                <ModalHeader className='modal-add-new-contact' toggle={addNewGroupMember ? handleAddNewGroupMember : handleAddNewContact}>{addNewGroupMember === false ? "Tạo liên hệ mới" : "Thêm thành viên mới"}</ModalHeader>
                 <ModalBody className='body-container add-new-contact-modal-body'>
                     <div className='find-user'>
                         <div className='find-user__phone'>

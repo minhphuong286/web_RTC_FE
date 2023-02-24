@@ -366,7 +366,7 @@ const Chat = (props) => {
                                 />
                             </div>
                             <div className="send-box">
-                                <input type="button" className='button' id='button-send' value="Send"
+                                <input type="button" className='button' id='button-send' value="Gửi"
                                     onClick={() => handleSendMessage()}
                                 />
                             </div>

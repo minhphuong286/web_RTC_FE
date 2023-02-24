@@ -111,11 +111,18 @@
 
                     .button-refuse {
                         background-color: $background;
+                        width           : 116px;
+                        padding         : 5px 20px;
 
                         &:hover {
                             background-color: $primary-hover;
                             cursor          : pointer;
                         }
+                    }
+
+                    .button-accept {
+                        width  : 116px;
+                        padding: 5px 20px;
                     }
                 }
             }
