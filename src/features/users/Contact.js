@@ -46,8 +46,8 @@ const Contact = () => {
     const groups = useSelector(selectDataGroupIsCalling);
     const user = useSelector(selectCurrentUser)
     const token = useSelector(selectCurrentToken)
-    const baseURL = "https://webrtc-project-2-video-call.herokuapp.com";
-    // const baseURL = "http://127.0.0.1:8000";
+    // const baseURL = "https://webrtc-project-2-video-call.herokuapp.com";
+    const baseURL = "http://127.0.0.1:8000";
 
     const dispatch = useDispatch();
     const navigate = useNavigate()

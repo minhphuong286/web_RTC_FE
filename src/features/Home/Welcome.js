@@ -33,8 +33,8 @@ const Welcome = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const baseURL = "https://webrtc-project-2-video-call.herokuapp.com";
-    // const baseURL = "http://127.0.0.1:8000";
+    // const baseURL = "https://webrtc-project-2-video-call.herokuapp.com";
+    const baseURL = "http://127.0.0.1:8000";
     const user = useSelector(selectCurrentUser)
     const token = useSelector(selectCurrentToken)
     const callingUser = useSelector(selectCallingUser)
